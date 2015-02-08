@@ -1,5 +1,5 @@
-#ifndef HPKNX_TESTFW_TESTH
-#define HPKNX_TESTFW_TESTH
+#ifndef HPKNX_TESTS_TESTFW_H
+#define HPKNX_TESTS_TESTFW_H
 
 #include <stdio.h>
 
