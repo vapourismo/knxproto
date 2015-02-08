@@ -1,6 +1,10 @@
 #include <stdio.h>
+#include "tests/testfw.h"
+
+externtest(msgbuilder)
 
 int main(void) {
-	puts("Hello World");
+	runtest(msgbuilder);
+
 	return 0;
 }

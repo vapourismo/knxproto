@@ -33,8 +33,6 @@ test: $(OUTPUT)
 mkdirs:
 	$(MKDIR) $(dir $(OUTPUT) $(SRCOBJS) $(SRCDEPS))
 
-.PHONY: all clean test mkdirs
-
 # File Targets
 -include $(SRCDEPS)
 
@@ -43,3 +41,6 @@ $(OUTPUT): $(SRCOBJS) mkdirs
 
 $(DISTPATH)/%.o: $(SRCPATH)/%.c mkdirs
 	$(CC) -c $(CFLAGS) -MMD -MF$(@:%.o=%.d) -MT$@ -o$@ $<
+
+# Phony
+.PHONY: all clean test mkdirs
