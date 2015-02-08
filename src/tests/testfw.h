@@ -51,9 +51,9 @@ inline void __testcase_fail(const char* name, const __testinfo* info) {
  * 		assert(2 + 2 == 1);
  * 	})
  */
-#define deftest(name, code) \
+#define deftest(name, ...) \
 	bool __testcase_name(name)(__testinfo* __vtestinfo) { \
-		{ code; } \
+		{ __VA_ARGS__ }; \
 		return true; \
 	}
 
