@@ -89,8 +89,42 @@ deftest(msgbuilder_append, {
 	assert(!msgbuilder_append(&target, example_data1, 9));
 })
 
+deftest(msgbuilder_append_mb, {
+	msgbuilder target;
+	msgbuilder_init(&target, 20);
+
+	msgbuilder sample1;
+	msgbuilder_init(&sample1, 10);
+	msgbuilder_append(&sample1, example_data1, 9);
+
+	msgbuilder sample2;
+	msgbuilder_init(&sample2, 10);
+	msgbuilder_append(&sample2, example_data2, 9);
+
+	// Append example data
+	assert(msgbuilder_append_mb(&target, &sample1));
+	assert(target.used == 9);
+	assert(memcmp(target.buffer, example_data1, 9) == 0);
+
+	// Append example data
+	assert(msgbuilder_append_mb(&target, &sample2));
+	assert(target.used == 18);
+	assert(memcmp(target.buffer + 9, example_data2, 9) == 0);
+	assert(memcmp(target.buffer, example_data_sum, 18) == 0);
+
+	// Overflow
+	assert(!msgbuilder_append_mb(&target, &sample1));
+
+	// Reset
+	msgbuilder_reset(&target);
+
+	// Overflow
+	assert(!msgbuilder_append_mb(&target, &sample1));
+})
+
 deftest(msgbuilder, {
 	runsubtest(msgbuilder_init_reset);
 	runsubtest(msgbuilder_reserve);
 	runsubtest(msgbuilder_append);
+	runsubtest(msgbuilder_append_mb);
 })
