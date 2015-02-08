@@ -25,6 +25,10 @@ bool msgbuilder_init(msgbuilder* mb, size_t cap) {
 }
 
 bool msgbuilder_reserve(msgbuilder* mb, size_t num) {
+	if (mb->buffer == NULL) {
+		return msgbuilder_init(mb, num);
+	}
+
 	// Has enough space?
 	if (mb->max - mb->used >= num)
 		return true;
