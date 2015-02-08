@@ -62,7 +62,9 @@ bool msgbuilder_append(msgbuilder* mb,
 /**
  * Append data from another `msgbuilder`.
  */
-bool msgbuilder_append_mb(const msgbuilder* mb, const msgbuilder* rhs);
+inline bool msgbuilder_append_mb(msgbuilder* mb, const msgbuilder* rhs) {
+	return msgbuilder_append(mb, rhs->buffer, rhs->used);
+}
 
 
 #endif

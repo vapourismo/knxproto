@@ -66,7 +66,3 @@ bool msgbuilder_append(msgbuilder* mb,
 
 	return true;
 }
-
-bool msgbuilder_append_mb(const msgbuilder* mb, const msgbuilder* rhs) {
-	return false;
-}
