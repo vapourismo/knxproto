@@ -6,7 +6,6 @@ EXEC            = exec
 # Directories
 DISTPATH        = dist
 SRCPATH         = src
-INCPATH         = inc
 
 # Source Artifacts
 SRCFILES        = $(shell find $(SRCPATH) -iname "*.c")
@@ -15,7 +14,7 @@ SRCDEPS         = $(SRCFILES:$(SRCPATH)/%.c=$(DISTPATH)/%.d)
 
 # Compiler
 CC              = clang
-CFLAGS          = -std=c11 -fmessage-length=0 -Wall -Wextra -pedantic -O2 -I$(INCPATH)
+CFLAGS          = -std=c11 -fmessage-length=0 -Wall -Wextra -pedantic -O2
 LDFLAGS         = -flto
 
 # Executable
