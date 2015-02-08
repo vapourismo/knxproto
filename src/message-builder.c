@@ -56,3 +56,14 @@ bool msgbuilder_reserve(msgbuilder* mb, size_t num) {
 	return true;
 }
 
+bool msgbuilder_append(const msgbuilder* mb,
+                       const uint8_t* restrict source,
+                       size_t length) {
+	return false;
+}
+
+bool msgbuilder_append_mb(const msgbuilder* mb,
+                          const uint8_t* restrict source,
+                          size_t length) {
+	return false;
+}

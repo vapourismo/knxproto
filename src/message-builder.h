@@ -52,4 +52,19 @@ inline void msgbuilder_free(msgbuilder* mb) {
  */
 bool msgbuilder_reserve(msgbuilder* mb, size_t num);
 
+/**
+ * Append data.
+ */
+bool msgbuilder_append(const msgbuilder* mb,
+                       const uint8_t* restrict source,
+                       size_t length);
+
+/**
+ * Append data from another `msgbuilder`.
+ */
+bool msgbuilder_append_mb(const msgbuilder* mb,
+                          const uint8_t* restrict source,
+                          size_t length);
+
+
 #endif
