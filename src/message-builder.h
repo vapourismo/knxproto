@@ -1,11 +1,11 @@
 #ifndef HPKNXD_MESSAGEBUILDER_H
 #define HPKNXD_MESSAGEBUILDER_H
 
+#include "alloc.h"
+
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
-
-#include "alloc.h"
 
 /**
  * Message Builder
