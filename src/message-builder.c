@@ -25,9 +25,8 @@ bool msgbuilder_init(msgbuilder* mb, size_t cap) {
 }
 
 bool msgbuilder_reserve(msgbuilder* mb, size_t num) {
-	if (mb->buffer == NULL) {
+	if (mb->buffer == NULL)
 		return msgbuilder_init(mb, num);
-	}
 
 	// Has enough space?
 	if (mb->max - mb->used >= num)
@@ -56,14 +55,18 @@ bool msgbuilder_reserve(msgbuilder* mb, size_t num) {
 	return true;
 }
 
-bool msgbuilder_append(const msgbuilder* mb,
+bool msgbuilder_append(msgbuilder* mb,
                        const uint8_t* restrict source,
                        size_t length) {
-	return false;
+	if (mb->max - mb->used < length)
+		return false;
+
+	memcpy(mb->buffer + mb->used, source, length);
+	mb->used += length;
+
+	return true;
 }
 
-bool msgbuilder_append_mb(const msgbuilder* mb,
-                          const uint8_t* restrict source,
-                          size_t length) {
+bool msgbuilder_append_mb(const msgbuilder* mb, const msgbuilder* rhs) {
 	return false;
 }

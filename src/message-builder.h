@@ -55,16 +55,14 @@ bool msgbuilder_reserve(msgbuilder* mb, size_t num);
 /**
  * Append data.
  */
-bool msgbuilder_append(const msgbuilder* mb,
+bool msgbuilder_append(msgbuilder* mb,
                        const uint8_t* restrict source,
                        size_t length);
 
 /**
  * Append data from another `msgbuilder`.
  */
-bool msgbuilder_append_mb(const msgbuilder* mb,
-                          const uint8_t* restrict source,
-                          size_t length);
+bool msgbuilder_append_mb(const msgbuilder* mb, const msgbuilder* rhs);
 
 
 #endif
