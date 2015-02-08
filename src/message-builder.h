@@ -28,15 +28,22 @@ bool msgbuilder_init(msgbuilder* mb, size_t cap);
 /**
  * Free the underlying buffer.
  */
-inline void msgbuilder_free_buffer(const msgbuilder* mb) {
-	if (mb->buffer) free(mb->buffer);
+inline void msgbuilder_reset(msgbuilder* mb) {
+	if (mb->buffer) {
+		free(mb->buffer);
+		mb->buffer = NULL;
+	}
+
+	mb->used = mb->max = 0;
 }
 
 /**
  * Free the entire structure including the buffer.
  */
 inline void msgbuilder_free(msgbuilder* mb) {
-	msgbuilder_free_buffer(mb);
+	if (mb->buffer)
+		free(mb->buffer);
+
 	free(mb);
 }
 
