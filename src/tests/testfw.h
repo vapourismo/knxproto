@@ -2,6 +2,7 @@
 #define HPKNX_TESTS_TESTFW_H
 
 #include <stdio.h>
+#include <stdbool.h>
 
 typedef enum {
 	TR_ASSERT,
