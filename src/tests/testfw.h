@@ -61,7 +61,7 @@ inline void __testcase_fail(const char* name, const __testinfo* info) {
  * Simply generate the signature of this test case.
  * Use this within header files.
  */
-#define exporttest(name) \
+#define externtest(name) \
 	bool __testcase_name(name)(__testinfo* __vtestinfo);
 
 /**
