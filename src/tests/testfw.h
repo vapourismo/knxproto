@@ -3,29 +3,24 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include "../alloc.h"
 
 typedef enum {
 	TR_ASSERT,
-	TR_FAIL
+	TR_FAIL,
+	TR_SUBTEST
 } __testfailreason;
 
 typedef struct {
 	__testfailreason reason;
 	const char* filename;
 	int fileline;
-	union {
-		struct {
-			const char* expression;
-		} assertion;
-		struct {
-			const char* message;
-		} user;
-	} info;
+	const char* info;
 } __testinfo;
 
 #define __testcase_name(name) __testcase_##name
 
-#define __testcase_failed(r) { __testinfo->reason = (r); __testinfo->filename = __FILE__; __testinfo->fileline = __LINE__; }
+#define __testcase_failed(r) { __vtestinfo->reason = (r); __vtestinfo->filename = __FILE__; __vtestinfo->fileline = __LINE__; }
 
 inline void __testcase_pass(const char* name) {
 	printf("\033[0;32mPASS\033[0m %s\n", name);
@@ -36,11 +31,15 @@ inline void __testcase_fail(const char* name, const __testinfo* info) {
 
 	switch (info->reason) {
 		case TR_ASSERT:
-			printf("     + Assertion failed: %s\n", info->info.assertion.expression);
+			printf("     + Assertion failed: %s\n", info->info);
 			break;
 
 		case TR_FAIL:
-			printf("     + User message: %s\n", info->info.user.message);
+			printf("     + User message: %s\n", info->info);
+			break;
+
+		case TR_SUBTEST:
+			printf("     + Sub test failed: %s\n", info->info);
 			break;
 	}
 }
@@ -53,7 +52,7 @@ inline void __testcase_fail(const char* name, const __testinfo* info) {
  * 	})
  */
 #define deftest(name, code) \
-	bool __testcase_name(name)(__testinfo* __testinfo) { \
+	bool __testcase_name(name)(__testinfo* __vtestinfo) { \
 		{ code; } \
 		return true; \
 	}
@@ -63,17 +62,32 @@ inline void __testcase_fail(const char* name, const __testinfo* info) {
  * Use this within header files.
  */
 #define exporttest(name) \
-	bool __testcase_name(name)(__testinfo* __testinfo);
+	bool __testcase_name(name)(__testinfo* __vtestinfo);
 
 /**
  * Perform a test.
  */
 #define runtest(name) { \
-	__testinfo info; \
-	if (__testcase_name(name)(&info)) { \
+	__testinfo __vtestinfo; \
+	if (__testcase_name(name)(&__vtestinfo)) { \
 		__testcase_pass(__STRING(name)); \
 	} else { \
-		__testcase_fail(__STRING(name), &info); \
+		__testcase_fail(__STRING(name), &__vtestinfo); \
+	} \
+}
+
+/**
+ * Perform a test within a test.
+ */
+#define runsubtest(name) { \
+	__testinfo __vsubtestinfo; \
+	if (__testcase_name(name)(&__vsubtestinfo)) { \
+		__testcase_pass(__STRING(name)); \
+	} else { \
+		__testcase_fail(__STRING(name), &__vsubtestinfo); \
+		__testcase_failed(TR_SUBTEST); \
+		__vtestinfo->info = __STRING(name); \
+		return false; \
 	} \
 }
 
@@ -83,7 +97,7 @@ inline void __testcase_fail(const char* name, const __testinfo* info) {
 #define assert(expr) { \
 	if (!(expr)) { \
 		__testcase_failed(TR_ASSERT); \
-		__testinfo->info.assertion.expression = __STRING(expr); \
+		__vtestinfo->info = __STRING(expr); \
 		return false; \
 	} \
 }
@@ -93,7 +107,7 @@ inline void __testcase_fail(const char* name, const __testinfo* info) {
  */
 #define fail(msg) { \
 	__testcase_failed(TR_FAIL); \
-	__testinfo->info.user.message = (msg); \
+	__vtestinfo->info = (msg); \
 	return false; \
 }
 
