@@ -79,14 +79,14 @@ deftest(msgbuilder_append, {
 	assert(memcmp(target.buffer + 9, example_data2, 9) == 0);
 	assert(memcmp(target.buffer, example_data_sum, 18) == 0);
 
-	// Overflow
-	assert(!msgbuilder_append(&target, example_data1, 9));
+	// Overflow prevention
+	assert(msgbuilder_append(&target, example_data1, 9));
 
 	// Reset
 	msgbuilder_reset(&target);
 
-	// Overflow
-	assert(!msgbuilder_append(&target, example_data1, 9));
+	// Overflow prevention
+	assert(msgbuilder_append(&target, example_data1, 9));
 })
 
 deftest(msgbuilder_append_mb, {
@@ -112,14 +112,14 @@ deftest(msgbuilder_append_mb, {
 	assert(memcmp(target.buffer + 9, example_data2, 9) == 0);
 	assert(memcmp(target.buffer, example_data_sum, 18) == 0);
 
-	// Overflow
-	assert(!msgbuilder_append_mb(&target, &sample1));
+	// Overflow prevention
+	assert(msgbuilder_append_mb(&target, &sample1));
 
 	// Reset
 	msgbuilder_reset(&target);
 
-	// Overflow
-	assert(!msgbuilder_append_mb(&target, &sample1));
+	// Overflow prevention
+	assert(msgbuilder_append_mb(&target, &sample1));
 })
 
 deftest(msgbuilder, {

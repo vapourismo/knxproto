@@ -58,7 +58,7 @@ bool msgbuilder_reserve(msgbuilder* mb, size_t num) {
 bool msgbuilder_append(msgbuilder* mb,
                        const uint8_t* restrict source,
                        size_t length) {
-	if (mb->max - mb->used < length)
+	if (!msgbuilder_reserve(mb, length))
 		return false;
 
 	memcpy(mb->buffer + mb->used, source, length);
