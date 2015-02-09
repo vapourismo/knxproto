@@ -30,7 +30,7 @@ typedef enum {
 /**
  * Generate the KNXnet/IP header and append it to the message.
  */
-bool knxnetip_header(msgbuilder* mb, knxnetip_service service, uint16_t length);
+bool knxnetip_generate_header(msgbuilder* mb, knxnetip_service service, uint16_t length);
 
 /**
  * Parse a KNXnet/IP packet.

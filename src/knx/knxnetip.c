@@ -79,7 +79,7 @@ static bool knxnetip_append_service(msgbuilder* mb, knxnetip_service srv) {
 	}
 }
 
-bool knxnetip_header(msgbuilder* mb, knxnetip_service srv, uint16_t length) {
+bool knxnetip_generate_header(msgbuilder* mb, knxnetip_service srv, uint16_t length) {
 	static const uint8_t preamble[2] = {6, 16};
 
 	if (length > (UINT16_MAX - 6))
