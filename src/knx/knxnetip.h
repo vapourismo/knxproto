@@ -79,7 +79,12 @@ typedef struct {
 } knxnetip_packet;
 
 /**
- * Generate a message from the given packet information.
+ * Generate the message for a connection request.
+ */
+bool knxnetip_generate_connreq(msgbuilder* mb, const knxnetip_connreq* connreq);
+
+/**
+ * Generate the message from the given packet information.
  */
 bool knxnetip_generate(msgbuilder* mb, const knxnetip_packet* packet);
 

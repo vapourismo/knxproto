@@ -104,7 +104,7 @@ static bool knxnetip_append_host_info(msgbuilder* mb, const knxnetip_host_info* 
 		msgbuilder_append(mb, (const uint8_t*) &host->address.sin_port, 2);
 }
 
-static bool knxnetip_append_connreq(msgbuilder* mb, const knxnetip_connreq* connreq) {
+bool knxnetip_generate_connreq(msgbuilder* mb, const knxnetip_connreq* connreq) {
 	const uint8_t contents[4] = {4, connreq->type, connreq->layer, 0};
 
 	return
@@ -129,7 +129,7 @@ bool knxnetip_generate(msgbuilder* mb, const knxnetip_packet* packet) {
 			return false;
 
 		case KNXNETIP_CONNECTION_REQUEST:
-			return knxnetip_append_connreq(mb, &packet->connection_request);
+			return knxnetip_generate_connreq(mb, &packet->connection_request);
 
 		case KNXNETIP_CONNECTION_RESPONSE:
 			return false;
@@ -233,7 +233,8 @@ bool knxnetip_parse(const uint8_t* message, size_t length,
 			return false;
 	}
 
-	if (((message[4] << 8) | message[5]) > length)
+	uint16_t claimed_len = (message[4] << 8) | message[5];
+	if (claimed_len > length)
 		return false;
 
 	return true;
