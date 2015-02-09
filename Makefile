@@ -30,17 +30,16 @@ clean:
 test: $(OUTPUT)
 	$(EXEC) $(OUTPUT)
 
-mkdirs:
-	$(MKDIR) $(dir $(OUTPUT) $(SRCOBJS) $(SRCDEPS))
-
 # File Targets
 -include $(SRCDEPS)
 
-$(OUTPUT): $(SRCOBJS) mkdirs
+$(OUTPUT): $(SRCOBJS)
+	@$(MKDIR) $(dir $@)
 	$(CC) $(LDFLAGS) -o$@ $(SRCOBJS)
 
-$(DISTPATH)/%.o: $(SRCPATH)/%.c mkdirs
+$(DISTPATH)/%.o: $(SRCPATH)/%.c
+	@$(MKDIR) $(dir $@)
 	$(CC) -c $(CFLAGS) -MMD -MF$(@:%.o=%.d) -MT$@ -o$@ $<
 
 # Phony
-.PHONY: all clean test mkdirs
+.PHONY: all clean test
