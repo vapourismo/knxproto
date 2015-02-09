@@ -99,7 +99,7 @@ ssize_t knxnetip_parse(const uint8_t* restrict packet, size_t length,
 	if (length < 6 || packet[0] != 6 || packet[1] != 16)
 		return -1;
 
-	if (srv) {
+	if (service) {
 		switch ((packet[2] << 8) | packet[3]) {
 			case 0x0201: *service = KNXNETIP_SEARCH_REQUEST;
 			case 0x0202: *service = KNXNETIP_SEARCH_RESPONSE;
