@@ -163,7 +163,7 @@ bool knxnetip_generate(msgbuilder* mb, const knxnetip_packet* packet) {
 	}
 }
 
-bool knxnetip_parse(const uint8_t* restrict message, size_t length,
+bool knxnetip_parse(const uint8_t* message, size_t length,
                     knxnetip_packet* packet) {
 	if (length < 6 || message[0] != 6 || message[1] != 16)
 		return false;

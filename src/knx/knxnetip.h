@@ -86,7 +86,7 @@ bool knxnetip_generate(msgbuilder* mb, const knxnetip_packet* packet);
 /**
  * Parse a given message into a packet.
  */
-bool knxnetip_parse(const uint8_t* restrict msg, size_t length,
+bool knxnetip_parse(const uint8_t* msg, size_t length,
                     knxnetip_packet* packet);
 
 #endif
