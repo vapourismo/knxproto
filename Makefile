@@ -14,7 +14,7 @@ SRCDEPS         = $(SRCFILES:$(SRCPATH)/%.c=$(DISTPATH)/%.d)
 
 # Compiler
 CC              = clang
-CFLAGS          = -std=c11 -fmessage-length=0 -Wall -Wextra -pedantic -O2
+CFLAGS          = -std=c11 -fmessage-length=0 -Wall -Wextra -pedantic -O2 -g
 LDFLAGS         = -flto
 
 # Executable
