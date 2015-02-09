@@ -57,7 +57,8 @@ typedef enum {
  */
 typedef struct {
 	knxnetip_proto protocol;
-	ip4addr address;
+	in_addr_t address;
+	in_port_t port;
 } knxnetip_host_info;
 
 /**

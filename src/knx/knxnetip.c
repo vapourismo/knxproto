@@ -100,8 +100,8 @@ static bool knxnetip_append_host_info(msgbuilder* mb, const knxnetip_host_info* 
 
 	return
 		msgbuilder_append(mb, preamble, 2) &&
-		msgbuilder_append(mb, (const uint8_t*) &host->address.sin_addr.s_addr, 4) &&
-		msgbuilder_append(mb, (const uint8_t*) &host->address.sin_port, 2);
+		msgbuilder_append(mb, (const uint8_t*) &host->address, 4) &&
+		msgbuilder_append(mb, (const uint8_t*) &host->port, 2);
 }
 
 bool knxnetip_generate_connreq(msgbuilder* mb, const knxnetip_connreq* connreq) {
@@ -163,79 +163,128 @@ bool knxnetip_generate(msgbuilder* mb, const knxnetip_packet* packet) {
 	}
 }
 
-bool knxnetip_parse(const uint8_t* message, size_t length,
-                    knxnetip_packet* packet) {
-	if (length < 6 || message[0] != 6 || message[1] != 16)
+bool knxnetip_parse_host_info(const uint8_t* message, knxnetip_host_info* host) {
+	if (message[0] != 8)
 		return false;
 
-	switch ((message[2] << 8) | message[3]) {
-		case 0x0201:
-			packet->service = KNXNETIP_SEARCH_REQUEST;
+	switch (message[1]) {
+		case KNXNETIP_PROTO_UDP:
+			host->protocol = KNXNETIP_PROTO_UDP;
 			break;
 
-		case 0x0202:
-			packet->service = KNXNETIP_SEARCH_RESPONSE;
-			break;
-
-		case 0x0203:
-			packet->service = KNXNETIP_DESCRIPTION_REQUEST;
-			break;
-
-		case 0x0204:
-			packet->service = KNXNETIP_DESCRIPTION_RESPONSE;
-			break;
-
-		case 0x0205:
-			packet->service = KNXNETIP_CONNECTION_REQUEST;
-			break;
-
-		case 0x0206:
-			packet->service = KNXNETIP_CONNECTION_RESPONSE;
-			break;
-
-		case 0x0207:
-			packet->service = KNXNETIP_CONNECTIONSTATE_REQUEST;
-			break;
-
-		case 0x0208:
-			packet->service = KNXNETIP_CONNECTIONSTATE_RESPONSE;
-			break;
-
-		case 0x0209:
-			packet->service = KNXNETIP_DISCONNECT_REQUEST;
-			break;
-
-		case 0x020A:
-			packet->service = KNXNETIP_DISCONNECT_RESPONSE;
-			break;
-
-		case 0x0310:
-			packet->service = KNXNETIP_DEVICE_CONFIGURATION_REQUEST;
-			break;
-
-		case 0x0311:
-			packet->service = KNXNETIP_DEVICE_CONFIGURATION_ACK;
-			break;
-
-		case 0x0420:
-			packet->service = KNXNETIP_TUNNEL_REQUEST;
-			break;
-
-		case 0x0421:
-			packet->service = KNXNETIP_TUNNEL_RESPONSE;
-			break;
-
-		case 0x0530:
-			packet->service = KNXNETIP_ROUTING_INDICATION;
+		case KNXNETIP_PROTO_TCP:
+			host->protocol = KNXNETIP_PROTO_TCP;
 			break;
 
 		default:
 			return false;
 	}
 
-	uint16_t claimed_len = (message[4] << 8) | message[5];
-	if (claimed_len > length)
-		return false;
+	memcpy(&host->address, message + 2, 4);
+	memcpy(&host->port, message + 6, 2);
 
 	return true;
+}
+
+bool knxnetip_parse_connreq(const uint8_t* message, size_t length,
+                            knxnetip_connreq* req) {
+	if (length < 20 || message[16] != 4)
+		return false;
+
+	switch (message[17]) {
+		case KNXNETIP_CONNREQ_TUNNEL:
+			req->type = KNXNETIP_CONNREQ_TUNNEL;
+			break;
+
+		default:
+			return false;
+	}
+
+	switch (message[18]) {
+		case KNXNETIP_LAYER_TUNNEL:
+			req->layer = KNXNETIP_LAYER_TUNNEL;
+			break;
+
+		default:
+			return false;
+	}
+
+	return
+		knxnetip_parse_host_info(message, &req->control_host) &&
+		knxnetip_parse_host_info(message + 8, &req->tunnel_host);
+}
+
+bool knxnetip_parse(const uint8_t* message, size_t length,
+                    knxnetip_packet* packet) {
+	if (length < 6 || message[0] != 6 || message[1] != 16)
+		return false;
+
+	uint16_t claimed_len = (message[4] << 8) | message[5];
+	if (claimed_len > length || claimed_len < 6)
+		return false;
+
+	switch ((message[2] << 8) | message[3]) {
+		case 0x0201:
+			packet->service = KNXNETIP_SEARCH_REQUEST;
+			return false;
+
+		case 0x0202:
+			packet->service = KNXNETIP_SEARCH_RESPONSE;
+			return false;
+
+		case 0x0203:
+			packet->service = KNXNETIP_DESCRIPTION_REQUEST;
+			return false;
+
+		case 0x0204:
+			packet->service = KNXNETIP_DESCRIPTION_RESPONSE;
+			return false;
+
+		case 0x0205:
+			packet->service = KNXNETIP_CONNECTION_REQUEST;
+			return knxnetip_parse_connreq(message + 6, claimed_len - 6, &packet->connection_request);
+
+		case 0x0206:
+			packet->service = KNXNETIP_CONNECTION_RESPONSE;
+			return false;
+
+		case 0x0207:
+			packet->service = KNXNETIP_CONNECTIONSTATE_REQUEST;
+			return false;
+
+		case 0x0208:
+			packet->service = KNXNETIP_CONNECTIONSTATE_RESPONSE;
+			return false;
+
+		case 0x0209:
+			packet->service = KNXNETIP_DISCONNECT_REQUEST;
+			return false;
+
+		case 0x020A:
+			packet->service = KNXNETIP_DISCONNECT_RESPONSE;
+			return false;
+
+		case 0x0310:
+			packet->service = KNXNETIP_DEVICE_CONFIGURATION_REQUEST;
+			return false;
+
+		case 0x0311:
+			packet->service = KNXNETIP_DEVICE_CONFIGURATION_ACK;
+			return false;
+
+		case 0x0420:
+			packet->service = KNXNETIP_TUNNEL_REQUEST;
+			return false;
+
+		case 0x0421:
+			packet->service = KNXNETIP_TUNNEL_RESPONSE;
+			return false;
+
+		case 0x0530:
+			packet->service = KNXNETIP_ROUTING_INDICATION;
+			return false;
+
+		default:
+			return false;
+	}
 }
