@@ -51,7 +51,7 @@ typedef enum {
 } knxnetip_proto;
 
 /**
- *
+ * Host Information
  */
 typedef struct {
 	knxnetip_proto protocol;
@@ -59,7 +59,7 @@ typedef struct {
 } knxnetip_host_info;
 
 /**
- *
+ * Connection Request
  */
 typedef struct {
 	knxnetip_conn_type type;
