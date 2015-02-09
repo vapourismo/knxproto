@@ -129,7 +129,7 @@ bool knxnetip_generate(msgbuilder* mb, const knxnetip_packet* packet) {
 			return false;
 
 		case KNXNETIP_CONNECTION_REQUEST:
-			return knxnetip_append_connreq(mb, &packet->payload.connection_request);
+			return knxnetip_append_connreq(mb, &packet->connection_request);
 
 		case KNXNETIP_CONNECTION_RESPONSE:
 			return false;
