@@ -82,7 +82,7 @@ static bool knxnetip_append_service(msgbuilder* mb, knxnetip_service srv) {
 bool knxnetip_generate_header(msgbuilder* mb, knxnetip_service srv, uint16_t length) {
 	static const uint8_t preamble[2] = {6, 16};
 
-	if (length > (UINT16_MAX - 6))
+	if (length > UINT16_MAX - 6)
 		return false;
 
 	length += 6;
@@ -96,11 +96,10 @@ bool knxnetip_generate_header(msgbuilder* mb, knxnetip_service srv, uint16_t len
 
 ssize_t knxnetip_parse(const uint8_t* restrict packet, size_t length,
                        knxnetip_service* service, const uint8_t** payload) {
-
 	if (length < 6 || packet[0] != 6 || packet[1] != 16)
 		return -1;
 
-	uint16_t srv = (packet[2] << 8) | (packet[3]);
+	uint16_t srv = (packet[2] << 8) | packet[3];
 	switch (srv) {
 		case 0x0201: *service = KNXNETIP_SEARCH_REQUEST;
 		case 0x0202: *service = KNXNETIP_SEARCH_RESPONSE;
@@ -119,4 +118,12 @@ ssize_t knxnetip_parse(const uint8_t* restrict packet, size_t length,
 		case 0x0530: *service = KNXNETIP_ROUTING_INDICATION;
 		default: return -2;
 	}
+
+	uint16_t payload_size = (packet[4] << 8) | packet[5];
+
+	if (payload_size > length - 6)
+		return -3;
+
+	*payload = packet + 6;
+	return payload_size;
 }
