@@ -169,22 +169,68 @@ bool knxnetip_parse(const uint8_t* message, size_t length,
 		return false;
 
 	switch ((message[2] << 8) | message[3]) {
-		case 0x0201: packet->service = KNXNETIP_SEARCH_REQUEST;
-		case 0x0202: packet->service = KNXNETIP_SEARCH_RESPONSE;
-		case 0x0203: packet->service = KNXNETIP_DESCRIPTION_REQUEST;
-		case 0x0204: packet->service = KNXNETIP_DESCRIPTION_RESPONSE;
-		case 0x0205: packet->service = KNXNETIP_CONNECTION_REQUEST;
-		case 0x0206: packet->service = KNXNETIP_CONNECTION_RESPONSE;
-		case 0x0207: packet->service = KNXNETIP_CONNECTIONSTATE_REQUEST;
-		case 0x0208: packet->service = KNXNETIP_CONNECTIONSTATE_RESPONSE;
-		case 0x0209: packet->service = KNXNETIP_DISCONNECT_REQUEST;
-		case 0x020A: packet->service = KNXNETIP_DISCONNECT_RESPONSE;
-		case 0x0310: packet->service = KNXNETIP_DEVICE_CONFIGURATION_REQUEST;
-		case 0x0311: packet->service = KNXNETIP_DEVICE_CONFIGURATION_ACK;
-		case 0x0420: packet->service = KNXNETIP_TUNNEL_REQUEST;
-		case 0x0421: packet->service = KNXNETIP_TUNNEL_RESPONSE;
-		case 0x0530: packet->service = KNXNETIP_ROUTING_INDICATION;
-		default: return false;
+		case 0x0201:
+			packet->service = KNXNETIP_SEARCH_REQUEST;
+			break;
+
+		case 0x0202:
+			packet->service = KNXNETIP_SEARCH_RESPONSE;
+			break;
+
+		case 0x0203:
+			packet->service = KNXNETIP_DESCRIPTION_REQUEST;
+			break;
+
+		case 0x0204:
+			packet->service = KNXNETIP_DESCRIPTION_RESPONSE;
+			break;
+
+		case 0x0205:
+			packet->service = KNXNETIP_CONNECTION_REQUEST;
+			break;
+
+		case 0x0206:
+			packet->service = KNXNETIP_CONNECTION_RESPONSE;
+			break;
+
+		case 0x0207:
+			packet->service = KNXNETIP_CONNECTIONSTATE_REQUEST;
+			break;
+
+		case 0x0208:
+			packet->service = KNXNETIP_CONNECTIONSTATE_RESPONSE;
+			break;
+
+		case 0x0209:
+			packet->service = KNXNETIP_DISCONNECT_REQUEST;
+			break;
+
+		case 0x020A:
+			packet->service = KNXNETIP_DISCONNECT_RESPONSE;
+			break;
+
+		case 0x0310:
+			packet->service = KNXNETIP_DEVICE_CONFIGURATION_REQUEST;
+			break;
+
+		case 0x0311:
+			packet->service = KNXNETIP_DEVICE_CONFIGURATION_ACK;
+			break;
+
+		case 0x0420:
+			packet->service = KNXNETIP_TUNNEL_REQUEST;
+			break;
+
+		case 0x0421:
+			packet->service = KNXNETIP_TUNNEL_RESPONSE;
+			break;
+
+		case 0x0530:
+			packet->service = KNXNETIP_ROUTING_INDICATION;
+			break;
+
+		default:
+			return false;
 	}
 
 	if (((message[4] << 8) | message[5]) > length)
