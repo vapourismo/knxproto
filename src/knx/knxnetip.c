@@ -99,31 +99,34 @@ ssize_t knxnetip_parse(const uint8_t* restrict packet, size_t length,
 	if (length < 6 || packet[0] != 6 || packet[1] != 16)
 		return -1;
 
-	uint16_t srv = (packet[2] << 8) | packet[3];
-	switch (srv) {
-		case 0x0201: *service = KNXNETIP_SEARCH_REQUEST;
-		case 0x0202: *service = KNXNETIP_SEARCH_RESPONSE;
-		case 0x0203: *service = KNXNETIP_DESCRIPTION_REQUEST;
-		case 0x0204: *service = KNXNETIP_DESCRIPTION_RESPONSE;
-		case 0x0205: *service = KNXNETIP_CONNECTION_REQUEST;
-		case 0x0206: *service = KNXNETIP_CONNECTION_RESPONSE;
-		case 0x0207: *service = KNXNETIP_CONNECTIONSTATE_REQUEST;
-		case 0x0208: *service = KNXNETIP_CONNECTIONSTATE_RESPONSE;
-		case 0x0209: *service = KNXNETIP_DISCONNECT_REQUEST;
-		case 0x020A: *service = KNXNETIP_DISCONNECT_RESPONSE;
-		case 0x0310: *service = KNXNETIP_DEVICE_CONFIGURATION_REQUEST;
-		case 0x0311: *service = KNXNETIP_DEVICE_CONFIGURATION_ACK;
-		case 0x0420: *service = KNXNETIP_TUNNEL_REQUEST;
-		case 0x0421: *service = KNXNETIP_TUNNEL_RESPONSE;
-		case 0x0530: *service = KNXNETIP_ROUTING_INDICATION;
-		default: return -2;
+	if (srv) {
+		switch ((packet[2] << 8) | packet[3]) {
+			case 0x0201: *service = KNXNETIP_SEARCH_REQUEST;
+			case 0x0202: *service = KNXNETIP_SEARCH_RESPONSE;
+			case 0x0203: *service = KNXNETIP_DESCRIPTION_REQUEST;
+			case 0x0204: *service = KNXNETIP_DESCRIPTION_RESPONSE;
+			case 0x0205: *service = KNXNETIP_CONNECTION_REQUEST;
+			case 0x0206: *service = KNXNETIP_CONNECTION_RESPONSE;
+			case 0x0207: *service = KNXNETIP_CONNECTIONSTATE_REQUEST;
+			case 0x0208: *service = KNXNETIP_CONNECTIONSTATE_RESPONSE;
+			case 0x0209: *service = KNXNETIP_DISCONNECT_REQUEST;
+			case 0x020A: *service = KNXNETIP_DISCONNECT_RESPONSE;
+			case 0x0310: *service = KNXNETIP_DEVICE_CONFIGURATION_REQUEST;
+			case 0x0311: *service = KNXNETIP_DEVICE_CONFIGURATION_ACK;
+			case 0x0420: *service = KNXNETIP_TUNNEL_REQUEST;
+			case 0x0421: *service = KNXNETIP_TUNNEL_RESPONSE;
+			case 0x0530: *service = KNXNETIP_ROUTING_INDICATION;
+			default: return -2;
+		}
 	}
 
-	uint16_t payload_size = (packet[4] << 8) | packet[5];
+	uint16_t pkg_size = (packet[4] << 8) | packet[5];
 
-	if (payload_size > length - 6)
+	if (pkg_size > length)
 		return -3;
 
-	*payload = packet + 6;
-	return payload_size;
+	if (payload)
+		*payload = packet + 6;
+
+	return pkg_size - 6;
 }
