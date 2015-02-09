@@ -163,10 +163,10 @@ bool knxnetip_generate(msgbuilder* mb, const knxnetip_packet* packet) {
 	}
 }
 
-int knxnetip_parse(const uint8_t* restrict message, size_t length,
-                   knxnetip_packet* packet) {
+bool knxnetip_parse(const uint8_t* restrict message, size_t length,
+                    knxnetip_packet* packet) {
 	if (length < 6 || message[0] != 6 || message[1] != 16)
-		return -1;
+		return false;
 
 	switch ((message[2] << 8) | message[3]) {
 		case 0x0201: packet->service = KNXNETIP_SEARCH_REQUEST;
@@ -184,11 +184,11 @@ int knxnetip_parse(const uint8_t* restrict message, size_t length,
 		case 0x0420: packet->service = KNXNETIP_TUNNEL_REQUEST;
 		case 0x0421: packet->service = KNXNETIP_TUNNEL_RESPONSE;
 		case 0x0530: packet->service = KNXNETIP_ROUTING_INDICATION;
-		default: return -2;
+		default: return false;
 	}
 
 	if (((message[4] << 8) | message[5]) > length)
-		return -3;
+		return false;
 
-	return 0;
+	return true;
 }
