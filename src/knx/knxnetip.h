@@ -2,6 +2,8 @@
 #define HPKNXD_KNX_KNXNETIP_H
 
 #include "../message-builder.h"
+#include "../net/address.h"
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -55,7 +57,7 @@ typedef enum {
  */
 typedef struct {
 	knxnetip_proto protocol;
-	struct sockaddr_in address;
+	ip4addr address;
 } knxnetip_host_info;
 
 /**
