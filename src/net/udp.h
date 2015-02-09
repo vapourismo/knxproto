@@ -15,7 +15,7 @@
 int udpsock_create(const ip4addr* local);
 
 /**
- *
+ * Send something through the socket.
  */
 inline ssize_t udpsock_send(int sock, const void* data, size_t size, const ip4addr* remote) {
 	return sendto(sock, data, size, 0,
@@ -23,7 +23,7 @@ inline ssize_t udpsock_send(int sock, const void* data, size_t size, const ip4ad
 }
 
 /**
- *
+ * Receive a datagram from anybody.
  */
 inline ssize_t udpsock_recv(int sock, void* buffer, size_t size) {
 	return recvfrom(sock, buffer, size, 0,
@@ -31,7 +31,7 @@ inline ssize_t udpsock_recv(int sock, void* buffer, size_t size) {
 }
 
 /**
- *
+ * Close the socket.
  */
 inline void udpsock_close(int sock) {
 	close(sock);
