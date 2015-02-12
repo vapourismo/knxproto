@@ -1,9 +1,6 @@
 language: cpp
-sudo: true
 compiler:
   - gcc
   - clang
-install:
-  - sudo apt-get install -qq llvm clang
 script:
   - make test
