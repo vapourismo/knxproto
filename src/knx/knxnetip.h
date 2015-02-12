@@ -21,11 +21,6 @@ typedef struct {
 } knxnetip_packet;
 
 /**
- * Generate the message from the given packet information.
- */
-bool knxnetip_generate(msgbuilder* mb, const knxnetip_packet* packet);
-
-/**
  * Parse a given message into a packet.
  */
 bool knxnetip_parse(const uint8_t* msg, size_t length,

@@ -1,69 +1,6 @@
 #include "knxnetip.h"
 #include <string.h>
 
-bool knxnetip_generate(msgbuilder* mb, const knxnetip_packet* packet) {
-	switch (packet->service) {
-		case KNXNETIP_SEARCH_REQUEST:
-			// TODO: Implement KNXNETIP_SEARCH_REQUEST service
-			return false;
-
-		case KNXNETIP_SEARCH_RESPONSE:
-			// TODO: Implement KNXNETIP_SEARCH_RESPONSE service
-			return false;
-
-		case KNXNETIP_DESCRIPTION_REQUEST:
-			// TODO: Implement KNXNETIP_DESCRIPTION_REQUEST service
-			return false;
-
-		case KNXNETIP_DESCRIPTION_RESPONSE:
-			// TODO: Implement KNXNETIP_DESCRIPTION_RESPONSE service
-			return false;
-
-		case KNXNETIP_CONNECTION_REQUEST:
-			return knxnetip_append_connection_request(mb, &packet->conn_req);
-
-		case KNXNETIP_CONNECTION_RESPONSE:
-			// TODO: Implement KNXNETIP_CONNECTION_RESPONSE service
-			return false;
-
-		case KNXNETIP_CONNECTIONSTATE_REQUEST:
-			// TODO: Implement KNXNETIP_CONNECTIONSTATE_REQUEST service
-			return false;
-
-		case KNXNETIP_CONNECTIONSTATE_RESPONSE:
-			// TODO: Implement KNXNETIP_CONNECTIONSTATE_RESPONSE service
-			return false;
-
-		case KNXNETIP_DISCONNECT_REQUEST:
-			// TODO: Implement KNXNETIP_DISCONNECT_REQUEST service
-			return false;
-
-		case KNXNETIP_DISCONNECT_RESPONSE:
-			// TODO: Implement KNXNETIP_DISCONNECT_RESPONSE service
-			return false;
-
-		case KNXNETIP_DEVICE_CONFIGURATION_REQUEST:
-			// TODO: Implement KNXNETIP_DEVICE_CONFIGURATION_REQUEST service
-			return false;
-
-		case KNXNETIP_DEVICE_CONFIGURATION_ACK:
-			// TODO: Implement KNXNETIP_DEVICE_CONFIGURATION_ACK service
-			return false;
-
-		case KNXNETIP_TUNNEL_REQUEST:
-			// TODO: Implement KNXNETIP_TUNNEL_REQUEST service
-			return false;
-
-		case KNXNETIP_TUNNEL_RESPONSE:
-			// TODO: Implement KNXNETIP_TUNNEL_RESPONSE service
-			return false;
-
-		case KNXNETIP_ROUTING_INDICATION:
-			// TODO: Implement KNXNETIP_ROUTING_INDICATION service
-			return false;
-	}
-}
-
 bool knxnetip_parse(const uint8_t* message, size_t length,
                     knxnetip_packet* packet) {
 	if (length < 6 || message[0] != 6 || message[1] != 16)
