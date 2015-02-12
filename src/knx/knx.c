@@ -55,7 +55,8 @@ bool knxnetip_parse(const uint8_t* message, size_t length,
 
 		case KNXNETIP_DISCONNECT_RESPONSE:
 			packet->service = KNXNETIP_DISCONNECT_RESPONSE;
-			return false;
+			return knxnetip_parse_disconnect_response(message + 6, claimed_len - 6,
+			                                          &packet->payload.dc_res);
 
 		case KNXNETIP_DEVICE_CONFIGURATION_REQUEST:
 			packet->service = KNXNETIP_DEVICE_CONFIGURATION_REQUEST;
