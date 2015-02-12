@@ -13,7 +13,7 @@ SRCOBJS         = $(SRCFILES:$(SRCPATH)/%.c=$(DISTPATH)/%.o)
 SRCDEPS         = $(SRCFILES:$(SRCPATH)/%.c=$(DISTPATH)/%.d)
 
 # Compiler
-CC              = clang
+CC              ?= clang
 CFLAGS          = -std=c11 -fmessage-length=0 -Wall -Wextra -pedantic -O2 -g
 LDFLAGS         = -flto
 
