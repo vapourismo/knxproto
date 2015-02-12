@@ -14,48 +14,62 @@ bool knxnetip_generate_conn_req(msgbuilder* mb, const knxnetip_connection_reques
 bool knxnetip_generate(msgbuilder* mb, const knxnetip_packet* packet) {
 	switch (packet->service) {
 		case KNXNETIP_SEARCH_REQUEST:
+			// TODO: Implement KNXNETIP_SEARCH_REQUEST service
 			return false;
 
 		case KNXNETIP_SEARCH_RESPONSE:
+			// TODO: Implement KNXNETIP_SEARCH_RESPONSE service
 			return false;
 
 		case KNXNETIP_DESCRIPTION_REQUEST:
+			// TODO: Implement KNXNETIP_DESCRIPTION_REQUEST service
 			return false;
 
 		case KNXNETIP_DESCRIPTION_RESPONSE:
+			// TODO: Implement KNXNETIP_DESCRIPTION_RESPONSE service
 			return false;
 
 		case KNXNETIP_CONNECTION_REQUEST:
 			return knxnetip_generate_conn_req(mb, &packet->conn_req);
 
 		case KNXNETIP_CONNECTION_RESPONSE:
+			// TODO: Implement KNXNETIP_CONNECTION_RESPONSE service
 			return false;
 
 		case KNXNETIP_CONNECTIONSTATE_REQUEST:
+			// TODO: Implement KNXNETIP_CONNECTIONSTATE_REQUEST service
 			return false;
 
 		case KNXNETIP_CONNECTIONSTATE_RESPONSE:
+			// TODO: Implement KNXNETIP_CONNECTIONSTATE_RESPONSE service
 			return false;
 
 		case KNXNETIP_DISCONNECT_REQUEST:
+			// TODO: Implement KNXNETIP_DISCONNECT_REQUEST service
 			return false;
 
 		case KNXNETIP_DISCONNECT_RESPONSE:
+			// TODO: Implement KNXNETIP_DISCONNECT_RESPONSE service
 			return false;
 
 		case KNXNETIP_DEVICE_CONFIGURATION_REQUEST:
+			// TODO: Implement KNXNETIP_DEVICE_CONFIGURATION_REQUEST service
 			return false;
 
 		case KNXNETIP_DEVICE_CONFIGURATION_ACK:
+			// TODO: Implement KNXNETIP_DEVICE_CONFIGURATION_ACK service
 			return false;
 
 		case KNXNETIP_TUNNEL_REQUEST:
+			// TODO: Implement KNXNETIP_TUNNEL_REQUEST service
 			return false;
 
 		case KNXNETIP_TUNNEL_RESPONSE:
+			// TODO: Implement KNXNETIP_TUNNEL_RESPONSE service
 			return false;
 
 		case KNXNETIP_ROUTING_INDICATION:
+			// TODO: Implement KNXNETIP_ROUTING_INDICATION service
 			return false;
 	}
 }
@@ -88,6 +102,8 @@ bool knxnetip_parse_conn_req(const uint8_t* message, size_t length,
 	if (length < 20 || message[16] != 4)
 		return false;
 
+	// This seems redundant, but is required for the
+	// purposes of extensibility.
 	switch (message[17]) {
 		case KNXNETIP_CONNECTION_REQUEST_TUNNEL:
 			req->type = KNXNETIP_CONNECTION_REQUEST_TUNNEL;
@@ -97,6 +113,7 @@ bool knxnetip_parse_conn_req(const uint8_t* message, size_t length,
 			return false;
 	}
 
+	// This looks redundant aswell. Same purpose here.
 	switch (message[18]) {
 		case KNXNETIP_LAYER_TUNNEL:
 			req->layer = KNXNETIP_LAYER_TUNNEL;
