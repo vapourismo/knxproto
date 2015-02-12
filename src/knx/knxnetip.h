@@ -1,13 +1,35 @@
 #ifndef HPKNXD_KNX_KNXNETIP_H
 #define HPKNXD_KNX_KNXNETIP_H
 
-#include "common.h"
+#include "header.h"
 #include "../msgbuilder.h"
 
 #include <stdbool.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <netinet/in.h>
+
+/**
+ * KNX Connection Type
+ */
+typedef enum {
+	KNXNETIP_CONNREQ_TUNNEL = 4
+} knxnetip_conn_type;
+
+/**
+ * KNX Layer
+ */
+typedef enum {
+	KNXNETIP_LAYER_TUNNEL = 2
+} knxnetip_layer;
+
+/**
+ * KNXnet/IP Protocol
+ */
+typedef enum {
+	KNXNETIP_PROTO_UDP = 1,
+	KNXNETIP_PROTO_TCP = 2
+} knxnetip_proto;
 
 /**
  * Host Information

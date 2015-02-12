@@ -1,5 +1,7 @@
-#ifndef HPKNXD_KNX_COMMON_H
-#define HPKNXD_KNX_COMMON_H
+#ifndef HPKNXD_KNX_HEADER_H
+#define HPKNXD_KNX_HEADER_H
+
+#include "../msgbuilder.h"
 
 /**
  * KNXnet/IP Service Type
@@ -23,25 +25,8 @@ typedef enum {
 } knxnetip_service;
 
 /**
- * KNX Connection Type
+ * Append a KNXnet/IP header which advocates the given service and payload length.
  */
-typedef enum {
-	KNXNETIP_CONNREQ_TUNNEL = 4
-} knxnetip_conn_type;
-
-/**
- * KNX Layer
- */
-typedef enum {
-	KNXNETIP_LAYER_TUNNEL = 2
-} knxnetip_layer;
-
-/**
- * KNXnet/IP Protocol
- */
-typedef enum {
-	KNXNETIP_PROTO_UDP = 1,
-	KNXNETIP_PROTO_TCP = 2
-} knxnetip_proto;
+bool knxnetip_append_header(msgbuilder* mb, knxnetip_service srv, uint16_t length);
 
 #endif
