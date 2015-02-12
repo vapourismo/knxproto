@@ -4,6 +4,6 @@ compiler:
   - gcc
   - clang
 install:
-  - sudo apt-get install -y llvm clang
+  - sudo apt-get install -qq llvm clang
 script:
   - make test
