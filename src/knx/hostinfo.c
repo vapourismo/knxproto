@@ -1,4 +1,5 @@
 #include "hostinfo.h"
+#include <string.h>
 
 bool knxnetip_append_host_info(msgbuilder* mb, const knxnetip_host_info* host) {
 	const uint8_t preamble[2] = {8, host->protocol};
