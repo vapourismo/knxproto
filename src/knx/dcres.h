@@ -9,7 +9,8 @@
 #include <stdbool.h>
 
 typedef struct {
-	int _;
+	uint8_t channel;
+	uint8_t status;
 } knxnetip_disconnect_response;
 
 /**
