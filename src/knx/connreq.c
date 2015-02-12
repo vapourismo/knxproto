@@ -1,6 +1,18 @@
 #include "connreq.h"
 #include "header.h"
 
+// Connection Request:
+//   Octet 0-5:   Header
+//   Octet 6-13:  Control host information
+//   Octet 14-21: Tunnelling host information
+//   Octet 22-25: Connection request information
+
+// Connection Request Information:
+//   Octet 0: Structure length
+//   Octet 1: Connection type
+//   Octet 2: KNX Layer
+//   Octet 3: Reserved (should be 0)
+
 bool knxnetip_append_connection_request(msgbuilder* mb,
                                         const knxnetip_connection_request* conn_req) {
 	const uint8_t contents[4] = {4, conn_req->type, conn_req->layer, 0};

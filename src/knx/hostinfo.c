@@ -1,6 +1,12 @@
 #include "hostinfo.h"
 #include <string.h>
 
+// Host Information
+//   Octet 0:   Structure length
+//   Octet 1:   Protocol (e.g. UDP)
+//   Octet 2-5: IPv4 address
+//   Octet 6-7: Port number
+
 bool knxnetip_append_host_info(msgbuilder* mb, const knxnetip_host_info* host) {
 	const uint8_t preamble[2] = {8, host->protocol};
 

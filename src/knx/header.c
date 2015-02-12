@@ -1,16 +1,11 @@
 #include "header.h"
 #include <arpa/inet.h>
 
-/* A KNXnet/IP frame is a header followed by a payload.
- * The header follows this structure:
- *
- *   Octet 0:   Header length
- *   Octet 1:   Protocol version
- *   Octet 2-3: Service number
- *   Octet 4-5: Packet length including header size
- *
- * All integers are in network byte order (big-endian).
- */
+// Header:
+//   Octet 0:   Header length
+//   Octet 1:   Protocol version
+//   Octet 2-3: Service number
+//   Octet 4-5: Packet length including header size
 
 bool knxnetip_append_header(msgbuilder* mb, knxnetip_service srv, uint16_t length) {
 	// This preamble will always be there,
