@@ -66,5 +66,15 @@ inline bool msgbuilder_append_mb(msgbuilder* mb, const msgbuilder* rhs) {
 	return msgbuilder_append(mb, rhs->buffer, rhs->used);
 }
 
+/**
+ * Append a single byte.
+ */
+inline bool msgbuilder_append_single(msgbuilder* mb, uint8_t val) {
+	if (!msgbuilder_reserve(mb, 1))
+		return false;
+
+	mb->buffer[mb->used++] = val;
+	return true;
+}
 
 #endif
