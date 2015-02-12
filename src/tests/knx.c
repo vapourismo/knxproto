@@ -18,8 +18,8 @@ deftest(knxnetip_connection_request, {
 	knxnetip_connection_request packet_in = {
 		KNXNETIP_CONNECTION_REQUEST_TUNNEL,
 		KNXNETIP_LAYER_TUNNEL,
-		{KNXNETIP_PROTO_UDP, 0, 0},
-		{KNXNETIP_PROTO_UDP, 0, 0}
+		{KNXNETIP_PROTO_UDP, htonl(INADDR_LOOPBACK), 12345},
+		{KNXNETIP_PROTO_UDP, htonl(INADDR_LOOPBACK), 54321}
 	};
 
 	// Generate
@@ -45,7 +45,7 @@ deftest(knxnetip_connection_response, {
 	knxnetip_connection_response packet_in = {
 		100,
 		0,
-		{KNXNETIP_PROTO_UDP, INADDR_LOOPBACK, 12345},
+		{KNXNETIP_PROTO_UDP, htonl(INADDR_LOOPBACK), 12345},
 		{1, 2, 3}
 	};
 
@@ -66,7 +66,32 @@ deftest(knxnetip_connection_response, {
 	                       &packet_in.host));
 })
 
+deftest(knxnetip_disconnect_request, {
+	knxnetip_disconnect_request packet_in = {
+		100,
+		0,
+		{KNXNETIP_PROTO_UDP, htonl(INADDR_LOOPBACK), 12345}
+	};
+
+	// Generate
+	msgbuilder mb;
+	msgbuilder_init(&mb, 0);
+	assert(knxnetip_append_disconnect_request(&mb, &packet_in));
+
+	// Parse
+	knxnetip_packet packet_out;
+	assert(knxnetip_parse(mb.buffer, mb.used, &packet_out));
+
+	// Check
+	assert(packet_out.service == KNXNETIP_DISCONNECT_REQUEST);
+	assert(packet_out.payload.dc_req.channel == packet_in.channel);
+	assert(packet_out.payload.dc_req.status == packet_in.status);
+	assert(host_info_equal(&packet_out.payload.dc_req.host,
+	                       &packet_in.host));
+})
+
 deftest(knxnetip, {
 	runsubtest(knxnetip_connection_request);
 	runsubtest(knxnetip_connection_response);
+	runsubtest(knxnetip_disconnect_request);
 })
