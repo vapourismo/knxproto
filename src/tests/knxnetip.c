@@ -2,9 +2,9 @@
 #include "../knx/knxnetip.h"
 #include "../msgbuilder.h"
 
-deftest(knxnetip_conn_req, {
-	knxnetip_conn_req packet_in = {
-		KNXNETIP_conn_req_TUNNEL,
+deftest(knxnetip_connection_request, {
+	knxnetip_connection_request packet_in = {
+		KNXNETIP_CONNECTION_REQUEST_TUNNEL,
 		KNXNETIP_LAYER_TUNNEL,
 		{KNXNETIP_PROTO_UDP, 0, 0},
 		{KNXNETIP_PROTO_UDP, 0, 0}
@@ -21,16 +21,16 @@ deftest(knxnetip_conn_req, {
 
 	// Check
 	assert(packet_out.service == KNXNETIP_CONNECTION_REQUEST);
-	assert(packet_out.connection_request.type == packet_in.type);
-	assert(packet_out.connection_request.layer == packet_in.layer);
-	assert(packet_out.connection_request.control_host.protocol == packet_in.control_host.protocol);
-	assert(packet_out.connection_request.control_host.address == packet_in.control_host.address);
-	assert(packet_out.connection_request.control_host.port == packet_in.control_host.port);
-	assert(packet_out.connection_request.tunnel_host.protocol == packet_in.tunnel_host.protocol);
-	assert(packet_out.connection_request.tunnel_host.address == packet_in.tunnel_host.address);
-	assert(packet_out.connection_request.tunnel_host.port == packet_in.tunnel_host.port);
+	assert(packet_out.conn_req.type == packet_in.type);
+	assert(packet_out.conn_req.layer == packet_in.layer);
+	assert(packet_out.conn_req.control_host.protocol == packet_in.control_host.protocol);
+	assert(packet_out.conn_req.control_host.address == packet_in.control_host.address);
+	assert(packet_out.conn_req.control_host.port == packet_in.control_host.port);
+	assert(packet_out.conn_req.tunnel_host.protocol == packet_in.tunnel_host.protocol);
+	assert(packet_out.conn_req.tunnel_host.address == packet_in.tunnel_host.address);
+	assert(packet_out.conn_req.tunnel_host.port == packet_in.tunnel_host.port);
 })
 
 deftest(knxnetip, {
-	runsubtest(knxnetip_conn_req);
+	runsubtest(knxnetip_connection_request);
 })
