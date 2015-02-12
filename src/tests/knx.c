@@ -1,5 +1,6 @@
 #include "testfw.h"
 #include "../knx/connreq.h"
+#include "../knx/connres.h"
 #include "../knx/knx.h"
 #include "../msgbuilder.h"
 
@@ -32,6 +33,27 @@ deftest(knxnetip_connection_request, {
 	assert(packet_out.payload.conn_req.tunnel_host.port == packet_in.tunnel_host.port);
 })
 
+deftest(knxnetip_connection_response, {
+	knxnetip_connection_response packet_in = {
+		100,
+		0,
+		{KNXNETIP_PROTO_UDP, 0, 0}
+	};
+
+	// Generate
+	msgbuilder mb;
+	msgbuilder_init(&mb, 0);
+	assert(knxnetip_append_connection_response(&mb, &packet_in));
+
+	// Parse
+	knxnetip_packet packet_out;
+	assert(knxnetip_parse(mb.buffer, mb.used, &packet_out));
+
+	// Check
+	assert(packet_out.service == KNXNETIP_CONNECTION_RESPONSE);
+})
+
 deftest(knxnetip, {
 	runsubtest(knxnetip_connection_request);
+	runsubtest(knxnetip_connection_response);
 })
