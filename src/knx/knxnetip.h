@@ -2,7 +2,7 @@
 #define HPKNXD_KNX_KNXNETIP_H
 
 #include "common.h"
-#include "../message-builder.h"
+#include "../msgbuilder.h"
 
 #include <stdbool.h>
 #include <stdint.h>

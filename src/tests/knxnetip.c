@@ -1,6 +1,6 @@
 #include "testfw.h"
 #include "../knx/knxnetip.h"
-#include "../message-builder.h"
+#include "../msgbuilder.h"
 
 deftest(knxnetip_connreq, {
 	knxnetip_connreq packet_in = {

@@ -1,5 +1,5 @@
 #include "testfw.h"
-#include "../message-builder.h"
+#include "../msgbuilder.h"
 
 #include <stdint.h>
 #include <string.h>
