@@ -90,8 +90,30 @@ deftest(knxnetip_disconnect_request, {
 	                       &packet_in.host));
 })
 
+deftest(knxnetip_disconnect_response, {
+	knxnetip_disconnect_response packet_in = {
+		100,
+		0,
+	};
+
+	// Generate
+	msgbuilder mb;
+	msgbuilder_init(&mb, 0);
+	assert(knxnetip_append_disconnect_response(&mb, &packet_in));
+
+	// Parse
+	knxnetip_packet packet_out;
+	assert(knxnetip_parse(mb.buffer, mb.used, &packet_out));
+
+	// Check
+	assert(packet_out.service == KNXNETIP_DISCONNECT_RESPONSE);
+	assert(packet_out.payload.dc_res.channel == packet_in.channel);
+	assert(packet_out.payload.dc_res.status == packet_in.status);
+})
+
 deftest(knxnetip, {
 	runsubtest(knxnetip_connection_request);
 	runsubtest(knxnetip_connection_response);
 	runsubtest(knxnetip_disconnect_request);
+	runsubtest(knxnetip_disconnect_response);
 })
