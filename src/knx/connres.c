@@ -26,5 +26,5 @@ bool knxnetip_parse_connection_response(const uint8_t* message, size_t length,
 	//   Octet 11-13: Unknown
 	memcpy(req->extended, message + 11, 3);
 
-	return knxnetip_parse_host_info(message + 8, &req->host);
+	return knxnetip_parse_host_info(message + 2, &req->host);
 }
