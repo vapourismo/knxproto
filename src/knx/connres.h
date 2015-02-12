@@ -21,12 +21,12 @@ typedef struct {
  * Generate the message for a connection response.
  */
 bool knxnetip_append_connection_response(msgbuilder* mb,
-                                         const knxnetip_connection_response* conn_req);
+                                         const knxnetip_connection_response* res);
 
 /**
  * Parse a message (excluding header) which contains a connection response.
  */
 bool knxnetip_parse_connection_response(const uint8_t* message, size_t length,
-                                        knxnetip_connection_response* req);
+                                        knxnetip_connection_response* res);
 
 #endif
