@@ -14,65 +14,65 @@ bool knxnetip_parse(const uint8_t* message, size_t length,
 		return false;
 
 	switch ((message[2] << 8) | message[3]) {
-		case 0x0201:
+		case KNXNETIP_SEARCH_REQUEST:
 			packet->service = KNXNETIP_SEARCH_REQUEST;
 			return false;
 
-		case 0x0202:
+		case KNXNETIP_SEARCH_RESPONSE:
 			packet->service = KNXNETIP_SEARCH_RESPONSE;
 			return false;
 
-		case 0x0203:
+		case KNXNETIP_DESCRIPTION_REQUEST:
 			packet->service = KNXNETIP_DESCRIPTION_REQUEST;
 			return false;
 
-		case 0x0204:
+		case KNXNETIP_DESCRIPTION_RESPONSE:
 			packet->service = KNXNETIP_DESCRIPTION_RESPONSE;
 			return false;
 
-		case 0x0205:
+		case KNXNETIP_CONNECTION_REQUEST:
 			packet->service = KNXNETIP_CONNECTION_REQUEST;
 			return knxnetip_parse_connection_request(message + 6, claimed_len - 6,
 			                                         &packet->payload.conn_req);
 
-		case 0x0206:
+		case KNXNETIP_CONNECTION_RESPONSE:
 			packet->service = KNXNETIP_CONNECTION_RESPONSE;
 			return knxnetip_parse_connection_response(message + 6, claimed_len - 6,
 			                                          &packet->payload.conn_res);
 
-		case 0x0207:
+		case KNXNETIP_CONNECTIONSTATE_REQUEST:
 			packet->service = KNXNETIP_CONNECTIONSTATE_REQUEST;
 			return false;
 
-		case 0x0208:
+		case KNXNETIP_CONNECTIONSTATE_RESPONSE:
 			packet->service = KNXNETIP_CONNECTIONSTATE_RESPONSE;
 			return false;
 
-		case 0x0209:
+		case KNXNETIP_DISCONNECT_REQUEST:
 			packet->service = KNXNETIP_DISCONNECT_REQUEST;
 			return false;
 
-		case 0x020A:
+		case KNXNETIP_DISCONNECT_RESPONSE:
 			packet->service = KNXNETIP_DISCONNECT_RESPONSE;
 			return false;
 
-		case 0x0310:
+		case KNXNETIP_DEVICE_CONFIGURATION_REQUEST:
 			packet->service = KNXNETIP_DEVICE_CONFIGURATION_REQUEST;
 			return false;
 
-		case 0x0311:
+		case KNXNETIP_DEVICE_CONFIGURATION_ACK:
 			packet->service = KNXNETIP_DEVICE_CONFIGURATION_ACK;
 			return false;
 
-		case 0x0420:
+		case KNXNETIP_TUNNEL_REQUEST:
 			packet->service = KNXNETIP_TUNNEL_REQUEST;
 			return false;
 
-		case 0x0421:
+		case KNXNETIP_TUNNEL_RESPONSE:
 			packet->service = KNXNETIP_TUNNEL_RESPONSE;
 			return false;
 
-		case 0x0530:
+		case KNXNETIP_ROUTING_INDICATION:
 			packet->service = KNXNETIP_ROUTING_INDICATION;
 			return false;
 
