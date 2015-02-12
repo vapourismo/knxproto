@@ -3,6 +3,7 @@
 
 #include "header.h"
 #include "connreq.h"
+#include "connres.h"
 
 #include "../msgbuilder.h"
 
@@ -17,6 +18,7 @@ typedef struct {
 	knxnetip_service service;
 	union {
 		knxnetip_connection_request conn_req;
+		knxnetip_connection_response conn_res;
 	} payload;
 } knxnetip_packet;
 

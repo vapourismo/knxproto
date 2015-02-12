@@ -1,4 +1,7 @@
+#include "connreq.h"
+#include "connres.h"
 #include "knx.h"
+
 #include <string.h>
 
 bool knxnetip_parse(const uint8_t* message, size_t length,
@@ -34,7 +37,8 @@ bool knxnetip_parse(const uint8_t* message, size_t length,
 
 		case 0x0206:
 			packet->service = KNXNETIP_CONNECTION_RESPONSE;
-			return false;
+			return knxnetip_parse_connection_response(message + 6, claimed_len - 6,
+			                                          &packet->payload.conn_res);
 
 		case 0x0207:
 			packet->service = KNXNETIP_CONNECTIONSTATE_REQUEST;
