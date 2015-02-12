@@ -13,7 +13,7 @@
  * KNX Connection Type
  */
 typedef enum {
-	KNXNETIP_CONNREQ_TUNNEL = 4
+	KNXNETIP_conn_req_TUNNEL = 4
 } knxnetip_conn_type;
 
 /**
@@ -48,7 +48,7 @@ typedef struct {
 	knxnetip_layer layer;
 	knxnetip_host_info control_host;
 	knxnetip_host_info tunnel_host;
-} knxnetip_connreq;
+} knxnetip_conn_req;
 
 /**
  * KNXnet/IP Packet
@@ -56,14 +56,14 @@ typedef struct {
 typedef struct {
 	knxnetip_service service;
 	union {
-		knxnetip_connreq connection_request;
+		knxnetip_conn_req connection_request;
 	};
 } knxnetip_packet;
 
 /**
  * Generate the message for a connection request.
  */
-bool knxnetip_generate_connreq(msgbuilder* mb, const knxnetip_connreq* connreq);
+bool knxnetip_generate_conn_req(msgbuilder* mb, const knxnetip_conn_req* conn_req);
 
 /**
  * Generate the message from the given packet information.

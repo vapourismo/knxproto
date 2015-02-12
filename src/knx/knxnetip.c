@@ -10,13 +10,13 @@ static bool knxnetip_append_host_info(msgbuilder* mb, const knxnetip_host_info* 
 		msgbuilder_append(mb, (const uint8_t*) &host->port, 2);
 }
 
-bool knxnetip_generate_connreq(msgbuilder* mb, const knxnetip_connreq* connreq) {
-	const uint8_t contents[4] = {4, connreq->type, connreq->layer, 0};
+bool knxnetip_generate_conn_req(msgbuilder* mb, const knxnetip_conn_req* conn_req) {
+	const uint8_t contents[4] = {4, conn_req->type, conn_req->layer, 0};
 
 	return
 		knxnetip_append_header(mb, KNXNETIP_CONNECTION_REQUEST, 20) &&
-		knxnetip_append_host_info(mb, &connreq->control_host) &&
-		knxnetip_append_host_info(mb, &connreq->control_host) &&
+		knxnetip_append_host_info(mb, &conn_req->control_host) &&
+		knxnetip_append_host_info(mb, &conn_req->control_host) &&
 		msgbuilder_append(mb, contents, 4);
 }
 
@@ -35,7 +35,7 @@ bool knxnetip_generate(msgbuilder* mb, const knxnetip_packet* packet) {
 			return false;
 
 		case KNXNETIP_CONNECTION_REQUEST:
-			return knxnetip_generate_connreq(mb, &packet->connection_request);
+			return knxnetip_generate_conn_req(mb, &packet->connection_request);
 
 		case KNXNETIP_CONNECTION_RESPONSE:
 			return false;
@@ -92,14 +92,14 @@ bool knxnetip_parse_host_info(const uint8_t* message, knxnetip_host_info* host) 
 	return true;
 }
 
-bool knxnetip_parse_connreq(const uint8_t* message, size_t length,
-                            knxnetip_connreq* req) {
+bool knxnetip_parse_conn_req(const uint8_t* message, size_t length,
+                            knxnetip_conn_req* req) {
 	if (length < 20 || message[16] != 4)
 		return false;
 
 	switch (message[17]) {
-		case KNXNETIP_CONNREQ_TUNNEL:
-			req->type = KNXNETIP_CONNREQ_TUNNEL;
+		case KNXNETIP_conn_req_TUNNEL:
+			req->type = KNXNETIP_conn_req_TUNNEL;
 			break;
 
 		default:
@@ -148,7 +148,7 @@ bool knxnetip_parse(const uint8_t* message, size_t length,
 
 		case 0x0205:
 			packet->service = KNXNETIP_CONNECTION_REQUEST;
-			return knxnetip_parse_connreq(message + 6, claimed_len - 6, &packet->connection_request);
+			return knxnetip_parse_conn_req(message + 6, claimed_len - 6, &packet->connection_request);
 
 		case 0x0206:
 			packet->service = KNXNETIP_CONNECTION_RESPONSE;

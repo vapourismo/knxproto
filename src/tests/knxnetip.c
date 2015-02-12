@@ -2,9 +2,9 @@
 #include "../knx/knxnetip.h"
 #include "../msgbuilder.h"
 
-deftest(knxnetip_connreq, {
-	knxnetip_connreq packet_in = {
-		KNXNETIP_CONNREQ_TUNNEL,
+deftest(knxnetip_conn_req, {
+	knxnetip_conn_req packet_in = {
+		KNXNETIP_conn_req_TUNNEL,
 		KNXNETIP_LAYER_TUNNEL,
 		{KNXNETIP_PROTO_UDP, 0, 0},
 		{KNXNETIP_PROTO_UDP, 0, 0}
@@ -13,7 +13,7 @@ deftest(knxnetip_connreq, {
 	// Generate
 	msgbuilder mb;
 	msgbuilder_init(&mb, 0);
-	assert(knxnetip_generate_connreq(&mb, &packet_in));
+	assert(knxnetip_generate_conn_req(&mb, &packet_in));
 
 	// Parse
 	knxnetip_packet packet_out;
@@ -32,5 +32,5 @@ deftest(knxnetip_connreq, {
 })
 
 deftest(knxnetip, {
-	runsubtest(knxnetip_connreq);
+	runsubtest(knxnetip_conn_req);
 })
