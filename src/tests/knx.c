@@ -4,6 +4,16 @@
 #include "../knx/knx.h"
 #include "../msgbuilder.h"
 
+#include <stdbool.h>
+
+inline static bool host_info_equal(const knxnetip_host_info* a,
+                                   const knxnetip_host_info* b) {
+	return
+		a->address == b->address &&
+		a->port == b->port &&
+		a->protocol == b->protocol;
+}
+
 deftest(knxnetip_connection_request, {
 	knxnetip_connection_request packet_in = {
 		KNXNETIP_CONNECTION_REQUEST_TUNNEL,
@@ -25,12 +35,10 @@ deftest(knxnetip_connection_request, {
 	assert(packet_out.service == KNXNETIP_CONNECTION_REQUEST);
 	assert(packet_out.payload.conn_req.type == packet_in.type);
 	assert(packet_out.payload.conn_req.layer == packet_in.layer);
-	assert(packet_out.payload.conn_req.control_host.protocol == packet_in.control_host.protocol);
-	assert(packet_out.payload.conn_req.control_host.address == packet_in.control_host.address);
-	assert(packet_out.payload.conn_req.control_host.port == packet_in.control_host.port);
-	assert(packet_out.payload.conn_req.tunnel_host.protocol == packet_in.tunnel_host.protocol);
-	assert(packet_out.payload.conn_req.tunnel_host.address == packet_in.tunnel_host.address);
-	assert(packet_out.payload.conn_req.tunnel_host.port == packet_in.tunnel_host.port);
+	assert(host_info_equal(&packet_out.payload.conn_req.control_host,
+	                       &packet_in.control_host));
+	assert(host_info_equal(&packet_out.payload.conn_req.tunnel_host,
+	                       &packet_in.tunnel_host));
 })
 
 deftest(knxnetip_connection_response, {
@@ -52,6 +60,10 @@ deftest(knxnetip_connection_response, {
 
 	// Check
 	assert(packet_out.service == KNXNETIP_CONNECTION_RESPONSE);
+	assert(packet_out.payload.conn_res.channel == packet_in.channel);
+	assert(packet_out.payload.conn_res.status == packet_in.status);
+	assert(host_info_equal(&packet_out.payload.conn_res.host,
+	                       &packet_in.host));
 })
 
 deftest(knxnetip, {
