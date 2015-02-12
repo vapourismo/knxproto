@@ -30,7 +30,7 @@ bool knxnetip_parse(const uint8_t* message, size_t length,
 		case 0x0205:
 			packet->service = KNXNETIP_CONNECTION_REQUEST;
 			return knxnetip_parse_connection_request(message + 6, claimed_len - 6,
-			                                         &packet->conn_req);
+			                                         &packet->payload.conn_req);
 
 		case 0x0206:
 			packet->service = KNXNETIP_CONNECTION_RESPONSE;

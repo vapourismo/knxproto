@@ -17,7 +17,7 @@ typedef struct {
 	knxnetip_service service;
 	union {
 		knxnetip_connection_request conn_req;
-	};
+	} payload;
 } knxnetip_packet;
 
 /**
