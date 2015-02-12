@@ -2,12 +2,13 @@
 #define HPKNXD_KNX_KNXNETIP_H
 
 #include "header.h"
+#include "hostinfo.h"
+
 #include "../msgbuilder.h"
 
 #include <stdbool.h>
 #include <stdint.h>
 #include <sys/types.h>
-#include <netinet/in.h>
 
 /**
  * KNX Connection Type
@@ -22,23 +23,6 @@ typedef enum {
 typedef enum {
 	KNXNETIP_LAYER_TUNNEL = 2
 } knxnetip_layer;
-
-/**
- * KNXnet/IP Protocol
- */
-typedef enum {
-	KNXNETIP_PROTO_UDP = 1,
-	KNXNETIP_PROTO_TCP = 2
-} knxnetip_proto;
-
-/**
- * Host Information
- */
-typedef struct {
-	knxnetip_proto protocol;
-	in_addr_t address;
-	in_port_t port;
-} knxnetip_host_info;
 
 /**
  * Connection Request
