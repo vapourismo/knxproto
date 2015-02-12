@@ -1,6 +1,6 @@
 #include "testfw.h"
 #include "../knx/connreq.h"
-#include "../knx/knxnetip.h"
+#include "../knx/knx.h"
 #include "../msgbuilder.h"
 
 deftest(knxnetip_connection_request, {

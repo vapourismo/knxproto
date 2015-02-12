@@ -1,4 +1,4 @@
-#include "knxnetip.h"
+#include "knx.h"
 #include <string.h>
 
 bool knxnetip_parse(const uint8_t* message, size_t length,
