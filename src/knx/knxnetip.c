@@ -74,29 +74,6 @@ bool knxnetip_generate(msgbuilder* mb, const knxnetip_packet* packet) {
 	}
 }
 
-bool knxnetip_parse_host_info(const uint8_t* message, knxnetip_host_info* host) {
-	if (message[0] != 8)
-		return false;
-
-	switch (message[1]) {
-		case KNXNETIP_PROTO_UDP:
-			host->protocol = KNXNETIP_PROTO_UDP;
-			break;
-
-		case KNXNETIP_PROTO_TCP:
-			host->protocol = KNXNETIP_PROTO_TCP;
-			break;
-
-		default:
-			return false;
-	}
-
-	memcpy(&host->address, message + 2, 4);
-	memcpy(&host->port, message + 6, 2);
-
-	return true;
-}
-
 bool knxnetip_parse_conn_req(const uint8_t* message, size_t length,
                             knxnetip_connection_request* req) {
 	if (length < 20 || message[16] != 4)

@@ -28,4 +28,9 @@ typedef struct {
  */
 bool knxnetip_append_host_info(msgbuilder* mb, const knxnetip_host_info* host);
 
+/**
+ * Retrieve host information.
+ */
+bool knxnetip_parse_host_info(const uint8_t* message, knxnetip_host_info* host);
+
 #endif
