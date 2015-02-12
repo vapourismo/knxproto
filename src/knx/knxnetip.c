@@ -1,16 +1,6 @@
 #include "knxnetip.h"
 #include <string.h>
 
-bool knxnetip_generate_conn_req(msgbuilder* mb, const knxnetip_connection_request* conn_req) {
-	const uint8_t contents[4] = {4, conn_req->type, conn_req->layer, 0};
-
-	return
-		knxnetip_append_header(mb, KNXNETIP_CONNECTION_REQUEST, 20) &&
-		knxnetip_append_host_info(mb, &conn_req->control_host) &&
-		knxnetip_append_host_info(mb, &conn_req->control_host) &&
-		msgbuilder_append(mb, contents, 4);
-}
-
 bool knxnetip_generate(msgbuilder* mb, const knxnetip_packet* packet) {
 	switch (packet->service) {
 		case KNXNETIP_SEARCH_REQUEST:
@@ -30,7 +20,7 @@ bool knxnetip_generate(msgbuilder* mb, const knxnetip_packet* packet) {
 			return false;
 
 		case KNXNETIP_CONNECTION_REQUEST:
-			return knxnetip_generate_conn_req(mb, &packet->conn_req);
+			return knxnetip_append_connection_request(mb, &packet->conn_req);
 
 		case KNXNETIP_CONNECTION_RESPONSE:
 			// TODO: Implement KNXNETIP_CONNECTION_RESPONSE service
@@ -74,37 +64,6 @@ bool knxnetip_generate(msgbuilder* mb, const knxnetip_packet* packet) {
 	}
 }
 
-bool knxnetip_parse_conn_req(const uint8_t* message, size_t length,
-                            knxnetip_connection_request* req) {
-	if (length < 20 || message[16] != 4)
-		return false;
-
-	// This seems redundant, but is required for the
-	// purposes of extensibility.
-	switch (message[17]) {
-		case KNXNETIP_CONNECTION_REQUEST_TUNNEL:
-			req->type = KNXNETIP_CONNECTION_REQUEST_TUNNEL;
-			break;
-
-		default:
-			return false;
-	}
-
-	// This looks redundant aswell. Same purpose here.
-	switch (message[18]) {
-		case KNXNETIP_LAYER_TUNNEL:
-			req->layer = KNXNETIP_LAYER_TUNNEL;
-			break;
-
-		default:
-			return false;
-	}
-
-	return
-		knxnetip_parse_host_info(message, &req->control_host) &&
-		knxnetip_parse_host_info(message + 8, &req->tunnel_host);
-}
-
 bool knxnetip_parse(const uint8_t* message, size_t length,
                     knxnetip_packet* packet) {
 	if (length < 6 || message[0] != 6 || message[1] != 16)
@@ -133,7 +92,8 @@ bool knxnetip_parse(const uint8_t* message, size_t length,
 
 		case 0x0205:
 			packet->service = KNXNETIP_CONNECTION_REQUEST;
-			return knxnetip_parse_conn_req(message + 6, claimed_len - 6, &packet->conn_req);
+			return knxnetip_parse_connection_request(message + 6, claimed_len - 6,
+			                                         &packet->conn_req);
 
 		case 0x0206:
 			packet->service = KNXNETIP_CONNECTION_RESPONSE;

@@ -1,0 +1,44 @@
+#include "connreq.h"
+#include "header.h"
+
+bool knxnetip_append_connection_request(msgbuilder* mb,
+                                        const knxnetip_connection_request* conn_req) {
+	const uint8_t contents[4] = {4, conn_req->type, conn_req->layer, 0};
+
+	return
+		knxnetip_append_header(mb, KNXNETIP_CONNECTION_REQUEST, 20) &&
+		knxnetip_append_host_info(mb, &conn_req->control_host) &&
+		knxnetip_append_host_info(mb, &conn_req->control_host) &&
+		msgbuilder_append(mb, contents, 4);
+}
+
+bool knxnetip_parse_connection_request(const uint8_t* message, size_t length,
+                                       knxnetip_connection_request* req) {
+	if (length < 20 || message[16] != 4)
+		return false;
+
+	// This seems redundant, but is required for the
+	// purposes of extensibility.
+	switch (message[17]) {
+		case KNXNETIP_CONNECTION_REQUEST_TUNNEL:
+			req->type = KNXNETIP_CONNECTION_REQUEST_TUNNEL;
+			break;
+
+		default:
+			return false;
+	}
+
+	// This looks redundant aswell. Same purpose here.
+	switch (message[18]) {
+		case KNXNETIP_LAYER_TUNNEL:
+			req->layer = KNXNETIP_LAYER_TUNNEL;
+			break;
+
+		default:
+			return false;
+	}
+
+	return
+		knxnetip_parse_host_info(message, &req->control_host) &&
+		knxnetip_parse_host_info(message + 8, &req->tunnel_host);
+}

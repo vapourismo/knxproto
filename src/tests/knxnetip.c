@@ -1,4 +1,5 @@
 #include "testfw.h"
+#include "../knx/connreq.h"
 #include "../knx/knxnetip.h"
 #include "../msgbuilder.h"
 
@@ -13,7 +14,7 @@ deftest(knxnetip_connection_request, {
 	// Generate
 	msgbuilder mb;
 	msgbuilder_init(&mb, 0);
-	assert(knxnetip_generate_conn_req(&mb, &packet_in));
+	assert(knxnetip_append_connection_request(&mb, &packet_in));
 
 	// Parse
 	knxnetip_packet packet_out;
