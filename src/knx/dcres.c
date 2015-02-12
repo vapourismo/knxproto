@@ -2,7 +2,8 @@
 #include "header.h"
 
 // Disconnect Response:
-//   ???
+//   Octet 0: Channel
+//   Octet 1: Status
 
 bool knxnetip_append_disconnect_response(msgbuilder* mb,
                                          const knxnetip_disconnect_response* res) {
