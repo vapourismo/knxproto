@@ -1,4 +1,6 @@
 #include "connres.h"
+#include "header.h"
+
 #include <string.h>
 
 bool knxnetip_append_connection_response(msgbuilder* mb,
@@ -6,6 +8,7 @@ bool knxnetip_append_connection_response(msgbuilder* mb,
 	const uint8_t data[2] = {conn_req->channel, conn_req->status};
 
 	return
+		knxnetip_append_header(mb, KNXNETIP_CONNECTION_RESPONSE, 14) &&
 		msgbuilder_append(mb, data, 2) &&
 		knxnetip_append_host_info(mb, &conn_req->host) &&
 		msgbuilder_append_single(mb, 4) &&
