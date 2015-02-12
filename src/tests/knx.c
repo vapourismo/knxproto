@@ -45,7 +45,7 @@ deftest(knxnetip_connection_response, {
 	knxnetip_connection_response packet_in = {
 		100,
 		0,
-		{KNXNETIP_PROTO_UDP, 0, 0},
+		{KNXNETIP_PROTO_UDP, INADDR_LOOPBACK, 12345},
 		{1, 2, 3}
 	};
 

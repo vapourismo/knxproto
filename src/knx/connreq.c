@@ -20,7 +20,7 @@ bool knxnetip_append_connection_request(msgbuilder* mb,
 	return
 		knxnetip_append_header(mb, KNXNETIP_CONNECTION_REQUEST, 20) &&
 		knxnetip_append_host_info(mb, &conn_req->control_host) &&
-		knxnetip_append_host_info(mb, &conn_req->control_host) &&
+		knxnetip_append_host_info(mb, &conn_req->tunnel_host) &&
 		msgbuilder_append(mb, contents, 4);
 }
 
