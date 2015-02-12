@@ -2,5 +2,7 @@ language: cpp
 compiler:
   - gcc
   - clang
+install:
+  - sudo apt-get install -y llvm clang
 script:
   - make test
