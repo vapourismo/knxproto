@@ -8,7 +8,7 @@
 #include <stdbool.h>
 
 /**
- *
+ * Connection Response
  */
 typedef struct {
 	uint8_t channel;
@@ -18,16 +18,15 @@ typedef struct {
 } knxnetip_connection_response;
 
 /**
- *
+ * Generate the message for a connection response.
  */
 bool knxnetip_append_connection_response(msgbuilder* mb,
                                          const knxnetip_connection_response* conn_req);
 
 /**
- *
+ * Parse a message (excluding header) which contains a connection response.
  */
 bool knxnetip_parse_connection_response(const uint8_t* message, size_t length,
                                         knxnetip_connection_response* req);
-
 
 #endif
