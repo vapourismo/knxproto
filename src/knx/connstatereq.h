@@ -1,6 +1,8 @@
 #ifndef HPKNXD_KNX_CONNSTATEREQ_H
 #define HPKNXD_KNX_CONNSTATEREQ_H
 
+#include "hostinfo.h"
+
 #include "../msgbuilder.h"
 
 #include <stdbool.h>
@@ -12,14 +14,15 @@
  */
 typedef struct {
 	uint8_t channel;
-	uint8_t state;
+	uint8_t status;
+	knxnetip_host_info host;
 } knxnetip_connection_state_request;
 
 /**
  * Generate the message for a connection request.
  */
 bool knxnetip_append_connection_state_request(msgbuilder* mb,
-                                              const knxnetip_connection_state_request* conn_req);
+                                              const knxnetip_connection_state_request* req);
 
 /**
  * Parse a message (excluding header) which contains a connection request.
