@@ -27,14 +27,18 @@ bool knxnetip_append_connection_response(msgbuilder* mb,
 
 bool knxnetip_parse_connection_response(const uint8_t* message, size_t length,
                                         knxnetip_connection_response* res) {
-	if (length < 14 || message[10] != 4)
+	if (length < 2)
 		return false;
 
 	res->channel = message[0];
 	res->status = message[1];
 
-	// TODO: Figure out what the last 4 octets do.
-	memcpy(res->extended, message + 11, 3);
+	if (length >= 10 && !knxnetip_parse_host_info(message + 2, &res->host))
+		return false;
 
-	return knxnetip_parse_host_info(message + 2, &res->host);
+	if (length >= 14)
+		// TODO: Figure out what the last 4 octets do.
+		memcpy(res->extended, message + 11, 3);
+
+	return true;
 }
