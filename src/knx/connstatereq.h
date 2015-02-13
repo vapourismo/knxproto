@@ -10,7 +10,7 @@
 #include <stdint.h>
 
 /**
- * Connection Request
+ * Connection State Request
  */
 typedef struct {
 	uint8_t channel;
@@ -19,13 +19,13 @@ typedef struct {
 } knxnetip_connection_state_request;
 
 /**
- * Generate the message for a connection request.
+ * Generate the message for a connection state request.
  */
 bool knxnetip_append_connection_state_request(msgbuilder* mb,
                                               const knxnetip_connection_state_request* req);
 
 /**
- * Parse a message (excluding header) which contains a connection request.
+ * Parse a message (excluding header) which contains a connection state request.
  */
 bool knxnetip_parse_connection_state_request(const uint8_t* message, size_t length,
                                              knxnetip_connection_state_request* req);
