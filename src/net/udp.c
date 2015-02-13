@@ -35,6 +35,7 @@ ssize_t udpsock_recv_from(int sock, void* buffer, size_t size, const ip4addr* re
 	ip4addr other;
 	socklen_t other_len = sizeof(other);
 
+	// FIXME: Remove possible infinite loop
 	while (true) {
 		ssize_t r = recvfrom(sock, buffer, size, 0, (struct sockaddr*) &other, &other_len);
 
@@ -45,6 +46,6 @@ ssize_t udpsock_recv_from(int sock, void* buffer, size_t size, const ip4addr* re
 		    other.sin_family == remote->sin_family &&
 		    other.sin_addr.s_addr == remote->sin_addr.s_addr &&
 		    other.sin_port == remote->sin_port)
-		    	return r;
+				return r;
 	}
 }
