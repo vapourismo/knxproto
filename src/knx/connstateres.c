@@ -1,6 +1,10 @@
 #include "connstateres.h"
 #include "header.h"
 
+// Connection State Response:
+//   Octet 0: Channel
+//   Octet 1: Status
+
 bool knxnetip_append_connection_state_response(msgbuilder* mb,
                                                const knxnetip_connection_state_response* res) {
 	const uint8_t info[2] = {res->channel, res->status};
