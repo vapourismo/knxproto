@@ -14,7 +14,7 @@ deftest(msgbuilder_init_reset, {
 	assert(target.max == 0);
 
 	// Reset structure
-	msgbuilder_reset(&target);
+	msgbuilder_destroy(&target);
 	assert(target.buffer == NULL);
 	assert(target.used == 0);
 	assert(target.max == 0);
@@ -26,7 +26,7 @@ deftest(msgbuilder_init_reset, {
 	assert(target.max == 100);
 
 	// Reset structure
-	msgbuilder_reset(&target);
+	msgbuilder_destroy(&target);
 	assert(target.buffer == NULL);
 	assert(target.used == 0);
 	assert(target.max == 0);
@@ -54,7 +54,7 @@ deftest(msgbuilder_reserve, {
 	assert(target.used == 0);
 	assert(target.max == 150);
 
-	msgbuilder_reset(&target);
+	msgbuilder_destroy(&target);
 })
 
 const uint8_t example_data1[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
@@ -83,7 +83,7 @@ deftest(msgbuilder_append, {
 	assert(msgbuilder_append(&target, example_data1, 9));
 
 	// Reset
-	msgbuilder_reset(&target);
+	msgbuilder_destroy(&target);
 
 	// Overflow prevention
 	assert(msgbuilder_append(&target, example_data1, 9));
@@ -116,7 +116,7 @@ deftest(msgbuilder_append_mb, {
 	assert(msgbuilder_append_mb(&target, &sample1));
 
 	// Reset
-	msgbuilder_reset(&target);
+	msgbuilder_destroy(&target);
 
 	// Overflow prevention
 	assert(msgbuilder_append_mb(&target, &sample1));

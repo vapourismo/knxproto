@@ -28,7 +28,7 @@ bool msgbuilder_init(msgbuilder* mb, size_t cap);
 /**
  * Free the underlying buffer.
  */
-inline void msgbuilder_reset(msgbuilder* mb) {
+inline void msgbuilder_destroy(msgbuilder* mb) {
 	if (mb->buffer) {
 		free(mb->buffer);
 		mb->buffer = NULL;
