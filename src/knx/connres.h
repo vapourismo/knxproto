@@ -1,5 +1,5 @@
-#ifndef HPKNXD_KNX_CONNSTATE_H
-#define HPKNXD_KNX_CONNSTATE_H
+#ifndef HPKNXD_KNX_CONNRES_H
+#define HPKNXD_KNX_CONNRES_H
 
 #include "hostinfo.h"
 #include "../msgbuilder.h"
