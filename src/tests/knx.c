@@ -154,6 +154,33 @@ deftest(knxnetip_connection_state_response, {
 	assert(packet_out.payload.conn_state_res.status == packet_in.status);
 })
 
+deftest(knxnetip_tunnel_request, {
+	const uint8_t example_data[4] = {11, 22, 33, 44};
+
+	knxnetip_tunnel_request packet_in = {
+		100,
+		0,
+		4,
+		example_data
+	};
+
+	// Generate
+	msgbuilder mb;
+	msgbuilder_init(&mb, 0);
+	assert(knxnetip_append_tunnel_request(&mb, &packet_in));
+
+	// Parse
+	knxnetip_packet packet_out;
+	assert(knxnetip_parse(mb.buffer, mb.used, &packet_out));
+
+	// Check
+	assert(packet_out.service == KNXNETIP_TUNNEL_REQUEST);
+	assert(packet_out.payload.tunnel_req.channel == packet_in.channel);
+	assert(packet_out.payload.tunnel_req.seq_number == packet_in.seq_number);
+	assert(packet_out.payload.tunnel_req.size == packet_in.size);
+	assert(memcmp(packet_out.payload.tunnel_req.data, packet_in.data, packet_in.size) == 0);
+})
+
 deftest(knxnetip, {
 	runsubtest(knxnetip_connection_request);
 	runsubtest(knxnetip_connection_response);
@@ -161,4 +188,5 @@ deftest(knxnetip, {
 	runsubtest(knxnetip_disconnect_response);
 	runsubtest(knxnetip_connection_state_request);
 	runsubtest(knxnetip_connection_state_response);
+	runsubtest(knxnetip_tunnel_request);
 })
