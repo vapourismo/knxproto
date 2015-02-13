@@ -3,6 +3,16 @@
 
 #include <string.h>
 
+// Connection Response:
+//   Octet 0:     Channel
+//   Octet 1:     Status
+//   Octet 2-9:   Host info
+//   Octet 10-13: Connection response info
+
+// Connection Response Information
+//   Octet 0: Structure length
+//   Octet 1-3: Unknown
+
 bool knxnetip_append_connection_response(msgbuilder* mb,
                                          const knxnetip_connection_response* res) {
 	const uint8_t data[2] = {res->channel, res->status};
@@ -24,9 +34,6 @@ bool knxnetip_parse_connection_response(const uint8_t* message, size_t length,
 	res->status = message[1];
 
 	// TODO: Figure out what the last 4 octets do.
-	// So far:
-	//   Octet 10:   Structure length
-	//   Octet 11-13: Unknown
 	memcpy(res->extended, message + 11, 3);
 
 	return knxnetip_parse_host_info(message + 2, &res->host);
