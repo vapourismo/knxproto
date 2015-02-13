@@ -15,7 +15,7 @@ int udpsock_create(const ip4addr* local) {
 	return sock;
 }
 
-ssize_t udpsock_send(int sock, const void* data, size_t size, const ip4addr* remote) {
+bool udpsock_send(int sock, const void* data, size_t size, const ip4addr* remote) {
 	size_t sent = 0;
 
 	do {
@@ -23,12 +23,12 @@ ssize_t udpsock_send(int sock, const void* data, size_t size, const ip4addr* rem
 		                     (const struct sockaddr*) remote, sizeof(ip4addr));
 
 		if (tmp < 0)
-			return tmp;
+			return false;
 
 		sent += tmp;
 	} while (sent < size);
 
-	return sent;
+	return true;
 }
 
 ssize_t udpsock_recv_from(int sock, void* buffer, size_t size, const ip4addr* remote) {

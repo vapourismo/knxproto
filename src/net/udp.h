@@ -18,7 +18,7 @@ int udpsock_create(const ip4addr* local);
 /**
  * Send something through the socket.
  */
-ssize_t udpsock_send(int sock, const void* data, size_t size, const ip4addr* remote);
+bool udpsock_send(int sock, const void* data, size_t size, const ip4addr* remote);
 
 /**
  * Receive a datagram from anybody.
