@@ -1,5 +1,6 @@
 #include "tunnelreq.h"
 #include "header.h"
+#include "../alloc.h"
 
 // Tunnel Request:
 //   Octet 0:   Structure length
@@ -10,8 +11,6 @@
 
 bool knxnetip_append_tunnel_request(msgbuilder* mb,
                                     const knxnetip_tunnel_request* req) {
-	const uint8_t info[4] = {4, req->channel, req->seq_number, 0};
-
 	// Prevent integer overflow
 	// Why 10? To prevent cases where `knxnetip_append_header`
 	// would double-check (req->size + 4 > UINT16_MAX - 6)
@@ -20,7 +19,7 @@ bool knxnetip_append_tunnel_request(msgbuilder* mb,
 
 	return
 		knxnetip_append_header(mb, KNXNETIP_TUNNEL_REQUEST, 4 + req->size) &&
-		msgbuilder_append(mb, info, 4) &&
+		msgbuilder_append(mb, anona(const uint8_t, 4, req->channel, req->seq_number, 0), 4) &&
 		msgbuilder_append(mb, req->data, req->size);
 }
 

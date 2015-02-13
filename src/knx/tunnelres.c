@@ -1,5 +1,6 @@
 #include "tunnelres.h"
 #include "header.h"
+#include "../alloc.h"
 
 // Tunnel Response:
 //   Octet 0: Structure length
@@ -9,11 +10,9 @@
 
 bool knxnetip_append_tunnel_response(msgbuilder* mb,
                                      const knxnetip_tunnel_response* res) {
-	const uint8_t info[4] = {4, res->channel, res->seq_number, res->status};
-
 	return
 		knxnetip_append_header(mb, KNXNETIP_TUNNEL_RESPONSE, 4) &&
-		msgbuilder_append(mb, info, 4);
+		msgbuilder_append(mb, anona(const uint8_t, 4, res->channel, res->seq_number, res->status), 4);
 }
 
 bool knxnetip_parse_tunnel_response(const uint8_t* message, size_t length,

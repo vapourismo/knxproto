@@ -1,5 +1,6 @@
 #include "dcreq.h"
 #include "header.h"
+#include "../alloc.h"
 
 // Disconnect Request:
 //   Octet 0:   Channel
@@ -8,11 +9,9 @@
 
 bool knxnetip_append_disconnect_request(msgbuilder* mb,
                                         const knxnetip_disconnect_request* req) {
-	const uint8_t info[2] = {req->channel, req->status};
-
 	return
 		knxnetip_append_header(mb, KNXNETIP_DISCONNECT_REQUEST, 10) &&
-		msgbuilder_append(mb, info, 2) &&
+		msgbuilder_append(mb, anona(const uint8_t, req->channel, req->status), 2) &&
 		knxnetip_append_host_info(mb, &req->host);
 }
 

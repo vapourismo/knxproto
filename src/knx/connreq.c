@@ -1,5 +1,6 @@
 #include "connreq.h"
 #include "header.h"
+#include "../alloc.h"
 
 // Connection Request:
 //   Octet 0-5:   Header
@@ -15,13 +16,11 @@
 
 bool knxnetip_append_connection_request(msgbuilder* mb,
                                         const knxnetip_connection_request* conn_req) {
-	const uint8_t contents[4] = {4, conn_req->type, conn_req->layer, 0};
-
 	return
 		knxnetip_append_header(mb, KNXNETIP_CONNECTION_REQUEST, 20) &&
 		knxnetip_append_host_info(mb, &conn_req->control_host) &&
 		knxnetip_append_host_info(mb, &conn_req->tunnel_host) &&
-		msgbuilder_append(mb, contents, 4);
+		msgbuilder_append(mb, anona(const uint8_t, 4, conn_req->type, conn_req->layer, 0), 4);
 }
 
 bool knxnetip_parse_connection_request(const uint8_t* message, size_t length,
