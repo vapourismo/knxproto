@@ -6,5 +6,6 @@
 #define new(t) ((t*) malloc(sizeof(t)))
 #define newa(t, n) ((t*) malloc(sizeof(t) * (n)))
 #define renewa(p, t, n) ((t*) realloc(p, sizeof(t) * (n)))
+#define anona(t, ...) ((t[]) {__VA_ARGS__})
 
 #endif
