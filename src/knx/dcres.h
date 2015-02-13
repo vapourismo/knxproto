@@ -1,13 +1,14 @@
 #ifndef HPKNXD_KNX_DCRES_H
 #define HPKNXD_KNX_DCRES_H
 
-#include "hostinfo.h"
-
 #include "../msgbuilder.h"
 
 #include <stdint.h>
 #include <stdbool.h>
 
+/**
+ * Disconnect Response
+ */
 typedef struct {
 	uint8_t channel;
 	uint8_t status;
