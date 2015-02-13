@@ -15,8 +15,9 @@ typedef struct sockaddr_in ip4addr;
  */
 inline void ip4addr_from_string(ip4addr* addr, const char* addrstr, uint16_t port) {
 	memset(addr, 0, sizeof(ip4addr));
-	inet_pton(AF_INET, addrstr, &addr->sin_addr);
+	addr->sin_family = AF_INET;
 	addr->sin_port = htons(port);
+	inet_pton(AF_INET, addrstr, &addr->sin_addr);
 }
 
 #endif
