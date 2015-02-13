@@ -1,6 +1,4 @@
 #include "testfw.h"
-#include "../knx/connreq.h"
-#include "../knx/connres.h"
 #include "../knx/knx.h"
 #include "../msgbuilder.h"
 
@@ -111,9 +109,34 @@ deftest(knxnetip_disconnect_response, {
 	assert(packet_out.payload.dc_res.status == packet_in.status);
 })
 
+deftest(knxnetip_connection_state_request, {
+	knxnetip_connection_state_request packet_in = {
+		100,
+		0,
+		{KNXNETIP_PROTO_UDP, htonl(INADDR_LOOPBACK), 12345}
+	};
+
+	// Generate
+	msgbuilder mb;
+	msgbuilder_init(&mb, 0);
+	assert(knxnetip_append_connection_state_request(&mb, &packet_in));
+
+	// Parse
+	knxnetip_packet packet_out;
+	assert(knxnetip_parse(mb.buffer, mb.used, &packet_out));
+
+	// Check
+	assert(packet_out.service == KNXNETIP_CONNECTIONSTATE_REQUEST);
+	assert(packet_out.payload.conn_state_req.channel == packet_in.channel);
+	assert(packet_out.payload.conn_state_req.status == packet_in.status);
+	assert(host_info_equal(&packet_out.payload.conn_state_req.host,
+	                       &packet_in.host));
+})
+
 deftest(knxnetip, {
 	runsubtest(knxnetip_connection_request);
 	runsubtest(knxnetip_connection_response);
 	runsubtest(knxnetip_disconnect_request);
 	runsubtest(knxnetip_disconnect_response);
+	runsubtest(knxnetip_connection_state_request);
 })
