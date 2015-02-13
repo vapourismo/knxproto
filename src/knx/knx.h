@@ -4,6 +4,7 @@
 #include "header.h"
 #include "connreq.h"
 #include "connres.h"
+#include "connstatereq.h"
 #include "dcreq.h"
 #include "dcres.h"
 
@@ -23,6 +24,7 @@ typedef struct {
 		knxnetip_connection_response conn_res;
 		knxnetip_disconnect_request dc_req;
 		knxnetip_disconnect_response dc_res;
+		knxnetip_connection_state_request conn_state_req;
 	} payload;
 } knxnetip_packet;
 

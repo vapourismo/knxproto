@@ -42,7 +42,8 @@ bool knxnetip_parse(const uint8_t* message, size_t length,
 
 		case KNXNETIP_CONNECTIONSTATE_REQUEST:
 			packet->service = KNXNETIP_CONNECTIONSTATE_REQUEST;
-			return false;
+			return knxnetip_parse_connection_state_request(message + 6, claimed_len - 6,
+			                                               &packet->payload.conn_state_req);
 
 		case KNXNETIP_CONNECTIONSTATE_RESPONSE:
 			packet->service = KNXNETIP_CONNECTIONSTATE_RESPONSE;
