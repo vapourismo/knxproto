@@ -3,6 +3,7 @@
 #include "../msgbuilder.h"
 
 #include <stdbool.h>
+#include <string.h>
 
 inline static bool host_info_equal(const knxnetip_host_info* a,
                                    const knxnetip_host_info* b) {
@@ -181,6 +182,29 @@ deftest(knxnetip_tunnel_request, {
 	assert(memcmp(packet_out.payload.tunnel_req.data, packet_in.data, packet_in.size) == 0);
 })
 
+deftest(knxnetip_tunnel_response, {
+	knxnetip_tunnel_response packet_in = {
+		100,
+		50,
+		0,
+	};
+
+	// Generate
+	msgbuilder mb;
+	msgbuilder_init(&mb, 0);
+	assert(knxnetip_append_tunnel_response(&mb, &packet_in));
+
+	// Parse
+	knxnetip_packet packet_out;
+	assert(knxnetip_parse(mb.buffer, mb.used, &packet_out));
+
+	// Check
+	assert(packet_out.service == KNXNETIP_TUNNEL_RESPONSE);
+	assert(packet_out.payload.tunnel_res.channel == packet_in.channel);
+	assert(packet_out.payload.tunnel_res.seq_number == packet_in.seq_number);
+	assert(packet_out.payload.tunnel_res.status == packet_in.status);
+})
+
 deftest(knxnetip, {
 	runsubtest(knxnetip_connection_request);
 	runsubtest(knxnetip_connection_response);
@@ -189,4 +213,5 @@ deftest(knxnetip, {
 	runsubtest(knxnetip_connection_state_request);
 	runsubtest(knxnetip_connection_state_response);
 	runsubtest(knxnetip_tunnel_request);
+	runsubtest(knxnetip_tunnel_response);
 })
