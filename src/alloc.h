@@ -24,4 +24,9 @@
  */
 #define anona(t, ...) ((t[]) {__VA_ARGS__})
 
+/**
+ * Define an anonymous pointer to an instance of `t`.
+ */
+#define anon(t, ...) ((t[]) {{__VA_ARGS__}})
+
 #endif
