@@ -75,7 +75,8 @@ bool knxnetip_parse(const uint8_t* message, size_t length,
 
 		case KNXNETIP_TUNNEL_RESPONSE:
 			packet->service = KNXNETIP_TUNNEL_RESPONSE;
-			return false;
+			return knxnetip_parse_tunnel_response(message + 6, claimed_len - 6,
+			                                      &packet->payload.tunnel_res);
 
 		case KNXNETIP_ROUTING_INDICATION:
 			packet->service = KNXNETIP_ROUTING_INDICATION;
