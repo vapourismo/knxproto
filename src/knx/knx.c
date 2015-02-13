@@ -4,8 +4,8 @@
 
 #include <string.h>
 
-bool knxnetip_parse(const uint8_t* message, size_t length,
-                    knxnetip_packet* packet) {
+bool knx_parse(const uint8_t* message, size_t length,
+                    knx_packet* packet) {
 	if (length < 6 || message[0] != 6 || message[1] != 16)
 		return false;
 
@@ -14,72 +14,72 @@ bool knxnetip_parse(const uint8_t* message, size_t length,
 		return false;
 
 	switch ((message[2] << 8) | message[3]) {
-		case KNXNETIP_SEARCH_REQUEST:
-			packet->service = KNXNETIP_SEARCH_REQUEST;
+		case KNX_SEARCH_REQUEST:
+			packet->service = KNX_SEARCH_REQUEST;
 			return false;
 
-		case KNXNETIP_SEARCH_RESPONSE:
-			packet->service = KNXNETIP_SEARCH_RESPONSE;
+		case KNX_SEARCH_RESPONSE:
+			packet->service = KNX_SEARCH_RESPONSE;
 			return false;
 
-		case KNXNETIP_DESCRIPTION_REQUEST:
-			packet->service = KNXNETIP_DESCRIPTION_REQUEST;
+		case KNX_DESCRIPTION_REQUEST:
+			packet->service = KNX_DESCRIPTION_REQUEST;
 			return false;
 
-		case KNXNETIP_DESCRIPTION_RESPONSE:
-			packet->service = KNXNETIP_DESCRIPTION_RESPONSE;
+		case KNX_DESCRIPTION_RESPONSE:
+			packet->service = KNX_DESCRIPTION_RESPONSE;
 			return false;
 
-		case KNXNETIP_CONNECTION_REQUEST:
-			packet->service = KNXNETIP_CONNECTION_REQUEST;
-			return knxnetip_parse_connection_request(message + 6, claimed_len - 6,
+		case KNX_CONNECTION_REQUEST:
+			packet->service = KNX_CONNECTION_REQUEST;
+			return knx_parse_connection_request(message + 6, claimed_len - 6,
 			                                         &packet->payload.conn_req);
 
-		case KNXNETIP_CONNECTION_RESPONSE:
-			packet->service = KNXNETIP_CONNECTION_RESPONSE;
-			return knxnetip_parse_connection_response(message + 6, claimed_len - 6,
+		case KNX_CONNECTION_RESPONSE:
+			packet->service = KNX_CONNECTION_RESPONSE;
+			return knx_parse_connection_response(message + 6, claimed_len - 6,
 			                                          &packet->payload.conn_res);
 
-		case KNXNETIP_CONNECTIONSTATE_REQUEST:
-			packet->service = KNXNETIP_CONNECTIONSTATE_REQUEST;
-			return knxnetip_parse_connection_state_request(message + 6, claimed_len - 6,
+		case KNX_CONNECTIONSTATE_REQUEST:
+			packet->service = KNX_CONNECTIONSTATE_REQUEST;
+			return knx_parse_connection_state_request(message + 6, claimed_len - 6,
 			                                               &packet->payload.conn_state_req);
 
-		case KNXNETIP_CONNECTIONSTATE_RESPONSE:
-			packet->service = KNXNETIP_CONNECTIONSTATE_RESPONSE;
-			return knxnetip_parse_connection_state_response(message + 6, claimed_len - 6,
+		case KNX_CONNECTIONSTATE_RESPONSE:
+			packet->service = KNX_CONNECTIONSTATE_RESPONSE;
+			return knx_parse_connection_state_response(message + 6, claimed_len - 6,
 			                                                &packet->payload.conn_state_res);
 
-		case KNXNETIP_DISCONNECT_REQUEST:
-			packet->service = KNXNETIP_DISCONNECT_REQUEST;
-			return knxnetip_parse_disconnect_request(message + 6, claimed_len - 6,
+		case KNX_DISCONNECT_REQUEST:
+			packet->service = KNX_DISCONNECT_REQUEST;
+			return knx_parse_disconnect_request(message + 6, claimed_len - 6,
 			                                         &packet->payload.dc_req);
 
-		case KNXNETIP_DISCONNECT_RESPONSE:
-			packet->service = KNXNETIP_DISCONNECT_RESPONSE;
-			return knxnetip_parse_disconnect_response(message + 6, claimed_len - 6,
+		case KNX_DISCONNECT_RESPONSE:
+			packet->service = KNX_DISCONNECT_RESPONSE;
+			return knx_parse_disconnect_response(message + 6, claimed_len - 6,
 			                                          &packet->payload.dc_res);
 
-		case KNXNETIP_DEVICE_CONFIGURATION_REQUEST:
-			packet->service = KNXNETIP_DEVICE_CONFIGURATION_REQUEST;
+		case KNX_DEVICE_CONFIGURATION_REQUEST:
+			packet->service = KNX_DEVICE_CONFIGURATION_REQUEST;
 			return false;
 
-		case KNXNETIP_DEVICE_CONFIGURATION_ACK:
-			packet->service = KNXNETIP_DEVICE_CONFIGURATION_ACK;
+		case KNX_DEVICE_CONFIGURATION_ACK:
+			packet->service = KNX_DEVICE_CONFIGURATION_ACK;
 			return false;
 
-		case KNXNETIP_TUNNEL_REQUEST:
-			packet->service = KNXNETIP_TUNNEL_REQUEST;
-			return knxnetip_parse_tunnel_request(message + 6, claimed_len - 6,
+		case KNX_TUNNEL_REQUEST:
+			packet->service = KNX_TUNNEL_REQUEST;
+			return knx_parse_tunnel_request(message + 6, claimed_len - 6,
 			                                     &packet->payload.tunnel_req);
 
-		case KNXNETIP_TUNNEL_RESPONSE:
-			packet->service = KNXNETIP_TUNNEL_RESPONSE;
-			return knxnetip_parse_tunnel_response(message + 6, claimed_len - 6,
+		case KNX_TUNNEL_RESPONSE:
+			packet->service = KNX_TUNNEL_RESPONSE;
+			return knx_parse_tunnel_response(message + 6, claimed_len - 6,
 			                                      &packet->payload.tunnel_res);
 
-		case KNXNETIP_ROUTING_INDICATION:
-			packet->service = KNXNETIP_ROUTING_INDICATION;
+		case KNX_ROUTING_INDICATION:
+			packet->service = KNX_ROUTING_INDICATION;
 			return false;
 
 		default:

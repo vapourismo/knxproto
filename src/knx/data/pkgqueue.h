@@ -12,7 +12,7 @@
  * Queue Element
  */
 typedef struct _knx_pkgqueue_elem {
-	knxnetip_packet packet;
+	knx_packet packet;
 	struct _knx_pkgqueue_elem* next;
 } knx_pkgqueue_elem;
 
@@ -50,12 +50,12 @@ inline bool knx_queue_empty(knx_pkgqueue* queue) {
 /**
  * Add a packet at the back of a queue.
  */
-bool knx_queue_enqueue(knx_pkgqueue* queue, const knxnetip_packet* packet);
+bool knx_queue_enqueue(knx_pkgqueue* queue, const knx_packet* packet);
 
 /**
  * Remove a packet from the head of a queue.
  */
-bool knx_queue_dequeue(knx_pkgqueue* queue, knxnetip_packet* packet);
+bool knx_queue_dequeue(knx_pkgqueue* queue, knx_packet* packet);
 
 
 #endif

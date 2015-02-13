@@ -27,11 +27,11 @@ void knx_pkgqueue_destroy(knx_pkgqueue* queue) {
 	pthread_mutex_destroy(&queue->write_lock);
 }
 
-bool knx_pkgqueue_enqueue(knx_pkgqueue* queue, const knxnetip_packet* packet) {
+bool knx_pkgqueue_enqueue(knx_pkgqueue* queue, const knx_packet* packet) {
 	knx_pkgqueue_elem* elem = new(knx_pkgqueue_elem);
 
 	elem->next = NULL;
-	memcpy(&elem->packet, packet, sizeof(knxnetip_packet));
+	memcpy(&elem->packet, packet, sizeof(knx_packet));
 
 	pthread_mutex_lock(&queue->write_lock);
 
@@ -45,7 +45,7 @@ bool knx_pkgqueue_enqueue(knx_pkgqueue* queue, const knxnetip_packet* packet) {
 	return true;
 }
 
-bool knx_pkgqueue_dequeue(knx_pkgqueue* queue, knxnetip_packet* packet) {
+bool knx_pkgqueue_dequeue(knx_pkgqueue* queue, knx_packet* packet) {
 	bool success = false;
 	pthread_mutex_lock(&queue->write_lock);
 

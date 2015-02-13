@@ -7,21 +7,21 @@
 //   Octet 1:   Status
 //   Octet 2-9: Host info
 
-bool knxnetip_append_disconnect_request(msgbuilder* mb,
-                                        const knxnetip_disconnect_request* req) {
+bool knx_append_disconnect_request(msgbuilder* mb,
+                                        const knx_disconnect_request* req) {
 	return
-		knxnetip_append_header(mb, KNXNETIP_DISCONNECT_REQUEST, 10) &&
+		knx_append_header(mb, KNX_DISCONNECT_REQUEST, 10) &&
 		msgbuilder_append(mb, anona(const uint8_t, req->channel, req->status), 2) &&
-		knxnetip_append_host_info(mb, &req->host);
+		knx_append_host_info(mb, &req->host);
 }
 
-bool knxnetip_parse_disconnect_request(const uint8_t* message, size_t length,
-                                       knxnetip_disconnect_request* req) {
+bool knx_parse_disconnect_request(const uint8_t* message, size_t length,
+                                       knx_disconnect_request* req) {
 	if (length < 10)
 		return false;
 
 	req->channel = message[0];
 	req->status = message[1];
 
-	return knxnetip_parse_host_info(message + 2, &req->host);
+	return knx_parse_host_info(message + 2, &req->host);
 }

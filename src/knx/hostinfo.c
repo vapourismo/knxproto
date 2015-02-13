@@ -8,24 +8,24 @@
 //   Octet 2-5: IPv4 address
 //   Octet 6-7: Port number
 
-bool knxnetip_append_host_info(msgbuilder* mb, const knxnetip_host_info* host) {
+bool knx_append_host_info(msgbuilder* mb, const knx_host_info* host) {
 	return
 		msgbuilder_append(mb, anona(const uint8_t, 8, host->protocol), 2) &&
 		msgbuilder_append(mb, (const uint8_t*) &host->address, 4) &&
 		msgbuilder_append(mb, (const uint8_t*) &host->port, 2);
 }
 
-bool knxnetip_parse_host_info(const uint8_t* message, knxnetip_host_info* host) {
+bool knx_parse_host_info(const uint8_t* message, knx_host_info* host) {
 	if (message[0] != 8)
 		return false;
 
 	switch (message[1]) {
-		case KNXNETIP_PROTO_UDP:
-			host->protocol = KNXNETIP_PROTO_UDP;
+		case KNX_PROTO_UDP:
+			host->protocol = KNX_PROTO_UDP;
 			break;
 
-		case KNXNETIP_PROTO_TCP:
-			host->protocol = KNXNETIP_PROTO_TCP;
+		case KNX_PROTO_TCP:
+			host->protocol = KNX_PROTO_TCP;
 			break;
 
 		default:

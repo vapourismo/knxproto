@@ -11,27 +11,27 @@
  * KNXnet/IP Protocol
  */
 typedef enum {
-	KNXNETIP_PROTO_UDP = 1,
-	KNXNETIP_PROTO_TCP = 2
-} knxnetip_proto;
+	KNX_PROTO_UDP = 1,
+	KNX_PROTO_TCP = 2
+} knx_proto;
 
 /**
  * Host Information
  */
 typedef struct {
-	knxnetip_proto protocol;
+	knx_proto protocol;
 	in_addr_t address;
 	in_port_t port;
-} knxnetip_host_info;
+} knx_host_info;
 
 /**
  * Append host information.
  */
-bool knxnetip_append_host_info(msgbuilder* mb, const knxnetip_host_info* host);
+bool knx_append_host_info(msgbuilder* mb, const knx_host_info* host);
 
 /**
  * Retrieve host information.
  */
-bool knxnetip_parse_host_info(const uint8_t* message, knxnetip_host_info* host);
+bool knx_parse_host_info(const uint8_t* message, knx_host_info* host);
 
 #endif

@@ -13,36 +13,36 @@
  * KNX Connection Type
  */
 typedef enum {
-	KNXNETIP_CONNECTION_REQUEST_TUNNEL = 4
-} knxnetip_conn_type;
+	KNX_CONNECTION_REQUEST_TUNNEL = 4
+} knx_conn_type;
 
 /**
  * KNX Layer
  */
 typedef enum {
-	KNXNETIP_LAYER_TUNNEL = 2
-} knxnetip_layer;
+	KNX_LAYER_TUNNEL = 2
+} knx_layer;
 
 /**
  * Connection Request
  */
 typedef struct {
-	knxnetip_conn_type type;
-	knxnetip_layer layer;
-	knxnetip_host_info control_host;
-	knxnetip_host_info tunnel_host;
-} knxnetip_connection_request;
+	knx_conn_type type;
+	knx_layer layer;
+	knx_host_info control_host;
+	knx_host_info tunnel_host;
+} knx_connection_request;
 
 /**
  * Generate the message for a connection request.
  */
-bool knxnetip_append_connection_request(msgbuilder* mb,
-                                        const knxnetip_connection_request* conn_req);
+bool knx_append_connection_request(msgbuilder* mb,
+                                        const knx_connection_request* conn_req);
 
 /**
  * Parse a message (excluding header) which contains a connection request.
  */
-bool knxnetip_parse_connection_request(const uint8_t* message, size_t length,
-                                       knxnetip_connection_request* req);
+bool knx_parse_connection_request(const uint8_t* message, size_t length,
+                                       knx_connection_request* req);
 
 #endif

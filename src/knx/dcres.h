@@ -13,18 +13,18 @@
 typedef struct {
 	uint8_t channel;
 	uint8_t status;
-} knxnetip_disconnect_response;
+} knx_disconnect_response;
 
 /**
  * Generate the message for a disconnect response.
  */
-bool knxnetip_append_disconnect_response(msgbuilder* mb,
-                                         const knxnetip_disconnect_response* res);
+bool knx_append_disconnect_response(msgbuilder* mb,
+                                         const knx_disconnect_response* res);
 
 /**
  * Parse a message (excluding header) which contains a disconnect response.
  */
-bool knxnetip_parse_disconnect_response(const uint8_t* message, size_t length,
-                                        knxnetip_disconnect_response* res);
+bool knx_parse_disconnect_response(const uint8_t* message, size_t length,
+                                        knx_disconnect_response* res);
 
 #endif

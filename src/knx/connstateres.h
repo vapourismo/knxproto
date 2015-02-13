@@ -13,18 +13,18 @@
 typedef struct {
 	uint8_t channel;
 	uint8_t status;
-} knxnetip_connection_state_response;
+} knx_connection_state_response;
 
 /**
  * Generate the message for a connection response.
  */
-bool knxnetip_append_connection_state_response(msgbuilder* mb,
-                                               const knxnetip_connection_state_response* res);
+bool knx_append_connection_state_response(msgbuilder* mb,
+                                               const knx_connection_state_response* res);
 
 /**
  * Parse a message (excluding header) which contains a connection response.
  */
-bool knxnetip_parse_connection_state_response(const uint8_t* message, size_t length,
-                                              knxnetip_connection_state_response* res);
+bool knx_parse_connection_state_response(const uint8_t* message, size_t length,
+                                              knx_connection_state_response* res);
 
 #endif

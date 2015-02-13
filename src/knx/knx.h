@@ -1,5 +1,5 @@
-#ifndef HPKNXD_KNX_KNXNETIP_H
-#define HPKNXD_KNX_KNXNETIP_H
+#ifndef HPKNXD_KNX_KNX_H
+#define HPKNXD_KNX_KNX_H
 
 #include "header.h"
 #include "connreq.h"
@@ -21,23 +21,23 @@
  * KNXnet/IP Packet
  */
 typedef struct {
-	knxnetip_service service;
+	knx_service service;
 	union {
-		knxnetip_connection_request conn_req;
-		knxnetip_connection_response conn_res;
-		knxnetip_disconnect_request dc_req;
-		knxnetip_disconnect_response dc_res;
-		knxnetip_connection_state_request conn_state_req;
-		knxnetip_connection_state_response conn_state_res;
-		knxnetip_tunnel_request tunnel_req;
-		knxnetip_tunnel_response tunnel_res;
+		knx_connection_request conn_req;
+		knx_connection_response conn_res;
+		knx_disconnect_request dc_req;
+		knx_disconnect_response dc_res;
+		knx_connection_state_request conn_state_req;
+		knx_connection_state_response conn_state_res;
+		knx_tunnel_request tunnel_req;
+		knx_tunnel_response tunnel_res;
 	} payload;
-} knxnetip_packet;
+} knx_packet;
 
 /**
  * Parse a given message into a packet.
  */
-bool knxnetip_parse(const uint8_t* msg, size_t length,
-                    knxnetip_packet* packet);
+bool knx_parse(const uint8_t* msg, size_t length,
+                    knx_packet* packet);
 
 #endif

@@ -14,25 +14,25 @@
 //   Octet 0: Structure length
 //   Octet 1-3: Unknown
 
-bool knxnetip_append_connection_response(msgbuilder* mb,
-                                         const knxnetip_connection_response* res) {
+bool knx_append_connection_response(msgbuilder* mb,
+                                         const knx_connection_response* res) {
 	return
-		knxnetip_append_header(mb, KNXNETIP_CONNECTION_RESPONSE, 14) &&
+		knx_append_header(mb, KNX_CONNECTION_RESPONSE, 14) &&
 		msgbuilder_append(mb, anona(const uint8_t, res->channel, res->status), 2) &&
-		knxnetip_append_host_info(mb, &res->host) &&
+		knx_append_host_info(mb, &res->host) &&
 		msgbuilder_append_single(mb, 4) &&
 		msgbuilder_append(mb, res->extended, 3);
 }
 
-bool knxnetip_parse_connection_response(const uint8_t* message, size_t length,
-                                        knxnetip_connection_response* res) {
+bool knx_parse_connection_response(const uint8_t* message, size_t length,
+                                        knx_connection_response* res) {
 	if (length < 2)
 		return false;
 
 	res->channel = message[0];
 	res->status = message[1];
 
-	if (length >= 10 && !knxnetip_parse_host_info(message + 2, &res->host))
+	if (length >= 10 && !knx_parse_host_info(message + 2, &res->host))
 		return false;
 
 	if (length >= 14)
