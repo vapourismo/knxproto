@@ -18,8 +18,19 @@ int udpsock_create(const ip4addr* local);
  * Send something through the socket.
  */
 inline ssize_t udpsock_send(int sock, const void* data, size_t size, const ip4addr* remote) {
-	return sendto(sock, data, size, 0,
-	              (const struct sockaddr*) remote, sizeof(ip4addr));
+	size_t sent = 0;
+
+	do {
+		ssize_t tmp = sendto(sock, data, size, 0,
+		                     (const struct sockaddr*) remote, sizeof(ip4addr));
+
+		if (tmp < 0)
+			return tmp;
+
+		sent += tmp;
+	} while (sent < size);
+
+	return sent;
 }
 
 /**
