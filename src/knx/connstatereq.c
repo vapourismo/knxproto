@@ -1,6 +1,11 @@
 #include "connstatereq.h"
 #include "header.h"
 
+// Connection State Request
+//   Octet 0:   Channel
+//   Octet 1:   Status
+//   Octet 2-9: Host info
+
 bool knxnetip_append_connection_state_request(msgbuilder* mb,
                                               const knxnetip_connection_state_request* req) {
 	const uint8_t info[2] = {req->channel, req->status};
