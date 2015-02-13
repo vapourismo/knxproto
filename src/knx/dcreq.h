@@ -8,6 +8,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+/**
+ * Disconnect Request
+ */
 typedef struct {
 	uint8_t channel;
 	uint8_t status;
