@@ -2,9 +2,12 @@
 #define HPKNXD_KNX_CONNREQ_H
 
 #include "hostinfo.h"
+
 #include "../msgbuilder.h"
 
-#include <sys/types.h>
+#include <stddef.h>
+#include <stdbool.h>
+#include <stdint.h>
 
 /**
  * KNX Connection Type

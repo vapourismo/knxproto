@@ -3,6 +3,9 @@
 
 #include "../msgbuilder.h"
 
+#include <stdint.h>
+#include <stdbool.h>
+
 /**
  * KNXnet/IP Service Type
  */

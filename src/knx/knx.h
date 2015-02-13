@@ -11,7 +11,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <sys/types.h>
+#include <stddef.h>
 
 /**
  * KNXnet/IP Packet
