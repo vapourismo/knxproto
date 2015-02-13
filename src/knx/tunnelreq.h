@@ -8,7 +8,7 @@
 #include <stdint.h>
 
 /**
- *
+ * Tunnel Request
  */
 typedef struct {
 	uint8_t channel;
