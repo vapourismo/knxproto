@@ -133,10 +133,32 @@ deftest(knxnetip_connection_state_request, {
 	                       &packet_in.host));
 })
 
+deftest(knxnetip_connection_state_response, {
+	knxnetip_connection_state_response packet_in = {
+		100,
+		0
+	};
+
+	// Generate
+	msgbuilder mb;
+	msgbuilder_init(&mb, 0);
+	assert(knxnetip_append_connection_state_response(&mb, &packet_in));
+
+	// Parse
+	knxnetip_packet packet_out;
+	assert(knxnetip_parse(mb.buffer, mb.used, &packet_out));
+
+	// Check
+	assert(packet_out.service == KNXNETIP_CONNECTIONSTATE_RESPONSE);
+	assert(packet_out.payload.conn_state_res.channel == packet_in.channel);
+	assert(packet_out.payload.conn_state_res.status == packet_in.status);
+})
+
 deftest(knxnetip, {
 	runsubtest(knxnetip_connection_request);
 	runsubtest(knxnetip_connection_response);
 	runsubtest(knxnetip_disconnect_request);
 	runsubtest(knxnetip_disconnect_response);
 	runsubtest(knxnetip_connection_state_request);
+	runsubtest(knxnetip_connection_state_response);
 })
