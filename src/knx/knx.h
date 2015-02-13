@@ -8,6 +8,7 @@
 #include "connstateres.h"
 #include "dcreq.h"
 #include "dcres.h"
+#include "tunnelreq.h"
 
 #include "../msgbuilder.h"
 
@@ -27,6 +28,7 @@ typedef struct {
 		knxnetip_disconnect_response dc_res;
 		knxnetip_connection_state_request conn_state_req;
 		knxnetip_connection_state_response conn_state_res;
+		knxnetip_tunnel_request tunnel_req;
 	} payload;
 } knxnetip_packet;
 

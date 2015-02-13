@@ -70,7 +70,8 @@ bool knxnetip_parse(const uint8_t* message, size_t length,
 
 		case KNXNETIP_TUNNEL_REQUEST:
 			packet->service = KNXNETIP_TUNNEL_REQUEST;
-			return false;
+			return knxnetip_parse_tunnel_request(message + 6, claimed_len - 6,
+			                                     &packet->payload.tunnel_req);
 
 		case KNXNETIP_TUNNEL_RESPONSE:
 			packet->service = KNXNETIP_TUNNEL_RESPONSE;
