@@ -28,7 +28,7 @@ void log_commit_raw(log_level level, const char* file, size_t line, const char* 
 
 #else
 
-#define log_setup(...) 1
+#define log_setup(...) true
 #define log_commit_raw(...)
 
 #endif
@@ -36,16 +36,16 @@ void log_commit_raw(log_level level, const char* file, size_t line, const char* 
 /**
  * Log a information
  */
-#define log_info(fmt, ...) log_commit_raw(LOG_INFO, __FILE__, __LINE__, (fmt), __VA_ARGS__)
+#define log_info(...) log_commit_raw(LOG_INFO, __FILE__, __LINE__, __VA_ARGS__)
 
 /**
  * Log a warning
  */
-#define log_warn(fmt, ...) log_commit_raw(LOG_WARN, __FILE__, __LINE__, (fmt), __VA_ARGS__)
+#define log_warn(...) log_commit_raw(LOG_WARN, __FILE__, __LINE__, __VA_ARGS__)
 
 /**
  * Log an error
  */
-#define log_error(fmt, ...) log_commit_raw(LOG_ERROR, __FILE__, __LINE__, (fmt), __VA_ARGS__)
+#define log_error(...) log_commit_raw(LOG_ERROR, __FILE__, __LINE__, __VA_ARGS__)
 
 #endif
