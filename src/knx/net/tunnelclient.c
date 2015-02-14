@@ -52,10 +52,8 @@ void knx_tunnel_worker(knx_tunnel_connection* conn) {
 		size_t receive_iter = 0;
 
 		// Receiver loop
-		while (conn->do_work && receive_iter++ < 100) {
-			// If there is nothing to be read, break
-			if (!dgramsock_ready(conn->sock, 0, 1000))
-				break;
+		while (conn->do_work && receive_iter++ < 100 &&
+		       dgramsock_ready(conn->sock, 0, 100000)) {
 
 			knx_packet pkg_in;
 
