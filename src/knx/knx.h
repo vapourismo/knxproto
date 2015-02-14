@@ -43,6 +43,6 @@ bool knx_parse(const uint8_t* msg, size_t length,
 /**
  *
  */
-bool knx_append(msgbuilder* mb, const knx_packet* packet);
+bool knx_append(msgbuilder* mb, knx_service srv, const void* pkg);
 
 #endif
