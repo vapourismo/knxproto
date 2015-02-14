@@ -61,6 +61,8 @@ void knx_tunnel_worker(knx_tunnel_connection* conn) {
 			ssize_t r = dgramsock_recv(conn->sock, mb.buffer, mb.max, NULL, 0);
 
 			if (r > 0 && knx_parse(mb.buffer, r, &pkg_in)) {
+				printf("worker: Received (service = 0x%04X)\n", pkg_in.service);
+
 				switch (pkg_in.service) {
 					// Connection successfully establish
 					case KNX_CONNECTION_RESPONSE:
@@ -71,8 +73,7 @@ void knx_tunnel_worker(knx_tunnel_connection* conn) {
 							conn->channel = pkg_in.payload.conn_res.channel;
 							conn->host_info = pkg_in.payload.conn_res.host;
 
-							printf("worker: Connected (established = %i, channel = %i)\n",
-							       conn->established, conn->channel);
+							printf("worker: Connected (channel = %i)\n", conn->channel);
 						} else {
 							printf("worker: Connection failed (code = %i)\n",
 							       pkg_in.payload.conn_res.status);
@@ -107,6 +108,7 @@ void knx_tunnel_worker(knx_tunnel_connection* conn) {
 
 					// Tunnel Request
 					case KNX_TUNNEL_REQUEST:
+						// Send tunnel response if a connection is established
 						if (conn->established) {
 							knx_packet tunnel_res = {
 								KNX_TUNNEL_RESPONSE,
@@ -120,13 +122,13 @@ void knx_tunnel_worker(knx_tunnel_connection* conn) {
 							};
 							knx_pkgqueue_enqueue(&conn->outgoing, &tunnel_res);
 						}
-						// Do not break here
 
-					// Everything else should be queued
-					default:
-						printf("worker: Received (service = 0x%04X)\n",
-						       pkg_in.service);
 						knx_pkgqueue_enqueue(&conn->incoming, &pkg_in);
+
+						break;
+
+					// Everything else should be ignored
+					default:
 						break;
 				}
 			} else if (r < 0)
