@@ -1,66 +1,40 @@
 #include "tunnelclient.h"
 
 void knx_tunnel_worker(knx_tunnel_connection* conn) {
-	msgbuilder mb;
-	if (!msgbuilder_init(&mb, 0))
-		return;
-
 	while (conn->do_work) {
 		// Check if we need to send a heartbeat
 		if (conn->established && difftime(time(NULL), conn->last_heartbeat) >= 30) {
-			puts("worker: Heartbeat required");
-
-			knx_packet packet = {
-				KNX_CONNECTIONSTATE_REQUEST,
-				{
-					.conn_state_req = {
-						conn->channel,
-						0,
-						conn->host_info
-					}
-				}
-			};
-
-			// Send and mark time of departure
-			if (knx_generate(&mb, &packet)) {
-				dgramsock_send(conn->sock, mb.buffer, mb.used, &conn->gateway);
+			knx_connection_state_request req = {conn->channel, 0, conn->host_info};
+			if (knx_outqueue_push(&conn->outgoing, KNX_CONNECTIONSTATE_REQUEST, &req))
 				conn->last_heartbeat = time(NULL);
-				puts("worker: Heartbeat sent");
-			}
 		}
 
 		// Sender loop
 		while (conn->do_work) {
-			knx_packet to_send;
+			knx_service service;
+			uint8_t* buffer;
+			ssize_t buffer_size = knx_outqueue_pop(&conn->outgoing, &buffer, &service);
 
-			// Dequeue packet or exit sender loop
-			if (!knx_pkgqueue_dequeue(&conn->outgoing, &to_send))
+			if (buffer_size < 0)
 				break;
 
+			dgramsock_send(conn->sock, buffer, buffer_size, &conn->gateway);
+			free(buffer);
 
-			// Generate message and send
-			if (knx_generate(&mb, &to_send))
-				dgramsock_send(conn->sock, mb.buffer, mb.used, &conn->gateway);
-
-			printf("worker: Sent (service = 0x%04X)\n", to_send.service);
+			printf("worker: Sent (service = 0x%04X)\n", service);
 		}
-
-		// Clear buffer and ensure enough space
-		mb.used = 0;
-		msgbuilder_reserve(&mb, 100);
 
 		size_t receive_iter = 0;
 
 		// Receiver loop
-		while (conn->do_work && receive_iter++ < 100 &&
-		       dgramsock_ready(conn->sock, 0, 100000)) {
-
-			knx_packet pkg_in;
+		while (conn->do_work && receive_iter++ < 100 && dgramsock_ready(conn->sock, 0, 100000)) {
+			uint8_t buffer[100];
 
 			// FIXME: Do not allow every endpoint
-			ssize_t r = dgramsock_recv(conn->sock, mb.buffer, mb.max, NULL, 0);
+			ssize_t r = dgramsock_recv(conn->sock, buffer, 100, NULL, 0);
 
-			if (r > 0 && knx_parse(mb.buffer, r, &pkg_in)) {
+			knx_packet pkg_in;
+			if (r > 0 && knx_parse(buffer, r, &pkg_in)) {
 				printf("worker: Received (service = 0x%04X)\n", pkg_in.service);
 
 				switch (pkg_in.service) {
@@ -110,17 +84,12 @@ void knx_tunnel_worker(knx_tunnel_connection* conn) {
 					case KNX_TUNNEL_REQUEST:
 						// Send tunnel response if a connection is established
 						if (conn->established) {
-							knx_packet tunnel_res = {
-								KNX_TUNNEL_RESPONSE,
-								{
-									.tunnel_res = {
-										conn->channel,
-										pkg_in.payload.tunnel_req.seq_number,
-										0
-									}
-								}
+							knx_tunnel_response res = {
+								conn->channel,
+								pkg_in.payload.tunnel_req.seq_number,
+								0
 							};
-							knx_pkgqueue_enqueue(&conn->outgoing, &tunnel_res);
+							knx_outqueue_push(&conn->outgoing, KNX_TUNNEL_RESPONSE, &res);
 						}
 
 						knx_pkgqueue_enqueue(&conn->incoming, &pkg_in);
@@ -136,23 +105,11 @@ void knx_tunnel_worker(knx_tunnel_connection* conn) {
 		}
 	}
 
-	// Clear the outgoing queue one last time
-	while (true) {
-		knx_packet to_send;
-
-		// Dequeue packet or exit sender loop
-		if (!knx_pkgqueue_dequeue(&conn->outgoing, &to_send))
-			break;
-
-		// Generate message and send
-		if (knx_generate(&mb, &to_send))
-			dgramsock_send(conn->sock, mb.buffer, mb.used, &conn->gateway);
-	}
+	// TODO: Clear outgoing queue once more.
 
 	// Free buffers and queues
-	msgbuilder_destroy(&mb);
 	knx_pkgqueue_destroy(&conn->incoming);
-	knx_pkgqueue_destroy(&conn->outgoing);
+	knx_outqueue_destroy(&conn->outgoing);
 
 	// The worker has to terminate the connection
 	dgramsock_close(conn->sock);
@@ -181,21 +138,16 @@ bool knx_tunnel_connect(knx_tunnel_connection* conn, const ip4addr* gateway) {
 	}
 
 	knx_pkgqueue_init(&conn->incoming);
-	knx_pkgqueue_init(&conn->outgoing);
+	knx_outqueue_init(&conn->outgoing);
 
 	// Queue a connection request
-	knx_packet req = {
-		KNX_CONNECTION_REQUEST,
-		{
-			.conn_req = {
-				KNX_CONNECTION_REQUEST_TUNNEL,
-				KNX_LAYER_TUNNEL,
-				KNX_HOST_INFO_NAT(KNX_PROTO_UDP),
-				KNX_HOST_INFO_NAT(KNX_PROTO_UDP)
-			}
-		}
+	knx_connection_request req = {
+		KNX_CONNECTION_REQUEST_TUNNEL,
+		KNX_LAYER_TUNNEL,
+		KNX_HOST_INFO_NAT(KNX_PROTO_UDP),
+		KNX_HOST_INFO_NAT(KNX_PROTO_UDP)
 	};
-	knx_pkgqueue_enqueue(&conn->outgoing, &req);
+	knx_outqueue_push(&conn->outgoing, KNX_CONNECTION_REQUEST, &req);
 
 	return true;
 }
@@ -203,17 +155,8 @@ bool knx_tunnel_connect(knx_tunnel_connection* conn, const ip4addr* gateway) {
 void knx_tunnel_disconnect(knx_tunnel_connection* conn, bool wait_for_worker) {
 	if (conn->established) {
 		// Queue a disconnect request
-		knx_packet req = {
-			KNX_DISCONNECT_REQUEST,
-			{
-				.dc_req = {
-					conn->channel,
-					0,
-					conn->host_info
-				}
-			}
-		};
-		knx_pkgqueue_enqueue(&conn->outgoing, &req);
+		knx_disconnect_request req = {conn->channel, 0, conn->host_info};
+		knx_outqueue_push(&conn->outgoing, KNX_DISCONNECT_REQUEST, &req);
 	} else {
 		// Shut down the worker thread
 		conn->do_work = false;

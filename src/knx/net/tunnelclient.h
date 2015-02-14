@@ -3,6 +3,7 @@
 
 #include "../knx.h"
 #include "../data/pkgqueue.h"
+#include "../data/outqueue.h"
 #include "../../net/dgramsock.h"
 
 #include <pthread.h>
@@ -18,7 +19,8 @@ typedef struct {
 
 	pthread_t worker_thread;
 	volatile bool do_work;
-	knx_pkgqueue incoming, outgoing;
+	knx_pkgqueue incoming;
+	knx_outqueue outgoing;
 
 	bool established;
 	uint8_t channel;
