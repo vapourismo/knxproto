@@ -58,6 +58,8 @@ void knx_tunnel_worker(knx_tunnel_connection* conn) {
 				break;
 
 			knx_packet pkg_in;
+
+			// FIXME: Do not allow every endpoint
 			ssize_t r = dgramsock_recv(conn->sock, mb.buffer, mb.max, NULL, 0);
 
 			if (r > 0 && knx_parse(mb.buffer, r, &pkg_in)) {
