@@ -77,4 +77,16 @@ inline bool msgbuilder_append_single(msgbuilder* mb, uint8_t val) {
 	return true;
 }
 
+/**
+ * Retrieve the underlying buffer and reset the message builder.
+ */
+inline uint8_t* msgbuilder_move(msgbuilder* mb) {
+	uint8_t* buffer = mb->buffer;
+
+	mb->buffer = NULL;
+	mb->used = mb->max = 0;
+
+	return buffer;
+}
+
 #endif
