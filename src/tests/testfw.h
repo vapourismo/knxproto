@@ -1,5 +1,5 @@
-#ifndef HPKNX_TESTS_TESTFW_H
-#define HPKNX_TESTS_TESTFW_H
+#ifndef KNXCLIENT_TESTS_TESTFW_H
+#define KNXCLIENT_TESTS_TESTFW_H
 
 #include <stdio.h>
 #include <stdbool.h>

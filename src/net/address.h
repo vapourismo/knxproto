@@ -1,5 +1,5 @@
-#ifndef HPKNXD_NET_ADDRESS_H
-#define HPKNXD_NET_ADDRESS_H
+#ifndef KNXCLIENT_NET_ADDRESS_H
+#define KNXCLIENT_NET_ADDRESS_H
 
 #include <netinet/in.h>
 #include <arpa/inet.h>

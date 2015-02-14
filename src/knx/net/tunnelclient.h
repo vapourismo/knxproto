@@ -1,5 +1,5 @@
-#ifndef HPKNXD_KNX_NET_TUNNELCLIENT_H
-#define HPKNXD_KNX_NET_TUNNELCLIENT_H
+#ifndef KNXCLIENT_KNX_NET_TUNNELCLIENT_H
+#define KNXCLIENT_KNX_NET_TUNNELCLIENT_H
 
 #include "../knx.h"
 #include "../data/pkgqueue.h"

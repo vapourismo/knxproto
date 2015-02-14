@@ -1,5 +1,5 @@
-#ifndef HPKNXD_KNX_CONNREQ_H
-#define HPKNXD_KNX_CONNREQ_H
+#ifndef KNXCLIENT_KNX_CONNREQ_H
+#define KNXCLIENT_KNX_CONNREQ_H
 
 #include "hostinfo.h"
 

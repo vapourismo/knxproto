@@ -1,5 +1,5 @@
-#ifndef HPKNXD_KNX_TUNNELREQ_H
-#define HPKNXD_KNX_TUNNELREQ_H
+#ifndef KNXCLIENT_KNX_TUNNELREQ_H
+#define KNXCLIENT_KNX_TUNNELREQ_H
 
 #include "../msgbuilder.h"
 

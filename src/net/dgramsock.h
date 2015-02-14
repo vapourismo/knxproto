@@ -1,5 +1,5 @@
-#ifndef HPKNXD_NET_DGRAMSOCK
-#define HPKNXD_NET_DGRAMSOCK
+#ifndef KNXCLIENT_NET_DGRAMSOCK
+#define KNXCLIENT_NET_DGRAMSOCK
 
 #include "address.h"
 

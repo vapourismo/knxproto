@@ -1,5 +1,5 @@
-#ifndef HPKNXD_KNX_DCRES_H
-#define HPKNXD_KNX_DCRES_H
+#ifndef KNXCLIENT_KNX_DCRES_H
+#define KNXCLIENT_KNX_DCRES_H
 
 #include "../msgbuilder.h"
 

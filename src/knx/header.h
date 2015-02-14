@@ -1,5 +1,5 @@
-#ifndef HPKNXD_KNX_HEADER_H
-#define HPKNXD_KNX_HEADER_H
+#ifndef KNXCLIENT_KNX_HEADER_H
+#define KNXCLIENT_KNX_HEADER_H
 
 #include "../msgbuilder.h"
 

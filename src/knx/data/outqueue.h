@@ -1,5 +1,5 @@
-#ifndef HPKNXD_KNX_DATA_OUTQUEUE_H
-#define HPKNXD_KNX_DATA_OUTQUEUE_H
+#ifndef KNXCLIENT_KNX_DATA_OUTQUEUE_H
+#define KNXCLIENT_KNX_DATA_OUTQUEUE_H
 
 #include "../knx.h"
 #include "../../msgbuilder.h"

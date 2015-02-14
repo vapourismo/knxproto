@@ -1,5 +1,5 @@
-#ifndef HPKNXD_LOG_H
-#define HPKNXD_LOG_H
+#ifndef KNXCLIENT_LOG_H
+#define KNXCLIENT_LOG_H
 
 #include <stdio.h>
 #include <stddef.h>

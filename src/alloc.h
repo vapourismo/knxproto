@@ -1,5 +1,5 @@
-#ifndef HPKNXD_ALLOC_H
-#define HPKNXD_ALLOC_H
+#ifndef KNXCLIENT_ALLOC_H
+#define KNXCLIENT_ALLOC_H
 
 #include <malloc.h>
 

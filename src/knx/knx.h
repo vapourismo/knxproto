@@ -1,5 +1,5 @@
-#ifndef HPKNXD_KNX_KNX_H
-#define HPKNXD_KNX_KNX_H
+#ifndef KNXCLIENT_KNX_KNX_H
+#define KNXCLIENT_KNX_KNX_H
 
 #include "header.h"
 #include "connreq.h"

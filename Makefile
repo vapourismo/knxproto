@@ -9,7 +9,7 @@ SRCDIR          = src
 DESTDIR         ?= /usr/local
 
 # Configuration
-SONAME          = libhpknxd.so.0
+SONAME          = libknxclient.so.0
 OUTPUT          = $(BUILDDIR)/$(SONAME)
 
 # Source Artifacts
