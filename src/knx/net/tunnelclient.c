@@ -201,27 +201,26 @@ bool knx_tunnel_connect(knx_tunnel_connection* conn, const ip4addr* gateway) {
 }
 
 void knx_tunnel_disconnect(knx_tunnel_connection* conn, bool wait_for_worker) {
-	// Queue a disconnect request
-	knx_packet req = {
-		KNX_DISCONNECT_REQUEST,
-		{
-			.dc_req = {
-				conn->channel,
-				0,
-				conn->host_info
+	if (conn->established) {
+		// Queue a disconnect request
+		knx_packet req = {
+			KNX_DISCONNECT_REQUEST,
+			{
+				.dc_req = {
+					conn->channel,
+					0,
+					conn->host_info
+				}
 			}
-		}
-	};
-	knx_pkgqueue_enqueue(&conn->outgoing, &req);
-
-	// Make the worker stop.
-	if (!conn->do_work)
-		return;
-
-	if (wait_for_worker) {
-		pthread_join(conn->worker_thread, NULL);
+		};
+		knx_pkgqueue_enqueue(&conn->outgoing, &req);
 	} else {
+		// Shut down the worker thread
 		conn->do_work = false;
-		pthread_detach(conn->worker_thread);
 	}
+
+	if (wait_for_worker)
+		pthread_join(conn->worker_thread, NULL);
+	else
+		pthread_detach(conn->worker_thread);
 }
