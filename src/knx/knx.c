@@ -87,7 +87,9 @@ bool knx_parse(const uint8_t* message, size_t length,
 	}
 }
 
-bool knx_append(msgbuilder* mb, const knx_packet* packet) {
+bool knx_generate(msgbuilder* mb, const knx_packet* packet) {
+	mb->used = 0;
+
 	switch (packet->service) {
 		case KNX_CONNECTION_REQUEST:
 			return knx_append_connection_request(mb, &packet->payload.conn_req);
