@@ -1,10 +1,7 @@
-// #include "tests/testfw.h"
+#include "log.h"
 #include "knx/net/tunnelclient.h"
 
 #include <signal.h>
-
-// externtest(msgbuilder)
-// externtest(knxnetip)
 
 static volatile bool running = true;
 
@@ -15,8 +12,7 @@ static void sighandler(int sig) {
 }
 
 int main(void) {
-	// runtest(msgbuilder);
-	// runtest(knxnetip);
+	log_setup(NULL, LOG_DEBUG);
 
 	signal(SIGINT, &sighandler);
 
@@ -25,16 +21,16 @@ int main(void) {
 
 	knx_tunnel_connection conn;
 
-	puts("main: Connecting ...");
+	log_debug("Connecting ...");
 	if (!knx_tunnel_connect(&conn, &gateway)) {
 		puts("main: Connection failed");
 		return false;
 	}
 
 	// while (running) sleep(1);
-	sleep(30);
+	sleep(35);
 
-	puts("main: Disconnecting...");
+	log_debug("Disconnecting ...");
 	knx_tunnel_disconnect(&conn, true);
 
 	return 0;
