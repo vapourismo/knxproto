@@ -36,7 +36,7 @@ bool dgramsock_ready(dgramsock sock, time_t timeout_sec, time_t timeout_usec) {
 ssize_t dgramsock_recv(dgramsock sock, void* buffer, size_t buffer_size,
                        const ip4addr* endpoints, size_t num_endpoints) {
 	ip4addr remote;
-	socklen_t remote_size;
+	socklen_t remote_size = sizeof(remote);
 
 	ssize_t rv = recvfrom(sock, buffer, buffer_size, 0, (struct sockaddr*) &remote, &remote_size);
 
