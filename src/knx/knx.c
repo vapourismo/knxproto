@@ -33,32 +33,32 @@ bool knx_parse(const uint8_t* message, size_t length,
 		case KNX_CONNECTION_REQUEST:
 			packet->service = KNX_CONNECTION_REQUEST;
 			return knx_parse_connection_request(message + 6, claimed_len - 6,
-			                                         &packet->payload.conn_req);
+			                                    &packet->payload.conn_req);
 
 		case KNX_CONNECTION_RESPONSE:
 			packet->service = KNX_CONNECTION_RESPONSE;
 			return knx_parse_connection_response(message + 6, claimed_len - 6,
-			                                          &packet->payload.conn_res);
+			                                     &packet->payload.conn_res);
 
 		case KNX_CONNECTIONSTATE_REQUEST:
 			packet->service = KNX_CONNECTIONSTATE_REQUEST;
 			return knx_parse_connection_state_request(message + 6, claimed_len - 6,
-			                                               &packet->payload.conn_state_req);
+			                                          &packet->payload.conn_state_req);
 
 		case KNX_CONNECTIONSTATE_RESPONSE:
 			packet->service = KNX_CONNECTIONSTATE_RESPONSE;
 			return knx_parse_connection_state_response(message + 6, claimed_len - 6,
-			                                                &packet->payload.conn_state_res);
+			                                           &packet->payload.conn_state_res);
 
 		case KNX_DISCONNECT_REQUEST:
 			packet->service = KNX_DISCONNECT_REQUEST;
 			return knx_parse_disconnect_request(message + 6, claimed_len - 6,
-			                                         &packet->payload.dc_req);
+			                                    &packet->payload.dc_req);
 
 		case KNX_DISCONNECT_RESPONSE:
 			packet->service = KNX_DISCONNECT_RESPONSE;
 			return knx_parse_disconnect_response(message + 6, claimed_len - 6,
-			                                          &packet->payload.dc_res);
+			                                     &packet->payload.dc_res);
 
 		case KNX_DEVICE_CONFIGURATION_REQUEST:
 			packet->service = KNX_DEVICE_CONFIGURATION_REQUEST;
@@ -71,12 +71,12 @@ bool knx_parse(const uint8_t* message, size_t length,
 		case KNX_TUNNEL_REQUEST:
 			packet->service = KNX_TUNNEL_REQUEST;
 			return knx_parse_tunnel_request(message + 6, claimed_len - 6,
-			                                     &packet->payload.tunnel_req);
+			                                &packet->payload.tunnel_req);
 
 		case KNX_TUNNEL_RESPONSE:
 			packet->service = KNX_TUNNEL_RESPONSE;
 			return knx_parse_tunnel_response(message + 6, claimed_len - 6,
-			                                      &packet->payload.tunnel_res);
+			                                 &packet->payload.tunnel_res);
 
 		case KNX_ROUTING_INDICATION:
 			packet->service = KNX_ROUTING_INDICATION;
