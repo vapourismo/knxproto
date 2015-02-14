@@ -151,12 +151,13 @@ void knx_tunnel_worker(knx_tunnel_connection* conn) {
 			dgramsock_send(conn->sock, mb.buffer, mb.used, &conn->gateway);
 	}
 
-	// Free buffer
+	// Free buffers and queues
 	msgbuilder_destroy(&mb);
+	knx_pkgqueue_destroy(&conn->incoming);
+	knx_pkgqueue_destroy(&conn->outgoing);
 
 	// The worker has to terminate the connection
 	dgramsock_close(conn->sock);
-	conn->established = false;
 }
 
 extern void* knx_tunnel_worker_thread(void* conn) {
@@ -216,12 +217,13 @@ void knx_tunnel_disconnect(knx_tunnel_connection* conn, bool wait_for_worker) {
 	knx_pkgqueue_enqueue(&conn->outgoing, &req);
 
 	// Make the worker stop.
-	if (conn->do_work) {
-		if (wait_for_worker)
-			pthread_join(conn->worker_thread, NULL);
-		else {
-			conn->do_work = false;
-			pthread_detach(conn->worker_thread);
-		}
+	if (!conn->do_work)
+		return;
+
+	if (wait_for_worker) {
+		pthread_join(conn->worker_thread, NULL);
+	} else {
+		conn->do_work = false;
+		pthread_detach(conn->worker_thread);
 	}
 }
