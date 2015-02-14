@@ -87,33 +87,33 @@ bool knx_parse(const uint8_t* message, size_t length,
 	}
 }
 
-bool knx_generate(msgbuilder* mb, const knx_packet* packet) {
+bool knx_generate(msgbuilder* mb, knx_service service, const void* payload) {
 	mb->used = 0;
 
-	switch (packet->service) {
+	switch (service) {
 		case KNX_CONNECTION_REQUEST:
-			return knx_append_connection_request(mb, &packet->payload.conn_req);
+			return knx_append_connection_request(mb, payload);
 
 		case KNX_CONNECTION_RESPONSE:
-			return knx_append_connection_response(mb, &packet->payload.conn_res);
+			return knx_append_connection_response(mb, payload);
 
 		case KNX_CONNECTIONSTATE_REQUEST:
-			return knx_append_connection_state_request(mb, &packet->payload.conn_state_req);
+			return knx_append_connection_state_request(mb, payload);
 
 		case KNX_CONNECTIONSTATE_RESPONSE:
-			return knx_append_connection_state_response(mb, &packet->payload.conn_state_res);
+			return knx_append_connection_state_response(mb, payload);
 
 		case KNX_DISCONNECT_REQUEST:
-			return knx_append_disconnect_request(mb, &packet->payload.dc_req);
+			return knx_append_disconnect_request(mb, payload);
 
 		case KNX_DISCONNECT_RESPONSE:
-			return knx_append_disconnect_response(mb, &packet->payload.dc_res);
+			return knx_append_disconnect_response(mb, payload);
 
 		case KNX_TUNNEL_REQUEST:
-			return knx_append_tunnel_request(mb, &packet->payload.tunnel_req);
+			return knx_append_tunnel_request(mb, payload);
 
 		case KNX_TUNNEL_RESPONSE:
-			return knx_append_tunnel_response(mb, &packet->payload.tunnel_res);
+			return knx_append_tunnel_response(mb, payload);
 
 		default:
 			return false;

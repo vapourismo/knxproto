@@ -41,8 +41,8 @@ bool knx_parse(const uint8_t* msg, size_t length,
                knx_packet* packet);
 
 /**
- *
+ * Generate a message.
  */
-bool knx_generate(msgbuilder* mb, const knx_packet* packet);
+bool knx_generate(msgbuilder* mb, knx_service service, const void* payload);
 
 #endif
