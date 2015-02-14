@@ -21,12 +21,12 @@ typedef struct {
  * Generate the message for a tunnel request.
  */
 bool knx_append_tunnel_request(msgbuilder* mb,
-                                    const knx_tunnel_request* req);
+                               const knx_tunnel_request* req);
 
 /**
  * Parse a message (excluding header) which contains a tunnel request.
  */
 bool knx_parse_tunnel_request(const uint8_t* message, size_t length,
-                                   knx_tunnel_request* req);
+                              knx_tunnel_request* req);
 
 #endif

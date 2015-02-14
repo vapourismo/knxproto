@@ -8,7 +8,7 @@
 //   Octet 2-9: Host info
 
 bool knx_append_connection_state_request(msgbuilder* mb,
-                                              const knx_connection_state_request* req) {
+                                         const knx_connection_state_request* req) {
 	return
 		knx_append_header(mb, KNX_CONNECTIONSTATE_REQUEST, 10) &&
 		msgbuilder_append(mb, anona(const uint8_t, req->channel, req->status), 2) &&
@@ -16,7 +16,7 @@ bool knx_append_connection_state_request(msgbuilder* mb,
 }
 
 bool knx_parse_connection_state_request(const uint8_t* message, size_t length,
-                                             knx_connection_state_request* req) {
+                                        knx_connection_state_request* req) {
 	if (length < 10)
 		return false;
 

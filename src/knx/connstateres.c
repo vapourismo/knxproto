@@ -6,14 +6,14 @@
 //   Octet 1: Status
 
 bool knx_append_connection_state_response(msgbuilder* mb,
-                                               const knx_connection_state_response* res) {
+                                          const knx_connection_state_response* res) {
 	return
 		knx_append_header(mb, KNX_CONNECTIONSTATE_RESPONSE, 2) &&
 		msgbuilder_append(mb, anona(const uint8_t, res->channel, res->status), 2);
 }
 
 bool knx_parse_connection_state_response(const uint8_t* message, size_t length,
-                                              knx_connection_state_response* res) {
+                                         knx_connection_state_response* res) {
 	if (length < 2)
 		return false;
 

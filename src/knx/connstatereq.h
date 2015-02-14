@@ -22,12 +22,12 @@ typedef struct {
  * Generate the message for a connection state request.
  */
 bool knx_append_connection_state_request(msgbuilder* mb,
-                                              const knx_connection_state_request* req);
+                                         const knx_connection_state_request* req);
 
 /**
  * Parse a message (excluding header) which contains a connection state request.
  */
 bool knx_parse_connection_state_request(const uint8_t* message, size_t length,
-                                             knx_connection_state_request* req);
+                                        knx_connection_state_request* req);
 
 #endif

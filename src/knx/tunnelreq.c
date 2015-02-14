@@ -10,7 +10,7 @@
 //   Octet 4-n: Payload
 
 bool knx_append_tunnel_request(msgbuilder* mb,
-                                    const knx_tunnel_request* req) {
+                               const knx_tunnel_request* req) {
 	// Prevent integer overflow
 	// Why 10? To prevent cases where `knx_append_header`
 	// would double-check (req->size + 4 > UINT16_MAX - 6)
@@ -24,7 +24,7 @@ bool knx_append_tunnel_request(msgbuilder* mb,
 }
 
 bool knx_parse_tunnel_request(const uint8_t* message, size_t length,
-                                   knx_tunnel_request* req) {
+                              knx_tunnel_request* req) {
 	if (length < 4 || message[0] != 4)
 		return false;
 

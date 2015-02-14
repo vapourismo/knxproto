@@ -22,12 +22,12 @@ typedef struct {
  * Generate the message for a connection response.
  */
 bool knx_append_connection_response(msgbuilder* mb,
-                                         const knx_connection_response* res);
+                                    const knx_connection_response* res);
 
 /**
  * Parse a message (excluding header) which contains a connection response.
  */
 bool knx_parse_connection_response(const uint8_t* message, size_t length,
-                                        knx_connection_response* res);
+                                   knx_connection_response* res);
 
 #endif

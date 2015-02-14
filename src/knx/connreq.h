@@ -37,12 +37,12 @@ typedef struct {
  * Generate the message for a connection request.
  */
 bool knx_append_connection_request(msgbuilder* mb,
-                                        const knx_connection_request* conn_req);
+                                   const knx_connection_request* conn_req);
 
 /**
  * Parse a message (excluding header) which contains a connection request.
  */
 bool knx_parse_connection_request(const uint8_t* message, size_t length,
-                                       knx_connection_request* req);
+                                  knx_connection_request* req);
 
 #endif

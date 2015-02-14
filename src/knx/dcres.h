@@ -19,12 +19,12 @@ typedef struct {
  * Generate the message for a disconnect response.
  */
 bool knx_append_disconnect_response(msgbuilder* mb,
-                                         const knx_disconnect_response* res);
+                                    const knx_disconnect_response* res);
 
 /**
  * Parse a message (excluding header) which contains a disconnect response.
  */
 bool knx_parse_disconnect_response(const uint8_t* message, size_t length,
-                                        knx_disconnect_response* res);
+                                   knx_disconnect_response* res);
 
 #endif

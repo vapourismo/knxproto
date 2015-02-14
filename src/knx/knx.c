@@ -5,7 +5,7 @@
 #include <string.h>
 
 bool knx_parse(const uint8_t* message, size_t length,
-                    knx_packet* packet) {
+               knx_packet* packet) {
 	if (length < 6 || message[0] != 6 || message[1] != 16)
 		return false;
 

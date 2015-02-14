@@ -15,7 +15,7 @@
 //   Octet 3: Reserved (should be 0)
 
 bool knx_append_connection_request(msgbuilder* mb,
-                                        const knx_connection_request* conn_req) {
+                                   const knx_connection_request* conn_req) {
 	return
 		knx_append_header(mb, KNX_CONNECTION_REQUEST, 20) &&
 		knx_append_host_info(mb, &conn_req->control_host) &&
@@ -24,7 +24,7 @@ bool knx_append_connection_request(msgbuilder* mb,
 }
 
 bool knx_parse_connection_request(const uint8_t* message, size_t length,
-                                       knx_connection_request* req) {
+                                  knx_connection_request* req) {
 	if (length < 20 || message[16] != 4)
 		return false;
 

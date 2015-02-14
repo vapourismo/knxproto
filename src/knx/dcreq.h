@@ -22,12 +22,12 @@ typedef struct {
  * Generate the message for a disconnect request.
  */
 bool knx_append_disconnect_request(msgbuilder* mb,
-                                        const knx_disconnect_request* req);
+                                   const knx_disconnect_request* req);
 
 /**
  * Parse a message (excluding header) which contains a disconnect request.
  */
 bool knx_parse_disconnect_request(const uint8_t* message, size_t length,
-                                       knx_disconnect_request* req);
+                                  knx_disconnect_request* req);
 
 #endif

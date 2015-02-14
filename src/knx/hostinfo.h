@@ -25,6 +25,11 @@ typedef struct {
 } knx_host_info;
 
 /**
+ *
+ */
+#define KNX_HOST_INFO_NAT(prot) {prot, 0, 0}
+
+/**
  * Append host information.
  */
 bool knx_append_host_info(msgbuilder* mb, const knx_host_info* host);
