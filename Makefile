@@ -4,31 +4,29 @@ MKDIR           = mkdir -p
 EXEC            = exec
 
 # Directories
-DISTPATH        = dist
-SRCPATH         = src
+BUILDDIR        = dist
+SRCDIR          = src
+DESTDIR         ?= /usr/local
+
+# Configuration
+SONAME          = libhpknxd.so.0
+OUTPUT          = $(BUILDDIR)/$(SONAME)
 
 # Source Artifacts
-SRCFILES        = $(shell find $(SRCPATH) -iname "*.c")
-SRCOBJS         = $(SRCFILES:$(SRCPATH)/%.c=$(DISTPATH)/%.o)
-SRCDEPS         = $(SRCFILES:$(SRCPATH)/%.c=$(DISTPATH)/%.d)
+SRCFILES        = $(shell find $(SRCDIR) -iname "*.c")
+SRCOBJS         = $(SRCFILES:$(SRCDIR)/%.c=$(BUILDDIR)/%.o)
+SRCDEPS         = $(SRCFILES:$(SRCDIR)/%.c=$(BUILDDIR)/%.d)
 
 # Compiler
 CC              ?= clang
-CFLAGS          = -std=c99 -fmessage-length=0 -Wall -Wextra -pedantic -O2 -g -pthread -DDEBUG -D_POSIX_SOURCE
-LDFLAGS         = -flto -pthread
-
-# Executable
-EXENAME         = hpknxd
-OUTPUT          = $(DISTPATH)/$(EXENAME)
+CFLAGS          += -std=c99 -fmessage-length=0 -Wall -Wextra -pedantic -O2 -fPIC -pthread -DDEBUG -D_POSIX_SOURCE
+LDFLAGS         += -flto -pthread -shared
 
 # Default Targets
-all: $(OUTPUT)
+all test: $(OUTPUT)
 
 clean:
-	$(RM) $(SRCDEPS) $(SRCOBJS)
-
-test: $(OUTPUT)
-	$(EXEC) $(OUTPUT)
+	$(RM) $(SRCDEPS) $(SRCOBJS) $(OUTPUT)
 
 # File Targets
 -include $(SRCDEPS)
@@ -37,7 +35,7 @@ $(OUTPUT): $(SRCOBJS)
 	@$(MKDIR) $(dir $@)
 	$(CC) $(LDFLAGS) -o$@ $(SRCOBJS)
 
-$(DISTPATH)/%.o: $(SRCPATH)/%.c
+$(BUILDDIR)/%.o: $(SRCDIR)/%.c
 	@$(MKDIR) $(dir $@)
 	$(CC) -c $(CFLAGS) -MMD -MF$(@:%.o=%.d) -MT$@ -o$@ $<
 
