@@ -1,14 +1,4 @@
-#ifndef _POSIX_SOURCE
-	#define _POSIX_SOURCE
-#endif
-
-#ifndef DEBUG
-	#define DEBUG
-	#include "log.h"
-	#undef DEBUG
-#else
-	#include "log.h"
-#endif
+#include "log.h"
 
 #include <time.h>
 #include <stdlib.h>
