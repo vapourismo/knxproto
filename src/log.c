@@ -31,18 +31,22 @@ void log_commit_raw(log_level level, const char* file, size_t line,
 	flockfile(log_out);
 
 	// Generate tag
-	const char* tag;
+	char tag;
 	switch (level) {
 		case LOG_INFO:
-			tag = "I";
+			tag = 'I';
 			break;
 
 		case LOG_WARN:
-			tag = "W";
+			tag = 'W';
+			break;
+
+		case LOG_ERROR:
+			tag = 'E';
 			break;
 
 		default:
-			tag = "E";
+			tag = 'D';
 			break;
 	}
 
@@ -51,7 +55,7 @@ void log_commit_raw(log_level level, const char* file, size_t line,
 	char timestamp[100];
 	strftime(timestamp, 100, "%c", localtime(&tm));
 
-	fprintf(log_out, "%s %s [%s:%lu]: ", tag, timestamp, file, line);
+	fprintf(log_out, "%c %s [%s:%lu]: ", tag, timestamp, file, line);
 
 	// Print log message
 	va_list args;
