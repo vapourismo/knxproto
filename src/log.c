@@ -2,6 +2,7 @@
 
 #include <time.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 static FILE* log_out = NULL;
 static log_level log_lvl = LOG_WARN;
