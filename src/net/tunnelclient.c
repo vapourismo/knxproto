@@ -189,13 +189,17 @@ bool knx_tunnel_connect(knx_tunnel_connection* conn, const ip4addr* gateway) {
 	pthread_cond_init(&conn->state_signal, NULL);
 
 	// Setup UDP socket
-	if ((conn->sock = dgramsock_create(NULL, false)) < 0)
+	if ((conn->sock = dgramsock_create(NULL, false)) < 0) {
+		log_error("Failed to create socket");
 		return false;
+	}
 
 	// Initialize queues
 	knx_pkgqueue_init(&conn->incoming);
 
-	if (knx_outqueue_init(&conn->outgoing)) {
+	if (!knx_outqueue_init(&conn->outgoing)) {
+		log_error("Failed to initialize outgoing queue");
+
 		knx_pkgqueue_destroy(&conn->incoming);
 		dgramsock_close(conn->sock);
 
@@ -215,6 +219,8 @@ bool knx_tunnel_connect(knx_tunnel_connection* conn, const ip4addr* gateway) {
 
 	// Start the worker thread
 	if (pthread_create(&conn->worker_thread, NULL, &knx_tunnel_worker_thread, conn) != 0) {
+		log_error("Failed to create worker thread");
+
 		conn->state = KNX_TUNNEL_DISCONNECTED;
 
 		dgramsock_close(conn->sock);
