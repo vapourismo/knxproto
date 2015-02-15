@@ -26,8 +26,8 @@
 #include <sys/socket.h>
 #include <sys/select.h>
 
-dgramsock dgramsock_create(const ip4addr* local, bool reuse) {
-	dgramsock sock;
+int dgramsock_create(const ip4addr* local, bool reuse) {
+	int sock;
 
 	if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
 		return -1;
@@ -42,7 +42,7 @@ dgramsock dgramsock_create(const ip4addr* local, bool reuse) {
 	return sock;
 }
 
-bool dgramsock_ready(dgramsock sock, time_t timeout_sec, time_t timeout_usec) {
+bool dgramsock_ready(int sock, time_t timeout_sec, time_t timeout_usec) {
 	fd_set fds;
 	FD_ZERO(&fds);
 	FD_SET(sock, &fds);
@@ -54,7 +54,7 @@ bool dgramsock_ready(dgramsock sock, time_t timeout_sec, time_t timeout_usec) {
 	return select(sock + 1, &fds, NULL, NULL, &tm) > 0;
 }
 
-ssize_t dgramsock_recv(dgramsock sock, void* buffer, size_t buffer_size,
+ssize_t dgramsock_recv(int sock, void* buffer, size_t buffer_size,
                        const ip4addr* endpoints, size_t num_endpoints) {
 	ip4addr remote;
 	socklen_t remote_size = sizeof(remote);

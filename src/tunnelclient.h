@@ -25,7 +25,7 @@
 #include "knx.h"
 #include "pkgqueue.h"
 #include "outqueue.h"
-#include "dgramsock.h"
+#include "address.h"
 
 #include <pthread.h>
 #include <stdbool.h>
@@ -35,7 +35,7 @@
  * Tunnel Connection
  */
 typedef struct {
-	dgramsock sock;
+	int sock;
 	ip4addr gateway;
 
 	pthread_t worker_thread;

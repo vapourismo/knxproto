@@ -20,6 +20,7 @@
  */
 
 #include "tunnelclient.h"
+#include "dgramsock.h"
 
 void knx_tunnel_worker(knx_tunnel_connection* conn) {
 	while (conn->do_work) {
