@@ -85,7 +85,7 @@ void log_commit_raw(log_level level, const char* file, size_t line,
 	vfprintf(log_out, format, args);
 	va_end(args);
 
-	fputc('\n', log_out);
+	// fputc('\n', log_out);
 	fflush(log_out);
 	funlockfile(log_out);
 }
