@@ -68,8 +68,8 @@ typedef struct {
 bool knx_tunnel_init(knx_tunnel_connection* conn);
 
 /**
- * Connect to a gateway. This function returns `true` if the initialization
- * was successful.
+ * Connect to a gateway. This function returns `true` if a connection request
+ * has been sent.
  */
 bool knx_tunnel_connect(knx_tunnel_connection* conn, const ip4addr* gateway);
 
