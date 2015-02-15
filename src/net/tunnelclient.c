@@ -242,7 +242,7 @@ void knx_tunnel_disconnect(knx_tunnel_connection* conn, bool wait_for_worker) {
 
 	pthread_mutex_unlock(&conn->state_lock);
 
-	if (!wait_for_worker) {
+	if (wait_for_worker) {
 		pthread_join(conn->worker_thread, NULL);
 		pthread_mutex_destroy(&conn->state_lock);
 		pthread_cond_destroy(&conn->state_signal);
