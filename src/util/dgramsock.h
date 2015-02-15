@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_NET_DGRAMSOCK
-#define KNXCLIENT_NET_DGRAMSOCK
+#ifndef KNXCLIENT_UTIL_DGRAMSOCK
+#define KNXCLIENT_UTIL_DGRAMSOCK
 
 #include "address.h"
 

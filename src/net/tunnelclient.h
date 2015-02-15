@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_KNX_NET_TUNNELCLIENT_H
-#define KNXCLIENT_KNX_NET_TUNNELCLIENT_H
+#ifndef KNXCLIENT_NET_TUNNELCLIENT_H
+#define KNXCLIENT_NET_TUNNELCLIENT_H
 
 #include "../proto/knxnetip.h"
 

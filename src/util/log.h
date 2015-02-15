@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_LOG_H
-#define KNXCLIENT_LOG_H
+#ifndef KNXCLIENT_UTIL_LOG_H
+#define KNXCLIENT_UTIL_LOG_H
 
 #include <stdio.h>
 #include <stddef.h>

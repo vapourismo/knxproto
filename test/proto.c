@@ -20,8 +20,9 @@
  */
 
 #include "testfw.h"
-#include "../src/knx.h"
-#include "../src/msgbuilder.h"
+
+#include "../src/proto/knxnetip.h"
+#include "../src/util/msgbuilder.h"
 
 #include <stdbool.h>
 #include <string.h>

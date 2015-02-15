@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_MESSAGEBUILDER_H
-#define KNXCLIENT_MESSAGEBUILDER_H
+#ifndef KNXCLIENT_UTIL_MESSAGEBUILDER_H
+#define KNXCLIENT_UTIL_MESSAGEBUILDER_H
 
 #include <malloc.h>
 #include <stdint.h>

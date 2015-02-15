@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_KNX_DATA_PKGQUEUE_H
-#define KNXCLIENT_KNX_DATA_PKGQUEUE_H
+#ifndef KNXCLIENT_UTIL_PKGQUEUE_H
+#define KNXCLIENT_UTIL_PKGQUEUE_H
 
 #include "../proto/knxnetip.h"
 

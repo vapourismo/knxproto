@@ -19,12 +19,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_TESTS_TESTFW_H
-#define KNXCLIENT_TESTS_TESTFW_H
+#ifndef KNXCLIENT_TEST_TESTFW_H
+#define KNXCLIENT_TEST_TESTFW_H
+
+#include "../src/util/alloc.h"
 
 #include <stdio.h>
 #include <stdbool.h>
-#include "../src/alloc.h"
 
 typedef enum {
 	TR_ASSERT,

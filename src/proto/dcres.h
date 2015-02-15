@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_KNX_DCRES_H
-#define KNXCLIENT_KNX_DCRES_H
+#ifndef KNXCLIENT_PROTO_DCRES_H
+#define KNXCLIENT_PROTO_DCRES_H
 
 #include "../util/msgbuilder.h"
 

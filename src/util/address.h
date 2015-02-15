@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_NET_ADDRESS_H
-#define KNXCLIENT_NET_ADDRESS_H
+#ifndef KNXCLIENT_UTIL_ADDRESS_H
+#define KNXCLIENT_UTIL_ADDRESS_H
 
 #include <netinet/in.h>
 #include <arpa/inet.h>
