@@ -24,7 +24,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
-#include "../alloc.h"
+#include "../src/alloc.h"
 
 typedef enum {
 	TR_ASSERT,

@@ -20,11 +20,12 @@
  */
 
 #include "testfw.h"
-#include "../knx/knx.h"
-#include "../msgbuilder.h"
+#include "../src/knx.h"
+#include "../src/msgbuilder.h"
 
 #include <stdbool.h>
 #include <string.h>
+
 
 inline static bool host_info_equal(const knx_host_info* a,
                                    const knx_host_info* b) {

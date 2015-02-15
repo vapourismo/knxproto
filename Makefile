@@ -5,13 +5,15 @@ EXEC            = exec
 INSTALL         = install
 
 # Install Directories
+BASENAME        := knxclient
 PREFIX          ?= /usr/local
-INCLUDEDIR      ?= $(PREFIX)/include/knxclient
+INCLUDEDIR      ?= $(PREFIX)/include/$(BASENAME)
 LIBDIR          ?= $(PREFIX)/lib
 
 # Local Directories
 DISTDIR         = dist
 SOURCEDIR       = src
+TESTDIR         = test
 
 # Artifacts
 HEADERFILES     = address.h connreq.h connres.h \
@@ -28,21 +30,31 @@ SOURCEFILES     = connreq.c connres.c connstatereq.c connstateres.c \
                   tunnelreq.c tunnelres.c
 SOURCEOBJS      = $(SOURCEFILES:%.c=$(DISTDIR)/%.o)
 SOURCEDEPS      = $(SOURCEFILES:%.c=$(DISTDIR)/%.d)
-LIBNAME         = libknxclient.so.0
+TESTFILES       = $(wildcard $(TESTDIR)/*.c)
+TESTOBJS        = $(TESTFILES:%.c=%.o)
+TESTDEPS        = $(TESTFILES:%.c=%.d)
+LIBNAME         = lib$(BASENAME).so.0
 OUTPUT          = $(DISTDIR)/$(LIBNAME)
+TESTOUTPUT      = $(DISTDIR)/$(BASENAME)-test
 
 # Compiler
 CC              ?= clang
-CFLAGS          += -std=c99 -O2 -fPIC -pthread \
-                   -fmessage-length=0 -Wall -Wextra -pedantic \
-                   -DDEBUG -D_POSIX_SOURCE
+BASECFLAGS      = -std=c99 -O2 -pthread \
+                  -fmessage-length=0 -Wall -Wextra -pedantic \
+                  -DDEBUG -D_POSIX_SOURCE
+CFLAGS          += $(BASECFLAGS) -fPIC
 LDFLAGS         += -flto -pthread -shared
+TESTCFLAGS      += $(BASECFLAGS)
+TESTLDFLAGS     += -L$(DISTDIR) -l:$(LIBNAME)
 
 # Default Targets
-all test: $(OUTPUT)
+all: $(OUTPUT)
 
 clean:
 	$(RM) $(SOURCEDEPS) $(SOURCEOBJS) $(OUTPUT) $(DISTDIR)
+
+test: $(TESTOUTPUT)
+	LD_LIBRARY_PATH=$(DISTDIR) $(TESTOUTPUT)
 
 install: $(OUTPUT)
 	$(INSTALL) -m755 -d $(INCLUDEDIR) $(LIBDIR)
@@ -51,6 +63,7 @@ install: $(OUTPUT)
 
 # Targets
 -include $(SOURCEDEPS)
+-include $(TESTDEPS)
 
 $(OUTPUT): $(SOURCEOBJS)
 	@$(MKDIR) $(dir $@)
@@ -60,5 +73,12 @@ $(DISTDIR)/%.o: $(SOURCEDIR)/%.c
 	@$(MKDIR) $(dir $@)
 	$(CC) -c $(CFLAGS) -MMD -MF$(@:%.o=%.d) -MT$@ -o$@ $<
 
+$(TESTOUTPUT): $(TESTOBJS) $(OUTPUT)
+	@$(MKDIR) $(dir $@)
+	$(CC) $(TESTLDFLAGS) -o$@ $(TESTOBJS)
+
+$(TESTDIR)/%.o: $(TESTDIR)/%.c
+	@$(MKDIR) $(dir $@)
+	$(CC) -c $(TESTCFLAGS) -MMD -MF$(@:%.o=%.d) -MT$@ -o$@ $<
 # Phony
 .PHONY: all clean test

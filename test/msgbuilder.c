@@ -20,7 +20,7 @@
  */
 
 #include "testfw.h"
-#include "../msgbuilder.h"
+#include "../src/msgbuilder.h"
 
 #include <stdint.h>
 #include <string.h>

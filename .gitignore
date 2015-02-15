@@ -1,2 +1,4 @@
 # Build Files
 dist/
+*.o
+*.d
