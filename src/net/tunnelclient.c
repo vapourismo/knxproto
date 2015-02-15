@@ -52,7 +52,7 @@ void knx_tunnel_process_incoming(knx_tunnel_connection* conn) {
 	knx_packet pkg_in;
 
 	if (r > 0 && knx_parse(buffer, r, &pkg_in)) {
-		log_debug("worker: Received (service = 0x%04X)\n", pkg_in.service);
+		log_debug("Received (service = 0x%04X)\n", pkg_in.service);
 
 		switch (pkg_in.service) {
 			// Connection successfully establish
@@ -64,9 +64,9 @@ void knx_tunnel_process_incoming(knx_tunnel_connection* conn) {
 					conn->channel = pkg_in.payload.conn_res.channel;
 					conn->host_info = pkg_in.payload.conn_res.host;
 
-					log_info("worker: Connected (channel = %i)\n", conn->channel);
+					log_info("Connected (channel = %i)\n", conn->channel);
 				} else {
-					log_error("worker: Connection failed (code = %i)\n",
+					log_error("Connection failed (code = %i)\n",
 					          pkg_in.payload.conn_res.status);
 				}
 
@@ -77,7 +77,7 @@ void knx_tunnel_process_incoming(knx_tunnel_connection* conn) {
 				if (pkg_in.payload.conn_state_res.channel == conn->channel) {
 					conn->established &= (pkg_in.payload.conn_state_res.status == 0);
 
-					log_debug("worker: Heartbeat (channel = %i, status = %i)\n",
+					log_debug("Heartbeat (channel = %i, status = %i)\n",
 					          pkg_in.payload.conn_state_res.channel,
 					          pkg_in.payload.conn_state_res.status);
 				}
@@ -93,7 +93,7 @@ void knx_tunnel_process_incoming(knx_tunnel_connection* conn) {
 				if (!conn->established) {
 					conn->do_work = false;
 
-					log_info("worker: Disconnected (channel = %i, status = %i)\n",
+					log_info("Disconnected (channel = %i, status = %i)\n",
 					         pkg_in.payload.dc_req.channel,
 					         pkg_in.payload.dc_req.status);
 				}
