@@ -20,6 +20,7 @@
  */
 
 #include "msgbuilder.h"
+#include "alloc.h"
 
 #include <string.h>
 #include <stdio.h>

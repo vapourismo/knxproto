@@ -22,8 +22,7 @@
 #ifndef KNXCLIENT_MESSAGEBUILDER_H
 #define KNXCLIENT_MESSAGEBUILDER_H
 
-#include "alloc.h"
-
+#include <malloc.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
