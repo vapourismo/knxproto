@@ -19,9 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "connreq.h"
-#include "connres.h"
-#include "knx.h"
+#include "knxnetip.h"
 
 #include <string.h>
 

@@ -22,7 +22,7 @@
 #ifndef KNXCLIENT_KNX_HOSTINFO_H
 #define KNXCLIENT_KNX_HOSTINFO_H
 
-#include "msgbuilder.h"
+#include "../util/msgbuilder.h"
 
 #include <netinet/in.h>
 #include <stdbool.h>

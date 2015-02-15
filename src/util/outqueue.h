@@ -22,8 +22,9 @@
 #ifndef KNXCLIENT_KNX_DATA_OUTQUEUE_H
 #define KNXCLIENT_KNX_DATA_OUTQUEUE_H
 
-#include "knx.h"
 #include "msgbuilder.h"
+
+#include "../proto/knxnetip.h"
 
 #include <pthread.h>
 

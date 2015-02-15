@@ -20,8 +20,10 @@
  */
 
 #include "tunnelres.h"
-#include "header.h"
-#include "alloc.h"
+
+#include "../proto/header.h"
+
+#include "../util/alloc.h"
 
 // Tunnel Response:
 //   Octet 0: Structure length

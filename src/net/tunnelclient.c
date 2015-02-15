@@ -20,8 +20,9 @@
  */
 
 #include "tunnelclient.h"
-#include "dgramsock.h"
-#include "log.h"
+
+#include "../util/dgramsock.h"
+#include "../util/log.h"
 
 void knx_tunnel_worker(knx_tunnel_connection* conn) {
 	while (conn->do_work) {

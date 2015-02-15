@@ -21,7 +21,8 @@
 
 #include "connreq.h"
 #include "header.h"
-#include "alloc.h"
+
+#include "../util/alloc.h"
 
 // Connection Request:
 //   Octet 0-5:   Header

@@ -21,7 +21,8 @@
 
 #include "tunnelreq.h"
 #include "header.h"
-#include "alloc.h"
+
+#include "../util/alloc.h"
 
 // Tunnel Request:
 //   Octet 0:   Structure length

@@ -21,7 +21,8 @@
 
 #include "connstatereq.h"
 #include "header.h"
-#include "alloc.h"
+
+#include "../util/alloc.h"
 
 // Connection State Request
 //   Octet 0:   Channel

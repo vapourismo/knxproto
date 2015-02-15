@@ -31,7 +31,8 @@
 #include "dcres.h"
 #include "tunnelreq.h"
 #include "tunnelres.h"
-#include "msgbuilder.h"
+
+#include "../util/msgbuilder.h"
 
 #include <stdbool.h>
 #include <stdint.h>

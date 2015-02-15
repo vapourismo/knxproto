@@ -24,7 +24,7 @@
 
 #include "hostinfo.h"
 
-#include "msgbuilder.h"
+#include "../util/msgbuilder.h"
 
 #include <stddef.h>
 #include <stdbool.h>

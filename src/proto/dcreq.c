@@ -21,7 +21,8 @@
 
 #include "dcreq.h"
 #include "header.h"
-#include "alloc.h"
+
+#include "../util/alloc.h"
 
 // Disconnect Request:
 //   Octet 0:   Channel

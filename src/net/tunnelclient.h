@@ -22,10 +22,11 @@
 #ifndef KNXCLIENT_KNX_NET_TUNNELCLIENT_H
 #define KNXCLIENT_KNX_NET_TUNNELCLIENT_H
 
-#include "knx.h"
-#include "pkgqueue.h"
-#include "outqueue.h"
-#include "address.h"
+#include "../proto/knxnetip.h"
+
+#include "../util/pkgqueue.h"
+#include "../util/outqueue.h"
+#include "../util/address.h"
 
 #include <pthread.h>
 #include <stdbool.h>

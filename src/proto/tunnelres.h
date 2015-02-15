@@ -22,7 +22,7 @@
 #ifndef KNXCLIENT_KNX_TUNNELRES_H
 #define KNXCLIENT_KNX_TUNNELRES_H
 
-#include "msgbuilder.h"
+#include "../util/msgbuilder.h"
 
 #include <stdbool.h>
 #include <stddef.h>

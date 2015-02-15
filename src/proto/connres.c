@@ -21,7 +21,8 @@
 
 #include "connres.h"
 #include "header.h"
-#include "alloc.h"
+
+#include "../util/alloc.h"
 
 #include <string.h>
 

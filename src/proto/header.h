@@ -22,7 +22,7 @@
 #ifndef KNXCLIENT_KNX_HEADER_H
 #define KNXCLIENT_KNX_HEADER_H
 
-#include "msgbuilder.h"
+#include "../util/msgbuilder.h"
 
 #include <stdint.h>
 #include <stdbool.h>
