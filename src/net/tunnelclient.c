@@ -91,7 +91,7 @@ void knx_tunnel_process_incoming(knx_tunnel_connection* conn) {
 				// Anything other than 0 means the bad news
 				if (pkg_in.payload.conn_state_res.status != 0) {
 					// TODO: Find out if we need to queue a disconnect request?
-					//
+
 					pthread_mutex_lock(&conn->state_lock);
 					conn->state = KNX_TUNNEL_DISCONNECTED;
 					pthread_cond_signal(&conn->state_signal);
