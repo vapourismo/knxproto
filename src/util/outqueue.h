@@ -29,7 +29,7 @@
 #include <pthread.h>
 
 /**
- *
+ * Outgoing Queue Element
  */
 struct knx_outqueue_elem {
 	knx_service service;
@@ -40,7 +40,7 @@ struct knx_outqueue_elem {
 };
 
 /**
- *
+ * Outgoing Queue
  */
 typedef struct {
 	pthread_mutex_t lock;
@@ -52,27 +52,27 @@ typedef struct {
 } knx_outqueue;
 
 /**
- *
+ * Initialize the queue
  */
 bool knx_outqueue_init(knx_outqueue* queue);
 
 /**
- *
+ * Remove all elements
  */
 void knx_outqueue_clear(knx_outqueue* queue);
 
 /**
- *
+ * Destroy the queue
  */
 void knx_outqueue_destroy(knx_outqueue* queue);
 
 /**
- *
+ * Push an element onto the queue
  */
 bool knx_outqueue_push(knx_outqueue* queue, knx_service service, const void* payload);
 
 /**
- *
+ * Remove an element from the queue
  */
 ssize_t knx_outqueue_pop(knx_outqueue* queue, uint8_t** buffer, knx_service* service);
 
