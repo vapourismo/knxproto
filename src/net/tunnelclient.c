@@ -148,10 +148,11 @@ void knx_tunnel_process_incoming(knx_tunnel_connection* conn) {
 void knx_tunnel_worker(knx_tunnel_connection* conn) {
 	while (conn->state != KNX_TUNNEL_DISCONNECTED) {
 		// Check if we need to send a heartbeat
-		if (conn->established && difftime(time(NULL), conn->last_heartbeat) >= 30) {
-			knx_connection_state_request req = {conn->channel, 0, conn->host_info};
-			if (knx_outqueue_push(&conn->outgoing, KNX_CONNECTIONSTATE_REQUEST, &req))
-				conn->last_heartbeat = time(NULL);
+		if (conn->state == KNX_TUNNEL_CONNECTED &&
+		    difftime(time(NULL), conn->last_heartbeat) >= 30) {
+				knx_connection_state_request req = {conn->channel, 0, conn->host_info};
+				if (knx_outqueue_push(&conn->outgoing, KNX_CONNECTIONSTATE_REQUEST, &req))
+					conn->last_heartbeat = time(NULL);
 		}
 
 		// Send outgoing messages
@@ -179,7 +180,6 @@ extern void* knx_tunnel_worker_thread(void* conn) {
 
 bool knx_tunnel_connect(knx_tunnel_connection* conn, const ip4addr* gateway) {
 	conn->gateway = *gateway;
-	conn->established = false;
 	conn->channel = 0;
 	conn->last_heartbeat = 0;
 	conn->state = KNX_TUNNEL_DISCONNECTED;

@@ -58,7 +58,6 @@ typedef struct {
 	pthread_cond_t state_signal;
 	knx_tunnel_state state;
 
-	bool established;
 	uint8_t channel;
 	knx_host_info host_info;
 	time_t last_heartbeat;
