@@ -230,13 +230,17 @@ bool knx_tunnel_connect(knx_tunnel_connection* conn, const ip4addr* gateway) {
 
 void knx_tunnel_disconnect(knx_tunnel_connection* conn, bool wait_for_worker) {
 	pthread_mutex_lock(&conn->state_lock);
-	if (conn->state != KNX_TUNNEL_DISCONNECTED && conn->state != KNX_TUNNEL_DISCONNECTING) {
+
+	if (conn->state == KNX_TUNNEL_CONNECTED) {
 		// Queue a disconnect request
 		knx_disconnect_request req = {conn->channel, 0, conn->host_info};
 		knx_outqueue_push(&conn->outgoing, KNX_DISCONNECT_REQUEST, &req);
 
 		conn->state = KNX_TUNNEL_DISCONNECTING;
+	} else if (conn->state == KNX_TUNNEL_CONNECTING) {
+		conn->state = KNX_TUNNEL_DISCONNECTED;
 	}
+
 	pthread_mutex_unlock(&conn->state_lock);
 
 	if (!wait_for_worker) {
