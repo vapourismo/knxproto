@@ -12,7 +12,6 @@ LIBDIR          ?= $(PREFIX)/lib
 # Local Directories
 DISTDIR         = dist
 SOURCEDIR       = src
-HEADERDIR       = inc
 
 # Artifacts
 HEADERFILES     = address.h connreq.h connres.h \
@@ -36,7 +35,7 @@ OUTPUT          = $(DISTDIR)/$(LIBNAME)
 CC              ?= clang
 CFLAGS          += -std=c99 -O2 -fPIC -pthread \
                    -fmessage-length=0 -Wall -Wextra -pedantic \
-                   -DDEBUG -D_POSIX_SOURCE -I$(HEADERDIR)
+                   -DDEBUG -D_POSIX_SOURCE
 LDFLAGS         += -flto -pthread -shared
 
 # Default Targets
