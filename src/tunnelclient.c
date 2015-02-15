@@ -21,6 +21,7 @@
 
 #include "tunnelclient.h"
 #include "dgramsock.h"
+#include "log.h"
 
 void knx_tunnel_worker(knx_tunnel_connection* conn) {
 	while (conn->do_work) {
@@ -43,7 +44,7 @@ void knx_tunnel_worker(knx_tunnel_connection* conn) {
 			dgramsock_send(conn->sock, buffer, buffer_size, &conn->gateway);
 			free(buffer);
 
-			printf("worker: Sent (service = 0x%04X)\n", service);
+			log_debug("worker: Sent (service = 0x%04X)\n", service);
 		}
 
 		size_t receive_iter = 0;
@@ -57,7 +58,7 @@ void knx_tunnel_worker(knx_tunnel_connection* conn) {
 
 			knx_packet pkg_in;
 			if (r > 0 && knx_parse(buffer, r, &pkg_in)) {
-				printf("worker: Received (service = 0x%04X)\n", pkg_in.service);
+				log_debug("worker: Received (service = 0x%04X)\n", pkg_in.service);
 
 				switch (pkg_in.service) {
 					// Connection successfully establish
@@ -69,22 +70,24 @@ void knx_tunnel_worker(knx_tunnel_connection* conn) {
 							conn->channel = pkg_in.payload.conn_res.channel;
 							conn->host_info = pkg_in.payload.conn_res.host;
 
-							printf("worker: Connected (channel = %i)\n", conn->channel);
+							log_info("worker: Connected (channel = %i)\n", conn->channel);
 						} else {
-							printf("worker: Connection failed (code = %i)\n",
-							       pkg_in.payload.conn_res.status);
+							log_error("worker: Connection failed (code = %i)\n",
+							          pkg_in.payload.conn_res.status);
 						}
 
 						break;
 
 					// Heartbeat
 					case KNX_CONNECTIONSTATE_RESPONSE:
-						if (pkg_in.payload.conn_state_res.channel == conn->channel)
+						if (pkg_in.payload.conn_state_res.channel == conn->channel) {
 							conn->established &= (pkg_in.payload.conn_state_res.status == 0);
 
-						printf("worker: Heartbeat response (channel = %i, status = %i)\n",
-						       pkg_in.payload.conn_state_res.channel,
-						       pkg_in.payload.conn_state_res.status);
+							log_debug("worker: Heartbeat (channel = %i, status = %i)\n",
+							          pkg_in.payload.conn_state_res.channel,
+							          pkg_in.payload.conn_state_res.status);
+						}
+
 						break;
 
 					// Result of a disconnect request (duh)
@@ -92,13 +95,14 @@ void knx_tunnel_worker(knx_tunnel_connection* conn) {
 						conn->established &= !(pkg_in.payload.dc_res.channel == conn->channel &&
 						                       pkg_in.payload.dc_req.status == 0);
 
-						printf("worker: Disconnect (channel = %i, status = %i)\n",
-						       pkg_in.payload.dc_req.channel,
-						       pkg_in.payload.dc_req.status);
-
 						// Gently shut down this worker thread
-						if (!conn->established)
+						if (!conn->established) {
 							conn->do_work = false;
+
+							log_info("worker: Disconnected (channel = %i, status = %i)\n",
+							         pkg_in.payload.dc_req.channel,
+							         pkg_in.payload.dc_req.status);
+						}
 
 						break;
 
