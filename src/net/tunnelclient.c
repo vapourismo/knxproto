@@ -164,13 +164,6 @@ void knx_tunnel_worker(knx_tunnel_connection* conn) {
 
 	// Clear outgoing queue entirely
 	while (knx_tunnel_process_outgoing(conn));
-
-	// Free buffers and queues
-	knx_pkgqueue_destroy(&conn->incoming);
-	knx_outqueue_destroy(&conn->outgoing);
-
-	// The worker has to terminate the connection
-	dgramsock_close(conn->sock);
 }
 
 extern void* knx_tunnel_worker_thread(void* conn) {
@@ -178,33 +171,45 @@ extern void* knx_tunnel_worker_thread(void* conn) {
 	pthread_exit(NULL);
 }
 
-bool knx_tunnel_connect(knx_tunnel_connection* conn, const ip4addr* gateway) {
-	conn->gateway = *gateway;
-	conn->channel = 0;
-	conn->last_heartbeat = 0;
+bool knx_tunnel_init(knx_tunnel_connection* conn) {
 	conn->state = KNX_TUNNEL_DISCONNECTED;
-
-	// Initialise state protectors
-	pthread_mutex_init(&conn->state_lock, NULL);
-	pthread_cond_init(&conn->state_signal, NULL);
-
-	// Setup UDP socket
-	if ((conn->sock = dgramsock_create(NULL, false)) < 0) {
-		log_error("Failed to create socket");
-		return false;
-	}
-
-	// Initialize queues
 	knx_pkgqueue_init(&conn->incoming);
 
-	if (!knx_outqueue_init(&conn->outgoing)) {
-		log_error("Failed to initialize outgoing queue");
-
-		knx_pkgqueue_destroy(&conn->incoming);
-		dgramsock_close(conn->sock);
-
-		return false;
+	if (pthread_mutex_init(&conn->state_lock, NULL) != 0) {
+		log_error("Failed to create state lock");
+		goto fail_state_lock;
 	}
+
+	if (pthread_cond_init(&conn->state_signal, NULL) != 0) {
+		log_error("Failed to create state signal");
+		goto fail_state_signal;
+	}
+
+	if ((conn->sock = dgramsock_create(NULL, false)) < 0) {
+		log_error("Failed to create socket");
+		goto fail_sock;
+	}
+
+	if (!knx_outqueue_init(&conn->outgoing)) {
+		log_error("Failed to create outgoing queue");
+		goto fail_outgoing;
+	}
+
+	return true;
+
+	fail_outgoing:     dgramsock_close(conn->sock);
+	fail_sock:         pthread_cond_destroy(&conn->state_signal);
+	fail_state_signal: pthread_mutex_destroy(&conn->state_lock);
+	fail_state_lock:   knx_pkgqueue_destroy(&conn->incoming);
+
+	return false;
+}
+
+bool knx_tunnel_connect(knx_tunnel_connection* conn, const ip4addr* gateway) {
+	conn->gateway = *gateway;
+	conn->state = KNX_TUNNEL_CONNECTING;
+	conn->channel = 0;
+	conn->last_heartbeat = 0;
 
 	static const knx_connection_request req = {
 		KNX_CONNECTION_REQUEST_TUNNEL,
@@ -214,8 +219,10 @@ bool knx_tunnel_connect(knx_tunnel_connection* conn, const ip4addr* gateway) {
 	};
 
 	// Queue a connection request
-	conn->state = KNX_TUNNEL_CONNECTING;
-	knx_outqueue_push(&conn->outgoing, KNX_CONNECTION_REQUEST, &req);
+	if (!knx_outqueue_push(&conn->outgoing, KNX_CONNECTION_REQUEST, &req)) {
+		conn->state = KNX_TUNNEL_DISCONNECTED;
+		return false;
+	}
 
 	// Start the worker thread
 	if (pthread_create(&conn->worker_thread, NULL, &knx_tunnel_worker_thread, conn) != 0) {
@@ -233,26 +240,33 @@ bool knx_tunnel_connect(knx_tunnel_connection* conn, const ip4addr* gateway) {
 	return true;
 }
 
-void knx_tunnel_disconnect(knx_tunnel_connection* conn, bool wait_for_worker) {
-	pthread_mutex_lock(&conn->state_lock);
-
+void knx_tunnel_disconnect(knx_tunnel_connection* conn) {
 	if (conn->state == KNX_TUNNEL_CONNECTED) {
 		// Queue a disconnect request
 		knx_disconnect_request req = {conn->channel, 0, conn->host_info};
 		knx_outqueue_push(&conn->outgoing, KNX_DISCONNECT_REQUEST, &req);
-
-		conn->state = KNX_TUNNEL_DISCONNECTING;
-	} else if (conn->state == KNX_TUNNEL_CONNECTING) {
-		conn->state = KNX_TUNNEL_DISCONNECTED;
 	}
 
+	// Set state to signal the worker thread to terminate
+	pthread_mutex_lock(&conn->state_lock);
+	conn->state = KNX_TUNNEL_DISCONNECTED;
 	pthread_mutex_unlock(&conn->state_lock);
 
-	if (wait_for_worker) {
-		pthread_join(conn->worker_thread, NULL);
-		pthread_mutex_destroy(&conn->state_lock);
-		pthread_cond_destroy(&conn->state_signal);
-	} else {
-		pthread_detach(conn->worker_thread);
-	}
+	pthread_join(conn->worker_thread, NULL);
+}
+
+void knx_tunnel_destroy(knx_tunnel_connection* conn) {
+	if (conn->state != KNX_TUNNEL_DISCONNECTED)
+		knx_tunnel_disconnect(conn);
+
+	// Free buffers and queues
+	knx_pkgqueue_destroy(&conn->incoming);
+	knx_outqueue_destroy(&conn->outgoing);
+
+	// Close socket
+	dgramsock_close(conn->sock);
+
+	// Destroy state protectors
+	pthread_mutex_destroy(&conn->state_lock);
+	pthread_cond_destroy(&conn->state_signal);
 }

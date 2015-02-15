@@ -38,7 +38,6 @@
 typedef enum {
 	KNX_TUNNEL_CONNECTING,
 	KNX_TUNNEL_CONNECTED,
-	KNX_TUNNEL_DISCONNECTING,
 	KNX_TUNNEL_DISCONNECTED
 } knx_tunnel_state;
 
@@ -63,8 +62,10 @@ typedef struct {
 	time_t last_heartbeat;
 } knx_tunnel_connection;
 
-// TODO: Disallow `knx_tunnel_connection` to be allocated on the stack.
-// A `knx_tunnel_connection` has to outlive it's worker thread.
+/**
+ * Create a tunnel client.
+ */
+bool knx_tunnel_init(knx_tunnel_connection* conn);
 
 /**
  * Connect to a gateway. This function returns `true` if the initialization
@@ -76,6 +77,11 @@ bool knx_tunnel_connect(knx_tunnel_connection* conn, const ip4addr* gateway);
  * Disconnect from a gateway. If `wait_for_worker` is true, this function will
  * block until a disconnect response has been given by the gateway.
  */
-void knx_tunnel_disconnect(knx_tunnel_connection* conn, bool wait_for_worker);
+void knx_tunnel_disconnect(knx_tunnel_connection* conn);
+
+/**
+ * Destroy a tunnel client.
+ */
+void knx_tunnel_destroy(knx_tunnel_connection* conn);
 
 #endif
