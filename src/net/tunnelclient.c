@@ -56,74 +56,83 @@ void knx_tunnel_process_incoming(knx_tunnel_connection* conn) {
 		switch (pkg_in.service) {
 			// Connection successfully establish
 			case KNX_CONNECTION_RESPONSE:
-				conn->established = (pkg_in.payload.conn_res.status == 0);
+				if (pkg_in.payload.conn_res.channel != conn->channel)
+					break;
 
-
-				if (conn->established) {
+				if (pkg_in.payload.conn_res.status == 0) {
+					// Save channel and host info
 					conn->channel = pkg_in.payload.conn_res.channel;
 					conn->host_info = pkg_in.payload.conn_res.host;
 
 					log_info("Connected (channel = %i)\n", conn->channel);
+
+					conn->state = KNX_TUNNEL_CONNECTED;
 				} else {
-					log_error("Connection failed (code = %i)\n",
-					          pkg_in.payload.conn_res.status);
+					log_error("Connection failed (code = %i)\n", pkg_in.payload.conn_res.status);
+					conn->state = KNX_TUNNEL_DISCONNECTED;
 				}
 
 				break;
 
 			// Heartbeat
 			case KNX_CONNECTIONSTATE_RESPONSE:
-				if (pkg_in.payload.conn_state_res.channel == conn->channel) {
-					conn->established &= (pkg_in.payload.conn_state_res.status == 0);
+				if (pkg_in.payload.conn_state_res.channel != conn->channel)
+					break;
 
-					log_debug("Heartbeat (channel = %i, status = %i)\n",
-					          pkg_in.payload.conn_state_res.channel,
-					          pkg_in.payload.conn_state_res.status);
+				log_debug("Heartbeat (status = %i)\n", pkg_in.payload.conn_state_res.status);
+
+				// Anything other than 0 means the bad news
+				if (pkg_in.payload.conn_state_res.status != 0) {
+					// TODO: Find out if we need to queue a disconnect request?
+					conn->state = KNX_TUNNEL_DISCONNECTED;
 				}
 
 				break;
 
 			// Result of a disconnect request (duh)
 			case KNX_DISCONNECT_RESPONSE:
-				conn->established &= !(pkg_in.payload.dc_res.channel == conn->channel &&
-				                       pkg_in.payload.dc_req.status == 0);
+				if (pkg_in.payload.dc_res.channel != conn->channel)
+					break;
 
-				// Gently shut down this worker thread
-				if (!conn->established) {
-					conn->do_work = false;
-
+				// If connection was previously intact
+				if (conn->state != KNX_TUNNEL_DISCONNECTED)
 					log_info("Disconnected (channel = %i, status = %i)\n",
 					         pkg_in.payload.dc_req.channel,
 					         pkg_in.payload.dc_req.status);
-				}
+
+				// Entering this state will stop the worker gently
+				conn->state = KNX_TUNNEL_DISCONNECTED;
 
 				break;
 
 			// Tunnel Request
 			case KNX_TUNNEL_REQUEST:
-				// Send tunnel response if a connection is established
-				if (conn->established) {
-					knx_tunnel_response res = {
-						conn->channel,
-						pkg_in.payload.tunnel_req.seq_number,
-						0
-					};
-					knx_outqueue_push(&conn->outgoing, KNX_TUNNEL_RESPONSE, &res);
-				}
+				if (conn->state != KNX_TUNNEL_CONNECTED ||
+				    conn->channel != pkg_in.payload.tunnel_req.channel)
+					break;
 
+				knx_tunnel_response res = {
+					conn->channel,
+					pkg_in.payload.tunnel_req.seq_number,
+					0
+				};
+
+				// Queue a tunnel response
+				knx_outqueue_push(&conn->outgoing, KNX_TUNNEL_RESPONSE, &res);
+
+				// Push the message onto the incoming queue
 				knx_pkgqueue_enqueue(&conn->incoming, &pkg_in);
 
 				break;
 
 			// Everything else should be ignored
-			default:
-				break;
+			default: break;
 		}
 	}
 }
 
 void knx_tunnel_worker(knx_tunnel_connection* conn) {
-	while (conn->do_work) {
+	while (conn->state != KNX_TUNNEL_DISCONNECTED) {
 		// Check if we need to send a heartbeat
 		if (conn->established && difftime(time(NULL), conn->last_heartbeat) >= 30) {
 			knx_connection_state_request req = {conn->channel, 0, conn->host_info};
@@ -162,25 +171,34 @@ bool knx_tunnel_connect(knx_tunnel_connection* conn, const ip4addr* gateway) {
 	conn->do_work = true;
 
 	// Setup UDP socket
-	if ((conn->sock = dgramsock_create(NULL, false)) < 0)
-		return false;
-
-	// Start the worker thread
-	if (pthread_create(&conn->worker_thread, NULL, &knx_tunnel_worker_thread, conn) != 0) {
-		dgramsock_close(conn->sock);
+	if ((conn->sock = dgramsock_create(NULL, false)) < 0) {
+		conn->state = KNX_TUNNEL_DISCONNECTED;
 		return false;
 	}
 
 	knx_pkgqueue_init(&conn->incoming);
 	knx_outqueue_init(&conn->outgoing);
 
-	// Queue a connection request
-	knx_connection_request req = {
+	// Start the worker thread
+	conn->state = KNX_TUNNEL_CONNECTING;
+	if (pthread_create(&conn->worker_thread, NULL, &knx_tunnel_worker_thread, conn) != 0) {
+		conn->state = KNX_TUNNEL_DISCONNECTED;
+
+		dgramsock_close(conn->sock);
+		knx_pkgqueue_destroy(&conn->incoming);
+		knx_outqueue_destroy(&conn->outgoing);
+
+		return false;
+	}
+
+	static const knx_connection_request req = {
 		KNX_CONNECTION_REQUEST_TUNNEL,
 		KNX_LAYER_TUNNEL,
 		KNX_HOST_INFO_NAT(KNX_PROTO_UDP),
 		KNX_HOST_INFO_NAT(KNX_PROTO_UDP)
 	};
+
+	// Queue a connection request
 	knx_outqueue_push(&conn->outgoing, KNX_CONNECTION_REQUEST, &req);
 
 	return true;

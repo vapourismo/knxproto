@@ -33,6 +33,16 @@
 #include <sys/time.h>
 
 /**
+ * Tunnel Connection State
+ */
+typedef enum {
+	KNX_TUNNEL_CONNECTING,
+	KNX_TUNNEL_CONNECTED,
+	KNX_TUNNEL_DISCONNECTING,
+	KNX_TUNNEL_DISCONNECTED
+} knx_tunnel_state;
+
+/**
  * Tunnel Connection
  */
 typedef struct {
@@ -41,8 +51,11 @@ typedef struct {
 
 	pthread_t worker_thread;
 	volatile bool do_work;
+
 	knx_pkgqueue incoming;
 	knx_outqueue outgoing;
+
+	knx_tunnel_state state;
 
 	bool established;
 	uint8_t channel;
