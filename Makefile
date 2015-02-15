@@ -2,40 +2,62 @@
 RM              = rm -rf
 MKDIR           = mkdir -p
 EXEC            = exec
+INSTALL         = install
 
-# Directories
-BUILDDIR        = dist
-SRCDIR          = src
-DESTDIR         ?= /usr/local
+# Install Directories
+PREFIX          ?= /usr/local
+INCLUDEDIR      ?= $(PREFIX)/include/knxclient
+LIBDIR          ?= $(PREFIX)/lib
 
-# Configuration
-SONAME          = libknxclient.so.0
-OUTPUT          = $(BUILDDIR)/$(SONAME)
+# Local Directories
+DISTDIR         = dist
+SOURCEDIR       = src
+HEADERDIR       = inc
 
-# Source Artifacts
-SRCFILES        = $(shell find $(SRCDIR) -iname "*.c")
-SRCOBJS         = $(SRCFILES:$(SRCDIR)/%.c=$(BUILDDIR)/%.o)
-SRCDEPS         = $(SRCFILES:$(SRCDIR)/%.c=$(BUILDDIR)/%.d)
+# Artifacts
+HEADERFILES     = address.h connreq.h connres.h \
+                  connstatereq.h connstateres.h dcreq.h \
+                  dcres.h header.h \
+                  hostinfo.h knx.h msgbuilder.h \
+                  outqueue.h pkgqueue.h tunnelreq.h \
+                  tunnelres.h
+HEADEROBJS      = $(HEADERFILES:%=$(SOURCEDIR)/%)
+SOURCEFILES     = connreq.c connres.c connstatereq.c connstateres.c \
+                  dcreq.c dcres.c dgramsock.c header.c \
+                  hostinfo.c knx.c log.c msgbuilder.c \
+                  outqueue.c pkgqueue.c tunnelclient.c \
+                  tunnelreq.c tunnelres.c
+SOURCEOBJS      = $(SOURCEFILES:%.c=$(DISTDIR)/%.o)
+SOURCEDEPS      = $(SOURCEFILES:%.c=$(DISTDIR)/%.d)
+LIBNAME         = libknxclient.so.0
+OUTPUT          = $(DISTDIR)/$(LIBNAME)
 
 # Compiler
 CC              ?= clang
-CFLAGS          += -std=c99 -fmessage-length=0 -Wall -Wextra -pedantic -O2 -fPIC -pthread -DDEBUG -D_POSIX_SOURCE
+CFLAGS          += -std=c99 -O2 -fPIC -pthread \
+                   -fmessage-length=0 -Wall -Wextra -pedantic \
+                   -DDEBUG -D_POSIX_SOURCE -I$(HEADERDIR)
 LDFLAGS         += -flto -pthread -shared
 
 # Default Targets
 all test: $(OUTPUT)
 
 clean:
-	$(RM) $(SRCDEPS) $(SRCOBJS) $(OUTPUT)
+	$(RM) $(SOURCEDEPS) $(SOURCEOBJS) $(OUTPUT) $(DISTDIR)
 
-# File Targets
--include $(SRCDEPS)
+install: $(OUTPUT)
+	$(INSTALL) -m755 -d $(INCLUDEDIR) $(LIBDIR)
+	$(INSTALL) -m755 $(OUTPUT) $(LIBDIR)
+	$(INSTALL) -m644 $(HEADEROBJS) $(INCLUDEDIR)
 
-$(OUTPUT): $(SRCOBJS)
+# Targets
+-include $(SOURCEDEPS)
+
+$(OUTPUT): $(SOURCEOBJS)
 	@$(MKDIR) $(dir $@)
-	$(CC) $(LDFLAGS) -o$@ $(SRCOBJS)
+	$(CC) $(LDFLAGS) -o$@ $(SOURCEOBJS)
 
-$(BUILDDIR)/%.o: $(SRCDIR)/%.c
+$(DISTDIR)/%.o: $(SOURCEDIR)/%.c
 	@$(MKDIR) $(dir $@)
 	$(CC) -c $(CFLAGS) -MMD -MF$(@:%.o=%.d) -MT$@ -o$@ $<
 
