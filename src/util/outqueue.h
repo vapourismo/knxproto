@@ -27,6 +27,7 @@
 #include "../proto/knxnetip.h"
 
 #include <pthread.h>
+#include <stdbool.h>
 
 /**
  * Outgoing Queue Element
@@ -75,5 +76,12 @@ bool knx_outqueue_push(knx_outqueue* queue, knx_service service, const void* pay
  * Remove an element from the queue
  */
 ssize_t knx_outqueue_pop(knx_outqueue* queue, uint8_t** buffer, knx_service* service);
+
+/**
+ * Check if the queue is empty
+ */
+inline bool knx_outqueue_empty(knx_outqueue* queue) {
+	return queue->head == NULL;
+}
 
 #endif
