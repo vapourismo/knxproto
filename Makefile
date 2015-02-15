@@ -16,23 +16,20 @@ SOURCEDIR       = src
 TESTDIR         = test
 
 # Artifacts
-HEADERFILES     = address.h connreq.h connres.h \
-                  connstatereq.h connstateres.h dcreq.h \
-                  dcres.h header.h \
-                  hostinfo.h knx.h msgbuilder.h \
-                  outqueue.h pkgqueue.h tunnelreq.h \
-                  tunnelres.h
-HEADEROBJS      = $(HEADERFILES:%=$(SOURCEDIR)/%)
-SOURCEFILES     = connreq.c connres.c connstatereq.c connstateres.c \
-                  dcreq.c dcres.c dgramsock.c header.c \
-                  hostinfo.c knx.c log.c msgbuilder.c \
-                  outqueue.c pkgqueue.c tunnelclient.c \
-                  tunnelreq.c tunnelres.c
-SOURCEOBJS      = $(SOURCEFILES:%.c=$(DISTDIR)/%.o)
-SOURCEDEPS      = $(SOURCEFILES:%.c=$(DISTDIR)/%.d)
+HEADERFILES     = util/address.h util/dgramsock.h util/msgbuilder.h util/outqueue.h util/pkgqueue.h \
+                  proto/connreq.h proto/connres.h proto/connstatereq.h proto/connstateres.h proto/dcreq.h proto/dcres.h proto/header.h proto/hostinfo.h proto/knxnetip.h proto/tunnelreq.h proto/tunnelres.h \
+                  net/tunnelclient.h
+SOURCEFILES     = proto/connstateres.c proto/connreq.c proto/tunnelreq.c proto/connstatereq.c proto/connres.c proto/dcreq.c proto/hostinfo.c proto/knxnetip.c proto/header.c proto/tunnelres.c proto/dcres.c \
+                  util/outqueue.c util/dgramsock.c util/msgbuilder.c util/log.c util/pkgqueue.c \
+                  net/tunnelclient.c
+
 TESTFILES       = $(wildcard $(TESTDIR)/*.c)
+HEADEROBJS      = $(HEADERFILES:%=$(SOURCEDIR)/%)
+SOURCEOBJS      = $(SOURCEFILES:%.c=$(DISTDIR)/%.o)
 TESTOBJS        = $(TESTFILES:%.c=%.o)
+SOURCEDEPS      = $(SOURCEFILES:%.c=$(DISTDIR)/%.d)
 TESTDEPS        = $(TESTFILES:%.c=%.d)
+
 LIBNAME         = lib$(BASENAME).so.0
 OUTPUT          = $(DISTDIR)/$(LIBNAME)
 TESTOUTPUT      = $(DISTDIR)/$(BASENAME)-test
