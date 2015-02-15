@@ -182,7 +182,6 @@ bool knx_tunnel_connect(knx_tunnel_connection* conn, const ip4addr* gateway) {
 	conn->established = false;
 	conn->channel = 0;
 	conn->last_heartbeat = 0;
-	// conn->do_work = true;
 	conn->state = KNX_TUNNEL_DISCONNECTED;
 
 	// Initialise state protectors
