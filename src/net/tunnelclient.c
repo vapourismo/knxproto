@@ -24,6 +24,23 @@
 #include "../util/dgramsock.h"
 #include "../util/log.h"
 
+void knx_tunnel_process_outgoing(knx_tunnel_connection* conn) {
+	if (knx_outqueue_empty(&conn->outgoing))
+		return;
+
+	knx_service service;
+	uint8_t* buffer;
+	ssize_t buffer_size = knx_outqueue_pop(&conn->outgoing, &buffer, &service);
+
+	if (buffer_size < 0)
+		return;
+
+	dgramsock_send(conn->sock, buffer, buffer_size, &conn->gateway);
+	free(buffer);
+
+	log_debug("Sent (service = 0x%04X)\n", service);
+}
+
 void knx_tunnel_worker(knx_tunnel_connection* conn) {
 	while (conn->do_work) {
 		// Check if we need to send a heartbeat
@@ -33,20 +50,8 @@ void knx_tunnel_worker(knx_tunnel_connection* conn) {
 				conn->last_heartbeat = time(NULL);
 		}
 
-		// Sender loop
-		if (!knx_outqueue_empty(&conn->outgoing)) {
-			knx_service service;
-			uint8_t* buffer;
-			ssize_t buffer_size = knx_outqueue_pop(&conn->outgoing, &buffer, &service);
-
-			if (buffer_size < 0)
-				break;
-
-			dgramsock_send(conn->sock, buffer, buffer_size, &conn->gateway);
-			free(buffer);
-
-			log_debug("worker: Sent (service = 0x%04X)\n", service);
-		}
+		// Send one outgoing message
+		knx_tunnel_process_outgoing(conn);
 
 		// Receiver loop
 		if (dgramsock_ready(conn->sock, 0, 100000)) {
