@@ -34,7 +34,7 @@ void knx_tunnel_worker(knx_tunnel_connection* conn) {
 		}
 
 		// Sender loop
-		while (conn->do_work) {
+		if (!knx_outqueue_empty(&conn->outgoing)) {
 			knx_service service;
 			uint8_t* buffer;
 			ssize_t buffer_size = knx_outqueue_pop(&conn->outgoing, &buffer, &service);
@@ -48,10 +48,8 @@ void knx_tunnel_worker(knx_tunnel_connection* conn) {
 			log_debug("worker: Sent (service = 0x%04X)\n", service);
 		}
 
-		size_t receive_iter = 0;
-
 		// Receiver loop
-		while (conn->do_work && receive_iter++ < 100 && dgramsock_ready(conn->sock, 0, 100000)) {
+		if (dgramsock_ready(conn->sock, 0, 100000)) {
 			uint8_t buffer[100];
 
 			// FIXME: Do not allow every endpoint
