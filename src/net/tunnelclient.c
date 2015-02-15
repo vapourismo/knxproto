@@ -66,10 +66,17 @@ void knx_tunnel_process_incoming(knx_tunnel_connection* conn) {
 
 					log_info("Connected (channel = %i)\n", conn->channel);
 
+					pthread_mutex_lock(&conn->state_lock);
 					conn->state = KNX_TUNNEL_CONNECTED;
+					pthread_cond_signal(&conn->state_signal);
+					pthread_mutex_unlock(&conn->state_lock);
 				} else {
 					log_error("Connection failed (code = %i)\n", pkg_in.payload.conn_res.status);
+
+					pthread_mutex_lock(&conn->state_lock);
 					conn->state = KNX_TUNNEL_DISCONNECTED;
+					pthread_cond_signal(&conn->state_signal);
+					pthread_mutex_unlock(&conn->state_lock);
 				}
 
 				break;
@@ -84,7 +91,11 @@ void knx_tunnel_process_incoming(knx_tunnel_connection* conn) {
 				// Anything other than 0 means the bad news
 				if (pkg_in.payload.conn_state_res.status != 0) {
 					// TODO: Find out if we need to queue a disconnect request?
+					//
+					pthread_mutex_lock(&conn->state_lock);
 					conn->state = KNX_TUNNEL_DISCONNECTED;
+					pthread_cond_signal(&conn->state_signal);
+					pthread_mutex_unlock(&conn->state_lock);
 				}
 
 				break;
@@ -101,7 +112,10 @@ void knx_tunnel_process_incoming(knx_tunnel_connection* conn) {
 					         pkg_in.payload.dc_req.status);
 
 				// Entering this state will stop the worker gently
+				pthread_mutex_lock(&conn->state_lock);
 				conn->state = KNX_TUNNEL_DISCONNECTED;
+				pthread_cond_signal(&conn->state_signal);
+				pthread_mutex_unlock(&conn->state_lock);
 
 				break;
 
@@ -168,25 +182,23 @@ bool knx_tunnel_connect(knx_tunnel_connection* conn, const ip4addr* gateway) {
 	conn->established = false;
 	conn->channel = 0;
 	conn->last_heartbeat = 0;
-	conn->do_work = true;
+	// conn->do_work = true;
+	conn->state = KNX_TUNNEL_DISCONNECTED;
+
+	// Initialise state protectors
+	pthread_mutex_init(&conn->state_lock, NULL);
+	pthread_cond_init(&conn->state_signal, NULL);
 
 	// Setup UDP socket
-	if ((conn->sock = dgramsock_create(NULL, false)) < 0) {
-		conn->state = KNX_TUNNEL_DISCONNECTED;
+	if ((conn->sock = dgramsock_create(NULL, false)) < 0)
 		return false;
-	}
 
+	// Initialize queues
 	knx_pkgqueue_init(&conn->incoming);
-	knx_outqueue_init(&conn->outgoing);
 
-	// Start the worker thread
-	conn->state = KNX_TUNNEL_CONNECTING;
-	if (pthread_create(&conn->worker_thread, NULL, &knx_tunnel_worker_thread, conn) != 0) {
-		conn->state = KNX_TUNNEL_DISCONNECTED;
-
-		dgramsock_close(conn->sock);
+	if (knx_outqueue_init(&conn->outgoing)) {
 		knx_pkgqueue_destroy(&conn->incoming);
-		knx_outqueue_destroy(&conn->outgoing);
+		dgramsock_close(conn->sock);
 
 		return false;
 	}
@@ -199,23 +211,39 @@ bool knx_tunnel_connect(knx_tunnel_connection* conn, const ip4addr* gateway) {
 	};
 
 	// Queue a connection request
+	conn->state = KNX_TUNNEL_CONNECTING;
 	knx_outqueue_push(&conn->outgoing, KNX_CONNECTION_REQUEST, &req);
+
+	// Start the worker thread
+	if (pthread_create(&conn->worker_thread, NULL, &knx_tunnel_worker_thread, conn) != 0) {
+		conn->state = KNX_TUNNEL_DISCONNECTED;
+
+		dgramsock_close(conn->sock);
+		knx_pkgqueue_destroy(&conn->incoming);
+		knx_outqueue_destroy(&conn->outgoing);
+
+		return false;
+	}
 
 	return true;
 }
 
 void knx_tunnel_disconnect(knx_tunnel_connection* conn, bool wait_for_worker) {
-	if (conn->established) {
+	pthread_mutex_lock(&conn->state_lock);
+	if (conn->state != KNX_TUNNEL_DISCONNECTED && conn->state != KNX_TUNNEL_DISCONNECTING) {
 		// Queue a disconnect request
 		knx_disconnect_request req = {conn->channel, 0, conn->host_info};
 		knx_outqueue_push(&conn->outgoing, KNX_DISCONNECT_REQUEST, &req);
-	} else {
-		// Shut down the worker thread
-		conn->do_work = false;
-	}
 
-	if (wait_for_worker)
+		conn->state = KNX_TUNNEL_DISCONNECTING;
+	}
+	pthread_mutex_unlock(&conn->state_lock);
+
+	if (!wait_for_worker) {
 		pthread_join(conn->worker_thread, NULL);
-	else
+		pthread_mutex_destroy(&conn->state_lock);
+		pthread_cond_destroy(&conn->state_signal);
+	} else {
 		pthread_detach(conn->worker_thread);
+	}
 }

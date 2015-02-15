@@ -50,11 +50,12 @@ typedef struct {
 	ip4addr gateway;
 
 	pthread_t worker_thread;
-	volatile bool do_work;
 
 	knx_pkgqueue incoming;
 	knx_outqueue outgoing;
 
+	pthread_mutex_t state_lock;
+	pthread_cond_t state_signal;
 	knx_tunnel_state state;
 
 	bool established;
@@ -63,8 +64,12 @@ typedef struct {
 	time_t last_heartbeat;
 } knx_tunnel_connection;
 
+// TODO: Disallow `knx_tunnel_connection` to be allocated on the stack.
+// A `knx_tunnel_connection` has to outlive it's worker thread.
+
 /**
- * Connect to a gateway.
+ * Connect to a gateway. This function returns `true` if the initialization
+ * was successful.
  */
 bool knx_tunnel_connect(knx_tunnel_connection* conn, const ip4addr* gateway);
 
