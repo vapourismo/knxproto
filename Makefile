@@ -64,19 +64,19 @@ install: $(OUTPUT)
 -include $(SOURCEDEPS)
 -include $(TESTDEPS)
 
-$(OUTPUT): $(SOURCEOBJS)
+$(OUTPUT): $(SOURCEOBJS) Makefile
 	@$(MKDIR) $(dir $@)
 	$(CC) $(LDFLAGS) -o$@ $(SOURCEOBJS)
 
-$(DISTDIR)/%.o: $(SOURCEDIR)/%.c
+$(DISTDIR)/%.o: $(SOURCEDIR)/%.c Makefile
 	@$(MKDIR) $(dir $@)
 	$(CC) -c $(CFLAGS) -MMD -MF$(@:%.o=%.d) -MT$@ -o$@ $<
 
-$(TESTOUTPUT): $(TESTOBJS) $(OUTPUT)
+$(TESTOUTPUT): $(TESTOBJS) $(OUTPUT) Makefile
 	@$(MKDIR) $(dir $@)
 	$(CC) $(TESTLDFLAGS) -o$@ $(TESTOBJS)
 
-$(TESTDIR)/%.o: $(TESTDIR)/%.c
+$(TESTDIR)/%.o: $(TESTDIR)/%.c Makefile
 	@$(MKDIR) $(dir $@)
 	$(CC) -c $(TESTCFLAGS) -MMD -MF$(@:%.o=%.d) -MT$@ -o$@ $<
 # Phony
