@@ -24,21 +24,20 @@
 #include "../util/dgramsock.h"
 #include "../util/log.h"
 
-void knx_tunnel_process_outgoing(knx_tunnel_connection* conn) {
-	if (knx_outqueue_empty(&conn->outgoing))
-		return;
-
+bool knx_tunnel_process_outgoing(knx_tunnel_connection* conn) {
 	knx_service service;
 	uint8_t* buffer;
 	ssize_t buffer_size = knx_outqueue_pop(&conn->outgoing, &buffer, &service);
 
 	if (buffer_size < 0)
-		return;
+		return false;
 
 	dgramsock_send(conn->sock, buffer, buffer_size, &conn->gateway);
+	log_debug("Sent (service = 0x%04X)\n", service);
+
 	free(buffer);
 
-	log_debug("Sent (service = 0x%04X)\n", service);
+	return true;
 }
 
 void knx_tunnel_process_incoming(knx_tunnel_connection* conn) {
@@ -139,7 +138,8 @@ void knx_tunnel_worker(knx_tunnel_connection* conn) {
 		knx_tunnel_process_incoming(conn);
 	}
 
-	// TODO: Clear outgoing queue once more.
+	// Clear outgoing queue entirely
+	while (knx_tunnel_process_outgoing(conn));
 
 	// Free buffers and queues
 	knx_pkgqueue_destroy(&conn->incoming);
