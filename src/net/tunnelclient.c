@@ -56,6 +56,9 @@ void knx_tunnel_process_incoming(knx_tunnel_connection* conn) {
 		switch (pkg_in.service) {
 			// Result of a connection request (duh)
 			case KNX_CONNECTION_RESPONSE:
+				if (conn->state != KNX_TUNNEL_CONNECTING)
+					break;
+
 				if (pkg_in.payload.conn_res.status == 0) {
 					// Save channel and host info
 					conn->channel = pkg_in.payload.conn_res.channel;
