@@ -154,8 +154,8 @@ void knx_tunnel_worker(knx_tunnel_connection* conn) {
 				conn->last_heartbeat = time(NULL);
 		}
 
-		// Send one outgoing message
-		knx_tunnel_process_outgoing(conn);
+		// Send outgoing messages
+		while (knx_tunnel_process_outgoing(conn));
 
 		// Receive one incoming message
 		knx_tunnel_process_incoming(conn);
