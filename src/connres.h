@@ -19,59 +19,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_KNX_DATA_OUTQUEUE_H
-#define KNXCLIENT_KNX_DATA_OUTQUEUE_H
+#ifndef KNXCLIENT_KNX_CONNRES_H
+#define KNXCLIENT_KNX_CONNRES_H
 
-#include "../knx.h"
-#include "../../msgbuilder.h"
-#include <pthread.h>
+#include "hostinfo.h"
+#include "msgbuilder.h"
 
-/**
- *
- */
-struct knx_outqueue_elem {
-	knx_service service;
-	uint8_t* message;
-	size_t length;
-
-	struct knx_outqueue_elem* next;
-};
+#include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
 
 /**
- *
+ * Connection Response
  */
 typedef struct {
-	pthread_mutex_t lock;
-
-	struct knx_outqueue_elem* head;
-	struct knx_outqueue_elem* tail;
-
-	msgbuilder mb;
-} knx_outqueue;
+	uint8_t channel;
+	uint8_t status;
+	knx_host_info host;
+	uint8_t extended[3];
+} knx_connection_response;
 
 /**
- *
+ * Generate the message for a connection response.
  */
-bool knx_outqueue_init(knx_outqueue* queue);
+bool knx_append_connection_response(msgbuilder* mb,
+                                    const knx_connection_response* res);
 
 /**
- *
+ * Parse a message (excluding header) which contains a connection response.
  */
-void knx_outqueue_clear(knx_outqueue* queue);
-
-/**
- *
- */
-void knx_outqueue_destroy(knx_outqueue* queue);
-
-/**
- *
- */
-bool knx_outqueue_push(knx_outqueue* queue, knx_service service, const void* payload);
-
-/**
- *
- */
-ssize_t knx_outqueue_pop(knx_outqueue* queue, uint8_t** buffer, knx_service* service);
+bool knx_parse_connection_response(const uint8_t* message, size_t length,
+                                   knx_connection_response* res);
 
 #endif

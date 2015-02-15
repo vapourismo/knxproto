@@ -19,33 +19,50 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_KNX_DCRES_H
-#define KNXCLIENT_KNX_DCRES_H
+#ifndef KNXCLIENT_KNX_KNX_H
+#define KNXCLIENT_KNX_KNX_H
 
-#include "../msgbuilder.h"
+#include "header.h"
+#include "connreq.h"
+#include "connres.h"
+#include "connstatereq.h"
+#include "connstateres.h"
+#include "dcreq.h"
+#include "dcres.h"
+#include "tunnelreq.h"
+#include "tunnelres.h"
+#include "msgbuilder.h"
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
-#include <stdbool.h>
 
 /**
- * Disconnect Response
+ * KNXnet/IP Packet
  */
 typedef struct {
-	uint8_t channel;
-	uint8_t status;
-} knx_disconnect_response;
+	knx_service service;
+	union {
+		knx_connection_request conn_req;
+		knx_connection_response conn_res;
+		knx_disconnect_request dc_req;
+		knx_disconnect_response dc_res;
+		knx_connection_state_request conn_state_req;
+		knx_connection_state_response conn_state_res;
+		knx_tunnel_request tunnel_req;
+		knx_tunnel_response tunnel_res;
+	} payload;
+} knx_packet;
 
 /**
- * Generate the message for a disconnect response.
+ * Parse a given message into a packet.
  */
-bool knx_append_disconnect_response(msgbuilder* mb,
-                                    const knx_disconnect_response* res);
+bool knx_parse(const uint8_t* msg, size_t length,
+               knx_packet* packet);
 
 /**
- * Parse a message (excluding header) which contains a disconnect response.
+ * Generate a message.
  */
-bool knx_parse_disconnect_response(const uint8_t* message, size_t length,
-                                   knx_disconnect_response* res);
+bool knx_generate(msgbuilder* mb, knx_service service, const void* payload);
 
 #endif

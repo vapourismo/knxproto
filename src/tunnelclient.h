@@ -22,10 +22,10 @@
 #ifndef KNXCLIENT_KNX_NET_TUNNELCLIENT_H
 #define KNXCLIENT_KNX_NET_TUNNELCLIENT_H
 
-#include "../knx.h"
-#include "../data/pkgqueue.h"
-#include "../data/outqueue.h"
-#include "../../net/dgramsock.h"
+#include "knx.h"
+#include "pkgqueue.h"
+#include "outqueue.h"
+#include "dgramsock.h"
 
 #include <pthread.h>
 #include <stdbool.h>

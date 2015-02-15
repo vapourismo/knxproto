@@ -20,7 +20,7 @@
  */
 
 #include "dgramsock.h"
-#include "../alloc.h"
+#include "alloc.h"
 
 #include <stdarg.h>
 #include <sys/socket.h>

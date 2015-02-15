@@ -19,28 +19,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "dcres.h"
-#include "header.h"
-#include "../alloc.h"
+#ifndef KNXCLIENT_KNX_CONNSTATERES_H
+#define KNXCLIENT_KNX_CONNSTATERES_H
 
-// Disconnect Response:
-//   Octet 0: Channel
-//   Octet 1: Status
+#include "msgbuilder.h"
 
-bool knx_append_disconnect_response(msgbuilder* mb,
-                                    const knx_disconnect_response* res) {
-	return
-		knx_append_header(mb, KNX_DISCONNECT_RESPONSE, 2) &&
-		msgbuilder_append(mb, anona(const uint8_t, res->channel, res->status), 2);
-}
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
-bool knx_parse_disconnect_response(const uint8_t* message, size_t length,
-                                   knx_disconnect_response* res) {
-	if (length < 2)
-		return false;
+/**
+ * Connection State Response
+ */
+typedef struct {
+	uint8_t channel;
+	uint8_t status;
+} knx_connection_state_response;
 
-	res->channel = message[0];
-	res->status = message[1];
+/**
+ * Generate the message for a connection response.
+ */
+bool knx_append_connection_state_response(msgbuilder* mb,
+                                          const knx_connection_state_response* res);
 
-	return true;
-}
+/**
+ * Parse a message (excluding header) which contains a connection response.
+ */
+bool knx_parse_connection_state_response(const uint8_t* message, size_t length,
+                                         knx_connection_state_response* res);
+
+#endif

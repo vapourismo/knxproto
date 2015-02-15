@@ -20,7 +20,7 @@
  */
 
 #include "pkgqueue.h"
-#include "../../alloc.h"
+#include "alloc.h"
 
 #include <string.h>
 

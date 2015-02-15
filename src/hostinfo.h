@@ -19,36 +19,45 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_KNX_CONNSTATEREQ_H
-#define KNXCLIENT_KNX_CONNSTATEREQ_H
+#ifndef KNXCLIENT_KNX_HOSTINFO_H
+#define KNXCLIENT_KNX_HOSTINFO_H
 
-#include "hostinfo.h"
+#include "msgbuilder.h"
 
-#include "../msgbuilder.h"
-
+#include <netinet/in.h>
 #include <stdbool.h>
-#include <stddef.h>
 #include <stdint.h>
 
 /**
- * Connection State Request
+ * KNXnet/IP Protocol
+ */
+typedef enum {
+	KNX_PROTO_UDP = 1,
+	KNX_PROTO_TCP = 2
+} knx_proto;
+
+/**
+ * Host Information
  */
 typedef struct {
-	uint8_t channel;
-	uint8_t status;
-	knx_host_info host;
-} knx_connection_state_request;
+	knx_proto protocol;
+	in_addr_t address;
+	in_port_t port;
+} knx_host_info;
 
 /**
- * Generate the message for a connection state request.
+ *
  */
-bool knx_append_connection_state_request(msgbuilder* mb,
-                                         const knx_connection_state_request* req);
+#define KNX_HOST_INFO_NAT(prot) {prot, 0, 0}
 
 /**
- * Parse a message (excluding header) which contains a connection state request.
+ * Append host information.
  */
-bool knx_parse_connection_state_request(const uint8_t* message, size_t length,
-                                        knx_connection_state_request* req);
+bool knx_append_host_info(msgbuilder* mb, const knx_host_info* host);
+
+/**
+ * Retrieve host information.
+ */
+bool knx_parse_host_info(const uint8_t* message, knx_host_info* host);
 
 #endif

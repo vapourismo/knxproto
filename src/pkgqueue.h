@@ -22,7 +22,7 @@
 #ifndef KNXCLIENT_KNX_DATA_PKGQUEUE_H
 #define KNXCLIENT_KNX_DATA_PKGQUEUE_H
 
-#include "../knx.h"
+#include "knx.h"
 
 #include <sys/types.h>
 #include <pthread.h>

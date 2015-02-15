@@ -19,32 +19,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "tunnelres.h"
+#include "connstatereq.h"
 #include "header.h"
-#include "../alloc.h"
+#include "alloc.h"
 
-// Tunnel Response:
-//   Octet 0: Structure length
-//   Octet 1: Channel
-//   Octet 2: Sequence number
-//   Octet 3: Status
+// Connection State Request
+//   Octet 0:   Channel
+//   Octet 1:   Status
+//   Octet 2-9: Host info
 
-bool knx_append_tunnel_response(msgbuilder* mb,
-                                const knx_tunnel_response* res) {
+bool knx_append_connection_state_request(msgbuilder* mb,
+                                         const knx_connection_state_request* req) {
 	return
-		knx_append_header(mb, KNX_TUNNEL_RESPONSE, 4) &&
-		msgbuilder_append(mb, anona(const uint8_t, 4, res->channel, res->seq_number, res->status), 4);
+		knx_append_header(mb, KNX_CONNECTIONSTATE_REQUEST, 10) &&
+		msgbuilder_append(mb, anona(const uint8_t, req->channel, req->status), 2) &&
+		knx_append_host_info(mb, &req->host);
 }
 
-bool knx_parse_tunnel_response(const uint8_t* message, size_t length,
-                               knx_tunnel_response* res) {
-	if (length < 4 || message[0] != 4)
+bool knx_parse_connection_state_request(const uint8_t* message, size_t length,
+                                        knx_connection_state_request* req) {
+	if (length < 10)
 		return false;
 
-	res->channel = message[1];
-	res->seq_number = message[2];
-	res->status = message[3];
+	req->channel = message[0];
+	req->status = message[1];
 
-	return true;
+	return knx_parse_host_info(message + 2, &req->host);
 }
-

@@ -19,36 +19,51 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_KNX_DCREQ_H
-#define KNXCLIENT_KNX_DCREQ_H
+#ifndef KNXCLIENT_KNX_CONNREQ_H
+#define KNXCLIENT_KNX_CONNREQ_H
 
 #include "hostinfo.h"
 
-#include "../msgbuilder.h"
+#include "msgbuilder.h"
 
-#include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 /**
- * Disconnect Request
+ * KNX Connection Type
+ */
+typedef enum {
+	KNX_CONNECTION_REQUEST_TUNNEL = 4
+} knx_conn_type;
+
+/**
+ * KNX Layer
+ */
+typedef enum {
+	KNX_LAYER_TUNNEL = 2
+} knx_layer;
+
+/**
+ * Connection Request
  */
 typedef struct {
-	uint8_t channel;
-	uint8_t status;
-	knx_host_info host;
-} knx_disconnect_request;
+	knx_conn_type type;
+	knx_layer layer;
+	knx_host_info control_host;
+	knx_host_info tunnel_host;
+} knx_connection_request;
 
 /**
- * Generate the message for a disconnect request.
+ * Generate the message for a connection request.
  */
-bool knx_append_disconnect_request(msgbuilder* mb,
-                                   const knx_disconnect_request* req);
+bool knx_append_connection_request(msgbuilder* mb,
+                                   const knx_connection_request* conn_req);
 
 /**
- * Parse a message (excluding header) which contains a disconnect request.
+ * Parse a message (excluding header) which contains a connection request.
  */
-bool knx_parse_disconnect_request(const uint8_t* message, size_t length,
-                                  knx_disconnect_request* req);
+bool knx_parse_connection_request(const uint8_t* message, size_t length,
+                                  knx_connection_request* req);
 
 #endif

@@ -19,34 +19,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_KNX_TUNNELRES_H
-#define KNXCLIENT_KNX_TUNNELRES_H
+#ifndef KNXCLIENT_KNX_DCREQ_H
+#define KNXCLIENT_KNX_DCREQ_H
 
-#include "../msgbuilder.h"
+#include "hostinfo.h"
 
-#include <stdbool.h>
-#include <stddef.h>
+#include "msgbuilder.h"
+
 #include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
 
 /**
- * Tunnel Response
+ * Disconnect Request
  */
 typedef struct {
 	uint8_t channel;
-	uint8_t seq_number;
 	uint8_t status;
-} knx_tunnel_response;
+	knx_host_info host;
+} knx_disconnect_request;
 
 /**
- * Generate the message for a tunnel response.
+ * Generate the message for a disconnect request.
  */
-bool knx_append_tunnel_response(msgbuilder* mb,
-                                const knx_tunnel_response* res);
+bool knx_append_disconnect_request(msgbuilder* mb,
+                                   const knx_disconnect_request* req);
 
 /**
- * Parse a message (excluding header) which contains a tunnel response.
+ * Parse a message (excluding header) which contains a disconnect request.
  */
-bool knx_parse_tunnel_response(const uint8_t* message, size_t length,
-                               knx_tunnel_response* res);
+bool knx_parse_disconnect_request(const uint8_t* message, size_t length,
+                                  knx_disconnect_request* req);
 
 #endif

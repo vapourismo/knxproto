@@ -19,45 +19,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_KNX_HOSTINFO_H
-#define KNXCLIENT_KNX_HOSTINFO_H
+#include "tunnelres.h"
+#include "header.h"
+#include "alloc.h"
 
-#include "../msgbuilder.h"
+// Tunnel Response:
+//   Octet 0: Structure length
+//   Octet 1: Channel
+//   Octet 2: Sequence number
+//   Octet 3: Status
 
-#include <netinet/in.h>
-#include <stdbool.h>
-#include <stdint.h>
+bool knx_append_tunnel_response(msgbuilder* mb,
+                                const knx_tunnel_response* res) {
+	return
+		knx_append_header(mb, KNX_TUNNEL_RESPONSE, 4) &&
+		msgbuilder_append(mb, anona(const uint8_t, 4, res->channel, res->seq_number, res->status), 4);
+}
 
-/**
- * KNXnet/IP Protocol
- */
-typedef enum {
-	KNX_PROTO_UDP = 1,
-	KNX_PROTO_TCP = 2
-} knx_proto;
+bool knx_parse_tunnel_response(const uint8_t* message, size_t length,
+                               knx_tunnel_response* res) {
+	if (length < 4 || message[0] != 4)
+		return false;
 
-/**
- * Host Information
- */
-typedef struct {
-	knx_proto protocol;
-	in_addr_t address;
-	in_port_t port;
-} knx_host_info;
+	res->channel = message[1];
+	res->seq_number = message[2];
+	res->status = message[3];
 
-/**
- *
- */
-#define KNX_HOST_INFO_NAT(prot) {prot, 0, 0}
+	return true;
+}
 
-/**
- * Append host information.
- */
-bool knx_append_host_info(msgbuilder* mb, const knx_host_info* host);
-
-/**
- * Retrieve host information.
- */
-bool knx_parse_host_info(const uint8_t* message, knx_host_info* host);
-
-#endif
