@@ -42,7 +42,7 @@ int dgramsock_create(const ip4addr* local, bool reuse) {
 	return sock;
 }
 
-bool dgramsock_ready(int sock, time_t timeout_sec, time_t timeout_usec) {
+bool dgramsock_ready(int sock, time_t timeout_sec, long timeout_usec) {
 	fd_set fds;
 	FD_ZERO(&fds);
 	FD_SET(sock, &fds);

@@ -36,7 +36,7 @@ int dgramsock_create(const ip4addr* local, bool reuse);
 /**
  * Check if data is available.
  */
-bool dgramsock_ready(int sock, time_t timeout_sec, time_t timeout_usec);
+bool dgramsock_ready(int sock, time_t timeout_sec, long timeout_usec);
 
 /**
  * Receive data from a number of given endpoints.
