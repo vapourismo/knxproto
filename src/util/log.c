@@ -28,7 +28,7 @@
 
 static FILE* log_out = NULL;
 static log_level log_lvl = LOG_WARN;
-static pthread_t log_lock;
+static pthread_mutex_t log_lock;
 
 void log_on_exit(void) {
 	if (log_out)
