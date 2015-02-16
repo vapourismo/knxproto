@@ -240,6 +240,24 @@ bool knx_tunnel_connect(knx_tunnel_connection* conn, const ip4addr* gateway) {
 	return true;
 }
 
+bool knx_tunnel_wait_state(knx_tunnel_connection* conn) {
+	pthread_mutex_lock(&conn->state_lock);
+	while (conn->state == KNX_TUNNEL_CONNECTING)
+		pthread_cond_wait(&conn->state_signal, &conn->state_lock);
+	pthread_mutex_unlock(&conn->state_lock);
+
+	return conn->state == KNX_TUNNEL_CONNECTED;
+}
+
+// bool knx_tunnel_wait_state_timed(knx_tunnel_connection* conn, const struct timespec* ts) {
+// 	pthread_mutex_lock(&conn->state_lock);
+// 	while (conn->state == KNX_TUNNEL_CONNECTING)
+// 		pthread_cond_timedwait(&conn->state_signal, &conn->state_lock, ts)
+// 	pthread_mutex_unlock(&conn->state_lock);
+//
+// 	return conn->state == KNX_TUNNEL_CONNECTED;
+// }
+
 void knx_tunnel_disconnect(knx_tunnel_connection* conn) {
 	if (conn->state == KNX_TUNNEL_CONNECTED) {
 		// Queue a disconnect request

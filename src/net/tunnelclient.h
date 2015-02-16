@@ -30,7 +30,7 @@
 
 #include <pthread.h>
 #include <stdbool.h>
-#include <sys/time.h>
+#include <time.h>
 
 /**
  * Tunnel Connection State
@@ -72,6 +72,16 @@ bool knx_tunnel_init(knx_tunnel_connection* conn);
  * has been sent.
  */
 bool knx_tunnel_connect(knx_tunnel_connection* conn, const ip4addr* gateway);
+
+/**
+ * Check if a connection has been established, by waiting for a connection response.
+ */
+bool knx_tunnel_wait_state(knx_tunnel_connection* conn);
+
+// /**
+//  * Similiar to `knx_tunnel_wait_state` but with an option to wait a
+//  */
+// bool knx_tunnel_wait_state_timed(knx_tunnel_connection* conn, const struct timespec* ts);
 
 /**
  * Disconnect from a gateway. If `wait_for_worker` is true, this function will
