@@ -24,9 +24,11 @@
 #include <time.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <pthread.h>
 
 static FILE* log_out = NULL;
 static log_level log_lvl = LOG_WARN;
+static pthread_t log_lock;
 
 void log_on_exit(void) {
 	if (log_out)
@@ -40,6 +42,7 @@ bool log_setup(const char* path, log_level level) {
 		return false;
 
 	log_lvl = level;
+	pthread_mutex_init(&log_lock, NULL);
 	atexit(&log_on_exit);
 
 	return true;
@@ -50,7 +53,7 @@ void log_commit_raw(log_level level, const char* file, size_t line,
 	if (!log_out || level < log_lvl)
 		return;
 
-	flockfile(log_out);
+	pthread_mutex_lock(&log_lock);
 
 	// Generate tag
 	char tag;
@@ -87,5 +90,5 @@ void log_commit_raw(log_level level, const char* file, size_t line,
 
 	// fputc('\n', log_out);
 	fflush(log_out);
-	funlockfile(log_out);
+	pthread_mutex_unlock(&log_lock);
 }
