@@ -1,3 +1,5 @@
+# Author: vapourismo <ole@vprsm.de>
+
 pkgname='knxclient-git'
 pkgrel=1
 pkgver=r188.d2ef893
@@ -20,10 +22,10 @@ pkgver() {
 
 build() {
 	cd "$srcdir/$pkgname"
-	make "PREFIX=$pkgdir/usr"
+	make PREFIX="$pkgdir/usr"
 }
 
 package() {
 	cd "$srcdir/$pkgname"
-	make "PREFIX=$pkgdir/usr" install
+	make PREFIX="$pkgdir/usr" install
 }
