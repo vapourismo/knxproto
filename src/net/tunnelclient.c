@@ -21,7 +21,7 @@
 
 #include "tunnelclient.h"
 
-#include "../util/dgramsock.h"
+#include "../util/sockutils.h"
 #include "../util/log.h"
 
 bool knx_tunnel_process_outgoing(knx_tunnel_client* conn) {
@@ -208,7 +208,7 @@ bool knx_tunnel_init(knx_tunnel_client* conn) {
 
 	return true;
 
-	fail_outgoing:     dgramsock_close(conn->sock);
+	fail_outgoing:     close(conn->sock);
 	fail_sock:         pthread_cond_destroy(&conn->state_signal);
 	fail_state_signal: pthread_mutex_destroy(&conn->state_lock);
 	fail_state_lock:   knx_pkgqueue_destroy(&conn->incoming);
@@ -242,7 +242,7 @@ bool knx_tunnel_connect(knx_tunnel_client* conn, const ip4addr* gateway) {
 
 		conn->state = KNX_TUNNEL_DISCONNECTED;
 
-		dgramsock_close(conn->sock);
+		close(conn->sock);
 		knx_pkgqueue_destroy(&conn->incoming);
 		knx_outqueue_destroy(&conn->outgoing);
 
@@ -294,7 +294,7 @@ void knx_tunnel_destroy(knx_tunnel_client* conn) {
 	knx_outqueue_destroy(&conn->outgoing);
 
 	// Close socket
-	dgramsock_close(conn->sock);
+	close(conn->sock);
 
 	// Destroy state protectors
 	pthread_mutex_destroy(&conn->state_lock);

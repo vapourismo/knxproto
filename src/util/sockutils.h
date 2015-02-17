@@ -58,11 +58,4 @@ inline bool dgramsock_send(int sock, const void* buffer, size_t buffer_size,
 		return (size_t) r == buffer_size;
 }
 
-/**
- * Destroy the datagram socket.
- */
-inline void dgramsock_close(int sock) {
-	close(sock);
-}
-
 #endif

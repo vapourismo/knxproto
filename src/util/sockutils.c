@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "dgramsock.h"
+#include "sockutils.h"
 #include "alloc.h"
 
 #include <stdarg.h>
@@ -36,7 +36,7 @@ int dgramsock_create(const ip4addr* local, bool reuse) {
 		setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, anona(int, reuse), sizeof(int));
 
 		if (bind(sock, (const struct sockaddr*) local, sizeof(ip4addr)) != 0) {
-			dgramsock_close(sock);
+			close(sock);
 			return -1;
 		}
 	}
