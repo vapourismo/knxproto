@@ -38,7 +38,7 @@ TESTOUTPUT      = $(DISTDIR)/$(BASENAME)-test
 CC              ?= clang
 BASECFLAGS      = -std=c99 -O2 -pthread \
                   -fmessage-length=0 -Wall -Wextra -pedantic \
-                  -DDEBUG -D_POSIX_SOURCE
+                  -DDEBUG -D_POSIX_SOURCE -D_GNU_SOURCE
 CFLAGS          += $(BASECFLAGS) -fPIC
 LDFLAGS         += -flto -pthread -shared
 TESTCFLAGS      += $(BASECFLAGS)
