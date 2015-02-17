@@ -29,17 +29,15 @@
 //   Octet 1:   Status
 //   Octet 2-9: Host info
 
-bool knx_generate_disconnect_request(msgbuilder* mb,
-                                   const knx_disconnect_request* req) {
+bool knx_generate_disconnect_request(msgbuilder* mb, const knx_disconnect_request* req) {
 	return
-		knx_generate_header(mb, KNX_DISCONNECT_REQUEST, 10) &&
+		knx_generate_header(mb, KNX_DISCONNECT_REQUEST, KNX_DISCONNECT_REQUEST_SIZE) &&
 		msgbuilder_append(mb, anona(const uint8_t, req->channel, req->status), 2) &&
 		knx_generate_host_info(mb, &req->host);
 }
 
-bool knx_parse_disconnect_request(const uint8_t* message, size_t length,
-                                  knx_disconnect_request* req) {
-	if (length < 10)
+bool knx_parse_disconnect_request(const uint8_t* message, size_t length, knx_disconnect_request* req) {
+	if (length < KNX_DISCONNECT_REQUEST_SIZE)
 		return false;
 
 	req->channel = message[0];
