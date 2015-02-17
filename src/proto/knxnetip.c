@@ -35,23 +35,8 @@ bool knx_parse(const uint8_t* message, size_t length,
 	uint16_t payload_length = claimed_len - 6;
 	const uint8_t* payload_ptr = message + 6;
 
-	switch ((message[2] << 8) | message[3]) {
-		case KNX_SEARCH_REQUEST:
-			packet->service = KNX_SEARCH_REQUEST;
-			return false;
-
-		case KNX_SEARCH_RESPONSE:
-			packet->service = KNX_SEARCH_RESPONSE;
-			return false;
-
-		case KNX_DESCRIPTION_REQUEST:
-			packet->service = KNX_DESCRIPTION_REQUEST;
-			return false;
-
-		case KNX_DESCRIPTION_RESPONSE:
-			packet->service = KNX_DESCRIPTION_RESPONSE;
-			return false;
-
+	packet->service = (message[2] << 8) | message[3];
+	switch (packet->service) {
 		case KNX_CONNECTION_REQUEST:
 			packet->service = KNX_CONNECTION_REQUEST;
 			return knx_parse_connection_request(payload_ptr, payload_length,
@@ -81,14 +66,6 @@ bool knx_parse(const uint8_t* message, size_t length,
 			packet->service = KNX_DISCONNECT_RESPONSE;
 			return knx_parse_disconnect_response(payload_ptr, payload_length,
 			                                     &packet->payload.dc_res);
-
-		case KNX_DEVICE_CONFIGURATION_REQUEST:
-			packet->service = KNX_DEVICE_CONFIGURATION_REQUEST;
-			return false;
-
-		case KNX_DEVICE_CONFIGURATION_ACK:
-			packet->service = KNX_DEVICE_CONFIGURATION_ACK;
-			return false;
 
 		case KNX_TUNNEL_REQUEST:
 			packet->service = KNX_TUNNEL_REQUEST;
