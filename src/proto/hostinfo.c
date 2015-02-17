@@ -38,6 +38,14 @@ bool knx_generate_host_info(msgbuilder* mb, const knx_host_info* host) {
 		msgbuilder_append(mb, (const uint8_t*) &host->port, 2);
 }
 
+void knx_generate_host_info_(uint8_t* buffer, const knx_host_info* host) {
+	buffer[0] = KNX_HOST_INFO_SIZE;
+	buffer[1] = host->protocol;
+
+	memcpy(buffer + 2, &host->address, 4);
+	memcpy(buffer + 6, &host->port, 2);
+}
+
 bool knx_parse_host_info(const uint8_t* message, knx_host_info* host) {
 	if (message[0] != KNX_HOST_INFO_SIZE)
 		return false;

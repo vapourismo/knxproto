@@ -54,6 +54,7 @@ typedef struct {
  * Append host information.
  */
 bool knx_generate_host_info(msgbuilder* mb, const knx_host_info* host);
+void knx_generate_host_info_(uint8_t* buffer, const knx_host_info* host);
 
 /**
  * Retrieve host information.

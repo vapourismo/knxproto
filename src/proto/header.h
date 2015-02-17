@@ -37,8 +37,8 @@ typedef enum {
 	KNX_DESCRIPTION_RESPONSE         = 0x0204,
 	KNX_CONNECTION_REQUEST           = 0x0205,
 	KNX_CONNECTION_RESPONSE          = 0x0206,
-	KNX_CONNECTION_STATE_REQUEST      = 0x0207,
-	KNX_CONNECTION_STATE_RESPONSE     = 0x0208,
+	KNX_CONNECTION_STATE_REQUEST     = 0x0207,
+	KNX_CONNECTION_STATE_RESPONSE    = 0x0208,
 	KNX_DISCONNECT_REQUEST           = 0x0209,
 	KNX_DISCONNECT_RESPONSE          = 0x020A,
 	KNX_DEVICE_CONFIGURATION_REQUEST = 0x0310,
@@ -52,6 +52,7 @@ typedef enum {
  * Append a KNXnet/IP header which advocates the given service and payload length.
  */
 bool knx_generate_header(msgbuilder* mb, knx_service srv, uint16_t length);
+bool knx_generate_header_(uint8_t* buffer, knx_service srv, uint16_t length);
 
 /**
  * KNXnet/IP Header Size

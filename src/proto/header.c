@@ -56,3 +56,28 @@ bool knx_generate_header(msgbuilder* mb, knx_service srv, uint16_t length) {
 		msgbuilder_append(mb, (const uint8_t *) &u16srv, 2) &&
 		msgbuilder_append(mb, length_data, 2);
 }
+
+bool knx_generate_header_(uint8_t* buffer, knx_service srv, uint16_t length) {
+	// Since the protocol specifies the payload length
+	// to be a 16-bit unsigned integer, we have to make
+	// sure the given length + header size do not exceed
+	// the uint16_t bounds.
+	if (length > UINT16_MAX - KNX_HEADER_SIZE)
+		return false;
+
+	// This preamble will always be there,
+	// unless the underlying KNXnet/IP version changes.
+	buffer[0] = KNX_HEADER_SIZE;
+	buffer[1] = 16;
+
+	// Service description
+	buffer[2] = srv >> 8 & 0xFF;
+	buffer[3] = srv & 0xFF;
+
+	// Entire packet size
+	length += KNX_HEADER_SIZE;
+	buffer[4] = length >> 8 & 0xFF;
+	buffer[5] = length & 0xFF;
+
+	return true;
+}
