@@ -19,14 +19,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "knxnetsock.h"
+#include "dgramsock.h"
 #include "alloc.h"
 
 #include <stdarg.h>
 #include <sys/socket.h>
 #include <sys/select.h>
 
-int knxnetsock_create(const ip4addr* local, bool reuse) {
+int dgramsock_create(const ip4addr* local, bool reuse) {
 	int sock;
 
 	if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
@@ -36,7 +36,7 @@ int knxnetsock_create(const ip4addr* local, bool reuse) {
 		setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, anona(int, reuse), sizeof(int));
 
 		if (bind(sock, (const struct sockaddr*) local, sizeof(ip4addr)) != 0) {
-			knxnetsock_close(sock);
+			dgramsock_close(sock);
 			return -1;
 		}
 	}
@@ -44,7 +44,7 @@ int knxnetsock_create(const ip4addr* local, bool reuse) {
 	return sock;
 }
 
-bool knxnetsock_ready(int sock, time_t timeout_sec, long timeout_usec) {
+bool dgramsock_ready(int sock, time_t timeout_sec, long timeout_usec) {
 	fd_set fds;
 	FD_ZERO(&fds);
 	FD_SET(sock, &fds);
@@ -56,8 +56,8 @@ bool knxnetsock_ready(int sock, time_t timeout_sec, long timeout_usec) {
 	return select(sock + 1, &fds, NULL, NULL, &tm) > 0;
 }
 
-ssize_t knxnetsock_recv(int sock, void* buffer, size_t buffer_size,
-                        const ip4addr* endpoints, size_t num_endpoints) {
+ssize_t dgramsock_recv(int sock, void* buffer, size_t buffer_size,
+                       const ip4addr* endpoints, size_t num_endpoints) {
 	ip4addr remote;
 	socklen_t remote_size = sizeof(remote);
 
