@@ -33,7 +33,7 @@ bool knx_tunnel_process_outgoing(knx_tunnel_client* conn) {
 		return false;
 
 	dgramsock_send(conn->sock, buffer, buffer_size, &conn->gateway);
-	log_debug("Sent (service = 0x%04X)\n", service);
+	log_debug("Sent (service = 0x%04X)", service);
 
 	free(buffer);
 
@@ -51,7 +51,7 @@ void knx_tunnel_process_incoming(knx_tunnel_client* conn) {
 	knx_packet pkg_in;
 
 	if (r > 0 && knx_parse(buffer, r, &pkg_in)) {
-		log_debug("Received (service = 0x%04X)\n", pkg_in.service);
+		log_debug("Received (service = 0x%04X)", pkg_in.service);
 
 		switch (pkg_in.service) {
 			// Result of a connection request (duh)
@@ -64,14 +64,14 @@ void knx_tunnel_process_incoming(knx_tunnel_client* conn) {
 					conn->channel = pkg_in.payload.conn_res.channel;
 					conn->host_info = pkg_in.payload.conn_res.host;
 
-					log_info("Connected (channel = %i)\n", conn->channel);
+					log_info("Connected (channel = %i)", conn->channel);
 
 					pthread_mutex_lock(&conn->state_lock);
 					conn->state = KNX_TUNNEL_CONNECTED;
 					pthread_cond_signal(&conn->state_signal);
 					pthread_mutex_unlock(&conn->state_lock);
 				} else {
-					log_error("Connection failed (code = %i)\n", pkg_in.payload.conn_res.status);
+					log_error("Connection failed (code = %i)", pkg_in.payload.conn_res.status);
 
 					pthread_mutex_lock(&conn->state_lock);
 					conn->state = KNX_TUNNEL_DISCONNECTED;
@@ -86,7 +86,7 @@ void knx_tunnel_process_incoming(knx_tunnel_client* conn) {
 				if (pkg_in.payload.conn_state_res.channel != conn->channel)
 					break;
 
-				log_debug("Heartbeat (status = %i)\n", pkg_in.payload.conn_state_res.status);
+				log_debug("Heartbeat (status = %i)", pkg_in.payload.conn_state_res.status);
 
 				// Anything other than 0 means the bad news
 				if (pkg_in.payload.conn_state_res.status != 0) {
@@ -107,7 +107,7 @@ void knx_tunnel_process_incoming(knx_tunnel_client* conn) {
 
 				// If connection was previously intact
 				if (conn->state != KNX_TUNNEL_DISCONNECTED)
-					log_info("Disconnected (channel = %i, status = %i)\n",
+					log_info("Disconnected (channel = %i, status = %i)",
 					         pkg_in.payload.dc_req.channel,
 					         pkg_in.payload.dc_req.status);
 
