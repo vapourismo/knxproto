@@ -65,7 +65,7 @@ bool knx_generate_connection_request(msgbuilder* mb, const knx_connection_reques
 bool knx_parse_connection_request(const uint8_t* message, size_t length, knx_connection_request* req);
 
 /**
- *
+ * Connection request size
  */
 #define KNX_CONNECTION_REQUEST_SIZE (4 + KNX_HOST_INFO_SIZE * 2)
 
