@@ -60,4 +60,9 @@ bool knx_generate_host_info(msgbuilder* mb, const knx_host_info* host);
  */
 bool knx_parse_host_info(const uint8_t* message, knx_host_info* host);
 
+/**
+ * Size of a host info segment
+ */
+#define KNX_HOST_INFO_SIZE 8
+
 #endif

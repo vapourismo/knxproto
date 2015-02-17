@@ -39,7 +39,7 @@ bool knx_generate_host_info(msgbuilder* mb, const knx_host_info* host) {
 }
 
 bool knx_parse_host_info(const uint8_t* message, knx_host_info* host) {
-	if (message[0] != 8)
+	if (message[0] != KNX_HOST_INFO_SIZE)
 		return false;
 
 	switch (message[1]) {
