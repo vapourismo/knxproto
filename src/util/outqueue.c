@@ -24,6 +24,9 @@
 
 #include <string.h>
 
+// Routing Indication:
+//   Octet 0-n: Payload
+
 bool knx_outqueue_init(knx_outqueue* queue) {
 	queue->head = queue->tail = NULL;
 	pthread_mutex_init(&queue->lock, NULL);
