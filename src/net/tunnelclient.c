@@ -169,7 +169,8 @@ void knx_tunnel_worker(knx_tunnel_client* conn) {
 		if (conn->state == KNX_TUNNEL_CONNECTED &&
 		    difftime(time(NULL), conn->last_heartbeat) >= 30) {
 				knx_connection_state_request req = {conn->channel, 0, conn->host_info};
-				if (knx_outqueue_push(&conn->outgoing, KNX_CONNECTIONSTATE_REQUEST, &req))
+
+				if (dgramsock_send_knx(conn->sock, KNX_CONNECTIONSTATE_REQUEST, &req, &conn->gateway, &mb))
 					conn->last_heartbeat = time(NULL);
 		}
 
