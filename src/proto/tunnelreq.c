@@ -24,6 +24,8 @@
 
 #include "../util/alloc.h"
 
+#include <string.h>
+
 // Tunnel Request:
 //   Octet 0:   Structure length
 //   Octet 1:   Channel
@@ -42,6 +44,15 @@ bool knx_generate_tunnel_request(msgbuilder* mb, const knx_tunnel_request* req) 
 		knx_generate_header(mb, KNX_TUNNEL_REQUEST, knx_tunnel_request_size(req)) &&
 		msgbuilder_append(mb, anona(const uint8_t, 4, req->channel, req->seq_number, 0), 4) &&
 		msgbuilder_append(mb, req->data, req->size);
+}
+
+void knx_generate_tunnel_request_(uint8_t* buffer, const knx_tunnel_request* req) {
+	*buffer++ = 4;
+	*buffer++ = req->channel;
+	*buffer++ = req->seq_number;
+	*buffer++ = 0;
+
+	memcpy(buffer, req->data, req->size);
 }
 
 bool knx_parse_tunnel_request(const uint8_t* message, size_t length, knx_tunnel_request* req) {

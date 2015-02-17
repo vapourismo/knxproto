@@ -34,6 +34,11 @@ bool knx_generate_disconnect_response(msgbuilder* mb, const knx_disconnect_respo
 		msgbuilder_append(mb, anona(const uint8_t, res->channel, res->status), 2);
 }
 
+void knx_generate_disconnect_response_(uint8_t* buffer, const knx_disconnect_response* res) {
+	*buffer++ = res->channel;
+	*buffer++ = res->status;
+}
+
 bool knx_parse_disconnect_response(const uint8_t* message, size_t length, knx_disconnect_response* res) {
 	if (length < KNX_DISCONNECT_RESPONSE_SIZE)
 		return false;

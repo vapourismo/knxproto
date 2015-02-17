@@ -43,6 +43,7 @@ typedef struct {
  * Generate the message for a disconnect request.
  */
 bool knx_generate_disconnect_request(msgbuilder* mb, const knx_disconnect_request* req);
+void knx_generate_disconnect_request_(uint8_t* buffer, const knx_disconnect_request* req);
 
 /**
  * Parse a message (excluding header) which contains a disconnect request.

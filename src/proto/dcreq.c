@@ -36,6 +36,13 @@ bool knx_generate_disconnect_request(msgbuilder* mb, const knx_disconnect_reques
 		knx_generate_host_info(mb, &req->host);
 }
 
+void knx_generate_disconnect_request_(uint8_t* buffer, const knx_disconnect_request* req) {
+	*buffer++ = req->channel;
+	*buffer++ = req->status;
+
+	knx_generate_host_info_(buffer, &req->host);
+}
+
 bool knx_parse_disconnect_request(const uint8_t* message, size_t length, knx_disconnect_request* req) {
 	if (length < KNX_DISCONNECT_REQUEST_SIZE)
 		return false;

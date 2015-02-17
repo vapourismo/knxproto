@@ -44,6 +44,19 @@ bool knx_generate_connection_request(msgbuilder* mb, const knx_connection_reques
 		msgbuilder_append(mb, anona(const uint8_t, 4, conn_req->type, conn_req->layer, 0), 4);
 }
 
+void knx_generate_connection_request_(uint8_t* buffer, const knx_connection_request* conn_req) {
+	knx_generate_host_info_(buffer, &conn_req->control_host);
+	buffer += KNX_HOST_INFO_SIZE;
+
+	knx_generate_host_info_(buffer, &conn_req->tunnel_host);
+	buffer += KNX_HOST_INFO_SIZE;
+
+	*buffer++ = 4;
+	*buffer++ = conn_req->type;
+	*buffer++ = conn_req->layer;
+	*buffer++ = 0;
+}
+
 bool knx_parse_connection_request(const uint8_t* message, size_t length, knx_connection_request* req) {
 	if (length < KNX_CONNECTION_REQUEST_SIZE || message[16] != 4)
 		return false;

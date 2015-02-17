@@ -37,6 +37,13 @@ bool knx_generate_tunnel_response(msgbuilder* mb, const knx_tunnel_response* res
 		msgbuilder_append(mb, anona(const uint8_t, 4, res->channel, res->seq_number, res->status), 4);
 }
 
+void knx_generate_tunnel_response_(uint8_t* buffer, const knx_tunnel_response* res) {
+	*buffer++ = 4;
+	*buffer++ = res->channel;
+	*buffer++ = res->seq_number;
+	*buffer++ = res->status;
+}
+
 bool knx_parse_tunnel_response(const uint8_t* message, size_t length, knx_tunnel_response* res) {
 	if (length < KNX_TUNNEL_RESPONSE_SIZE || message[0] != KNX_TUNNEL_RESPONSE_SIZE)
 		return false;

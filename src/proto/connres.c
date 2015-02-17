@@ -49,6 +49,19 @@ bool knx_generate_connection_response(msgbuilder* mb, const knx_connection_respo
 		       msgbuilder_append(mb, res->extended, 3);
 }
 
+void knx_generate_connection_response_(uint8_t* buffer, const knx_connection_response* res) {
+	*buffer++ = res->channel;
+	*buffer++ = res->status;
+
+	if (res->status == 0) {
+		knx_generate_host_info_(buffer, &res->host);
+		buffer += KNX_HOST_INFO_SIZE;
+
+		*buffer++ = 4;
+		memcpy(buffer, res->extended, 3);
+	}
+}
+
 bool knx_parse_connection_response(const uint8_t* message, size_t length,
                                    knx_connection_response* res) {
 	if (length < 2)

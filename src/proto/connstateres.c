@@ -34,6 +34,11 @@ bool knx_generate_connection_state_response(msgbuilder* mb, const knx_connection
 		msgbuilder_append(mb, anona(const uint8_t, res->channel, res->status), 2);
 }
 
+void knx_generate_connection_state_response_(uint8_t* buffer, const knx_connection_state_response* res) {
+	*buffer++ = res->channel;
+	*buffer++ = res->status;
+}
+
 bool knx_parse_connection_state_response(const uint8_t* message, size_t length,
                                          knx_connection_state_response* res) {
 	if (length < KNX_CONNECTION_STATE_RESPONSE_SIZE)

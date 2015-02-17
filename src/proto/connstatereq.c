@@ -36,6 +36,13 @@ bool knx_generate_connection_state_request(msgbuilder* mb, const knx_connection_
 		knx_generate_host_info(mb, &req->host);
 }
 
+void knx_generate_connection_state_request_(uint8_t* buffer, const knx_connection_state_request* req) {
+	*buffer++ = req->channel;
+	*buffer++ = req->status;
+
+	knx_generate_host_info_(buffer, &req->host);
+}
+
 bool knx_parse_connection_state_request(const uint8_t* message, size_t length,
                                         knx_connection_state_request* req) {
 	if (length < KNX_CONNECTION_STATE_REQUEST_SIZE)

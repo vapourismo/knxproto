@@ -42,6 +42,7 @@ typedef struct {
  * Generate the message for a tunnel request.
  */
 bool knx_generate_tunnel_request(msgbuilder* mb, const knx_tunnel_request* req);
+void knx_generate_tunnel_request_(uint8_t* buffer, const knx_tunnel_request* req);
 
 /**
  * Parse a message (excluding header) which contains a tunnel request.

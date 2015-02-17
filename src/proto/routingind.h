@@ -38,6 +38,7 @@ typedef struct {
  * Generate the message for a routing indication.
  */
 bool knx_generate_routing_indication(msgbuilder* mb, const knx_routing_indication* ind);
+void knx_generate_routing_indication_(uint8_t* buffer, const knx_routing_indication* ind);
 
 /**
  * Parse a message (excluding header) which contains a routing indication.
