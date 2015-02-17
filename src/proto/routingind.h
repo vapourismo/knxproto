@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_PROTO_ROUTEIND_H
-#define KNXCLIENT_PROTO_ROUTEIND_H
+#ifndef KNXCLIENT_PROTO_ROUTINGIND_H
+#define KNXCLIENT_PROTO_ROUTINGIND_H
 
 #include "../util/msgbuilder.h"
 
@@ -37,13 +37,18 @@ typedef struct {
 /**
  * Generate the message for a routing indication.
  */
-bool knx_generate_routing_indication(msgbuilder* mb,
-                                   const knx_routing_indication* ind);
+bool knx_generate_routing_indication(msgbuilder* mb, const knx_routing_indication* ind);
 
 /**
  * Parse a message (excluding header) which contains a routing indication.
  */
-bool knx_parse_routing_indication(const uint8_t* message, size_t length,
-                                  knx_routing_indication* ind);
+bool knx_parse_routing_indication(const uint8_t* message, size_t length, knx_routing_indication* ind);
+
+/**
+ * Routing indication size
+ */
+inline size_t knx_routing_indication_size(const knx_routing_indication* ind) {
+	return ind->size;
+}
 
 #endif
