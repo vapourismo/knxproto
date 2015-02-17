@@ -56,8 +56,8 @@ bool dgramsock_ready(int sock, time_t timeout_sec, long timeout_usec) {
 	return select(sock + 1, &fds, NULL, NULL, &tm) > 0;
 }
 
-ssize_t dgramsock_recv(int sock, void* buffer, size_t buffer_size,
-                       const ip4addr* endpoints, size_t num_endpoints) {
+ssize_t dgramsock_recv_from(int sock, void* buffer, size_t buffer_size,
+                            const ip4addr* endpoints, size_t num_endpoints) {
 	ip4addr remote;
 	socklen_t remote_size = sizeof(remote);
 

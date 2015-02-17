@@ -47,7 +47,7 @@ void knx_tunnel_process_incoming(knx_tunnel_client* conn) {
 	uint8_t buffer[100];
 
 	// FIXME: Do not allow every endpoint
-	ssize_t r = dgramsock_recv(conn->sock, buffer, 100, NULL, 0);
+	ssize_t r = dgramsock_recv_from(conn->sock, buffer, 100, NULL, 0);
 	knx_packet pkg_in;
 
 	if (r > 0 && knx_parse(buffer, r, &pkg_in)) {

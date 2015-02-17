@@ -41,14 +41,14 @@ bool dgramsock_ready(int sock, time_t timeout_sec, long timeout_usec);
 /**
  * Receive data from a number of given endpoints.
  */
-ssize_t dgramsock_recv(int sock, void* buffer, size_t buffer_size,
-                        const ip4addr* endpoints, size_t num_endpoints);
+ssize_t dgramsock_recv_from(int sock, void* buffer, size_t buffer_size,
+                            const ip4addr* endpoints, size_t num_endpoints);
 
 /**
  * Send a datagram.
  */
 inline bool dgramsock_send(int sock, const void* buffer, size_t buffer_size,
-                           const ip4addr* target) {
+                             const ip4addr* target) {
 	ssize_t r = sendto(sock, buffer, buffer_size, 0,
 	                   (const struct sockaddr*) target, sizeof(ip4addr));
 
