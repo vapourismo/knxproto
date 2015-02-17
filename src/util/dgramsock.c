@@ -35,8 +35,10 @@ int dgramsock_create(const ip4addr* local, bool reuse) {
 	if (local) {
 		setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, anona(int, reuse), sizeof(int));
 
-		if (bind(sock, (const struct sockaddr*) local, sizeof(ip4addr)) != 0)
+		if (bind(sock, (const struct sockaddr*) local, sizeof(ip4addr)) != 0) {
+			dgramsock_close(sock);
 			return -1;
+		}
 	}
 
 	return sock;
