@@ -48,4 +48,9 @@ bool knx_generate_connection_state_response(msgbuilder* mb,
 bool knx_parse_connection_state_response(const uint8_t* message, size_t length,
                                          knx_connection_state_response* res);
 
+/**
+ * Connection state response size
+ */
+#define KNX_CONNECTION_STATE_RESPONSE_SIZE 2
+
 #endif
