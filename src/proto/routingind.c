@@ -14,7 +14,7 @@ bool knx_generate_routing_indication(msgbuilder* mb,
 }
 
 void knx_generate_routing_indication_(uint8_t* buffer, const knx_routing_indication* ind) {
-	memcpy(buffer + KNX_HEADER_SIZE, ind->data, ind->size);
+	memcpy(buffer, ind->data, ind->size);
 }
 
 bool knx_parse_routing_indication(const uint8_t* message, size_t length, knx_routing_indication* ind) {
