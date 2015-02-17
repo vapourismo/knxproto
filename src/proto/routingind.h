@@ -37,7 +37,7 @@ typedef struct {
 /**
  *
  */
-bool knx_append_routing_indication(msgbuilder* mb,
+bool knx_generate_routing_indication(msgbuilder* mb,
                                    const knx_routing_indication* ind);
 
 /**

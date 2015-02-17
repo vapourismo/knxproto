@@ -29,7 +29,7 @@
 //   Octet 2-3: Service number
 //   Octet 4-5: Packet length including header size
 
-bool knx_append_header(msgbuilder* mb, knx_service srv, uint16_t length) {
+bool knx_generate_header(msgbuilder* mb, knx_service srv, uint16_t length) {
 	// This preamble will always be there,
 	// unless the underlying KNXnet/IP version changes.
 	static const uint8_t preamble[2] = {6, 16};

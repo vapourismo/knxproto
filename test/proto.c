@@ -47,7 +47,7 @@ deftest(knx_connection_request, {
 	// Generate
 	msgbuilder mb;
 	msgbuilder_init(&mb, 0);
-	assert(knx_append_connection_request(&mb, &packet_in));
+	assert(knx_generate_connection_request(&mb, &packet_in));
 
 	// Parse
 	knx_packet packet_out;
@@ -74,7 +74,7 @@ deftest(knx_connection_response, {
 	// Generate
 	msgbuilder mb;
 	msgbuilder_init(&mb, 0);
-	assert(knx_append_connection_response(&mb, &packet_in));
+	assert(knx_generate_connection_response(&mb, &packet_in));
 
 	// Parse
 	knx_packet packet_out;
@@ -98,7 +98,7 @@ deftest(knx_disconnect_request, {
 	// Generate
 	msgbuilder mb;
 	msgbuilder_init(&mb, 0);
-	assert(knx_append_disconnect_request(&mb, &packet_in));
+	assert(knx_generate_disconnect_request(&mb, &packet_in));
 
 	// Parse
 	knx_packet packet_out;
@@ -121,7 +121,7 @@ deftest(knx_disconnect_response, {
 	// Generate
 	msgbuilder mb;
 	msgbuilder_init(&mb, 0);
-	assert(knx_append_disconnect_response(&mb, &packet_in));
+	assert(knx_generate_disconnect_response(&mb, &packet_in));
 
 	// Parse
 	knx_packet packet_out;
@@ -143,7 +143,7 @@ deftest(knx_connection_state_request, {
 	// Generate
 	msgbuilder mb;
 	msgbuilder_init(&mb, 0);
-	assert(knx_append_connection_state_request(&mb, &packet_in));
+	assert(knx_generate_connection_state_request(&mb, &packet_in));
 
 	// Parse
 	knx_packet packet_out;
@@ -166,7 +166,7 @@ deftest(knx_connection_state_response, {
 	// Generate
 	msgbuilder mb;
 	msgbuilder_init(&mb, 0);
-	assert(knx_append_connection_state_response(&mb, &packet_in));
+	assert(knx_generate_connection_state_response(&mb, &packet_in));
 
 	// Parse
 	knx_packet packet_out;
@@ -191,7 +191,7 @@ deftest(knx_tunnel_request, {
 	// Generate
 	msgbuilder mb;
 	msgbuilder_init(&mb, 0);
-	assert(knx_append_tunnel_request(&mb, &packet_in));
+	assert(knx_generate_tunnel_request(&mb, &packet_in));
 
 	// Parse
 	knx_packet packet_out;
@@ -215,7 +215,7 @@ deftest(knx_tunnel_response, {
 	// Generate
 	msgbuilder mb;
 	msgbuilder_init(&mb, 0);
-	assert(knx_append_tunnel_response(&mb, &packet_in));
+	assert(knx_generate_tunnel_response(&mb, &packet_in));
 
 	// Parse
 	knx_packet packet_out;

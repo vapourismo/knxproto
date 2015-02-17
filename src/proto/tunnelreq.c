@@ -31,16 +31,16 @@
 //   Octet 3:   Reserved
 //   Octet 4-n: Payload
 
-bool knx_append_tunnel_request(msgbuilder* mb,
+bool knx_generate_tunnel_request(msgbuilder* mb,
                                const knx_tunnel_request* req) {
 	// Prevent integer overflow
-	// Why 10? To prevent cases where `knx_append_header`
+	// Why 10? To prevent cases where `knx_generate_header`
 	// would double-check (req->size + 4 > UINT16_MAX - 6)
 	if (req->size > UINT16_MAX - 10)
 		return false;
 
 	return
-		knx_append_header(mb, KNX_TUNNEL_REQUEST, 4 + req->size) &&
+		knx_generate_header(mb, KNX_TUNNEL_REQUEST, 4 + req->size) &&
 		msgbuilder_append(mb, anona(const uint8_t, 4, req->channel, req->seq_number, 0), 4) &&
 		msgbuilder_append(mb, req->data, req->size);
 }

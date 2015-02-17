@@ -1,10 +1,10 @@
 #include "routingind.h"
 #include "header.h"
 
-bool knx_append_routing_indication(msgbuilder* mb,
+bool knx_generate_routing_indication(msgbuilder* mb,
                                    const knx_routing_indication* ind) {
 	return
-		knx_append_header(mb, KNX_ROUTING_INDICATION, ind->size) &&
+		knx_generate_header(mb, KNX_ROUTING_INDICATION, ind->size) &&
 		msgbuilder_append(mb, ind->data, ind->size);
 }
 

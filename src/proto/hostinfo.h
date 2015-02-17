@@ -53,7 +53,7 @@ typedef struct {
 /**
  * Append host information.
  */
-bool knx_append_host_info(msgbuilder* mb, const knx_host_info* host);
+bool knx_generate_host_info(msgbuilder* mb, const knx_host_info* host);
 
 /**
  * Retrieve host information.

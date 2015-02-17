@@ -92,31 +92,31 @@ bool knx_generate(msgbuilder* mb, knx_service service, const void* payload) {
 
 	switch (service) {
 		case KNX_CONNECTION_REQUEST:
-			return knx_append_connection_request(mb, payload);
+			return knx_generate_connection_request(mb, payload);
 
 		case KNX_CONNECTION_RESPONSE:
-			return knx_append_connection_response(mb, payload);
+			return knx_generate_connection_response(mb, payload);
 
 		case KNX_CONNECTIONSTATE_REQUEST:
-			return knx_append_connection_state_request(mb, payload);
+			return knx_generate_connection_state_request(mb, payload);
 
 		case KNX_CONNECTIONSTATE_RESPONSE:
-			return knx_append_connection_state_response(mb, payload);
+			return knx_generate_connection_state_response(mb, payload);
 
 		case KNX_DISCONNECT_REQUEST:
-			return knx_append_disconnect_request(mb, payload);
+			return knx_generate_disconnect_request(mb, payload);
 
 		case KNX_DISCONNECT_RESPONSE:
-			return knx_append_disconnect_response(mb, payload);
+			return knx_generate_disconnect_response(mb, payload);
 
 		case KNX_TUNNEL_REQUEST:
-			return knx_append_tunnel_request(mb, payload);
+			return knx_generate_tunnel_request(mb, payload);
 
 		case KNX_TUNNEL_RESPONSE:
-			return knx_append_tunnel_response(mb, payload);
+			return knx_generate_tunnel_response(mb, payload);
 
 		case KNX_ROUTING_INDICATION:
-			return knx_append_routing_indication(mb, payload);
+			return knx_generate_routing_indication(mb, payload);
 
 		default:
 			return false;

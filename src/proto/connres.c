@@ -36,12 +36,12 @@
 //   Octet 0: Structure length
 //   Octet 1-3: Unknown
 
-bool knx_append_connection_response(msgbuilder* mb,
+bool knx_generate_connection_response(msgbuilder* mb,
                                     const knx_connection_response* res) {
 	return
-		knx_append_header(mb, KNX_CONNECTION_RESPONSE, 14) &&
+		knx_generate_header(mb, KNX_CONNECTION_RESPONSE, 14) &&
 		msgbuilder_append(mb, anona(const uint8_t, res->channel, res->status), 2) &&
-		knx_append_host_info(mb, &res->host) &&
+		knx_generate_host_info(mb, &res->host) &&
 		msgbuilder_append_single(mb, 4) &&
 		msgbuilder_append(mb, res->extended, 3);
 }

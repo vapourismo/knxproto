@@ -57,7 +57,7 @@ typedef struct {
 /**
  * Generate the message for a connection request.
  */
-bool knx_append_connection_request(msgbuilder* mb,
+bool knx_generate_connection_request(msgbuilder* mb,
                                    const knx_connection_request* conn_req);
 
 /**

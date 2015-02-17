@@ -42,7 +42,7 @@ typedef struct {
 /**
  * Generate the message for a connection state request.
  */
-bool knx_append_connection_state_request(msgbuilder* mb,
+bool knx_generate_connection_state_request(msgbuilder* mb,
                                          const knx_connection_state_request* req);
 
 /**

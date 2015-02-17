@@ -31,10 +31,10 @@
 //   Octet 2: Sequence number
 //   Octet 3: Status
 
-bool knx_append_tunnel_response(msgbuilder* mb,
+bool knx_generate_tunnel_response(msgbuilder* mb,
                                 const knx_tunnel_response* res) {
 	return
-		knx_append_header(mb, KNX_TUNNEL_RESPONSE, 4) &&
+		knx_generate_header(mb, KNX_TUNNEL_RESPONSE, 4) &&
 		msgbuilder_append(mb, anona(const uint8_t, 4, res->channel, res->seq_number, res->status), 4);
 }
 

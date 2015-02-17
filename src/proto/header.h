@@ -51,6 +51,6 @@ typedef enum {
 /**
  * Append a KNXnet/IP header which advocates the given service and payload length.
  */
-bool knx_append_header(msgbuilder* mb, knx_service srv, uint16_t length);
+bool knx_generate_header(msgbuilder* mb, knx_service srv, uint16_t length);
 
 #endif

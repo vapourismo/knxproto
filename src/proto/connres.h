@@ -43,7 +43,7 @@ typedef struct {
 /**
  * Generate the message for a connection response.
  */
-bool knx_append_connection_response(msgbuilder* mb,
+bool knx_generate_connection_response(msgbuilder* mb,
                                     const knx_connection_response* res);
 
 /**

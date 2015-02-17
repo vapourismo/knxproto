@@ -42,7 +42,7 @@ typedef struct {
 /**
  * Generate the message for a disconnect request.
  */
-bool knx_append_disconnect_request(msgbuilder* mb,
+bool knx_generate_disconnect_request(msgbuilder* mb,
                                    const knx_disconnect_request* req);
 
 /**

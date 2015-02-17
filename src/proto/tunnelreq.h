@@ -41,7 +41,7 @@ typedef struct {
 /**
  * Generate the message for a tunnel request.
  */
-bool knx_append_tunnel_request(msgbuilder* mb,
+bool knx_generate_tunnel_request(msgbuilder* mb,
                                const knx_tunnel_request* req);
 
 /**
