@@ -32,6 +32,9 @@ bool knx_parse(const uint8_t* message, size_t length,
 	if (claimed_len > length || claimed_len < 6)
 		return false;
 
+	uint16_t payload_length = claimed_len - 6;
+	const uint8_t* payload_ptr = message + 6;
+
 	switch ((message[2] << 8) | message[3]) {
 		case KNX_SEARCH_REQUEST:
 			packet->service = KNX_SEARCH_REQUEST;
@@ -51,32 +54,32 @@ bool knx_parse(const uint8_t* message, size_t length,
 
 		case KNX_CONNECTION_REQUEST:
 			packet->service = KNX_CONNECTION_REQUEST;
-			return knx_parse_connection_request(message + 6, claimed_len - 6,
+			return knx_parse_connection_request(payload_ptr, payload_length,
 			                                    &packet->payload.conn_req);
 
 		case KNX_CONNECTION_RESPONSE:
 			packet->service = KNX_CONNECTION_RESPONSE;
-			return knx_parse_connection_response(message + 6, claimed_len - 6,
+			return knx_parse_connection_response(payload_ptr, payload_length,
 			                                     &packet->payload.conn_res);
 
 		case KNX_CONNECTIONSTATE_REQUEST:
 			packet->service = KNX_CONNECTIONSTATE_REQUEST;
-			return knx_parse_connection_state_request(message + 6, claimed_len - 6,
+			return knx_parse_connection_state_request(payload_ptr, payload_length,
 			                                          &packet->payload.conn_state_req);
 
 		case KNX_CONNECTIONSTATE_RESPONSE:
 			packet->service = KNX_CONNECTIONSTATE_RESPONSE;
-			return knx_parse_connection_state_response(message + 6, claimed_len - 6,
+			return knx_parse_connection_state_response(payload_ptr, payload_length,
 			                                           &packet->payload.conn_state_res);
 
 		case KNX_DISCONNECT_REQUEST:
 			packet->service = KNX_DISCONNECT_REQUEST;
-			return knx_parse_disconnect_request(message + 6, claimed_len - 6,
+			return knx_parse_disconnect_request(payload_ptr, payload_length,
 			                                    &packet->payload.dc_req);
 
 		case KNX_DISCONNECT_RESPONSE:
 			packet->service = KNX_DISCONNECT_RESPONSE;
-			return knx_parse_disconnect_response(message + 6, claimed_len - 6,
+			return knx_parse_disconnect_response(payload_ptr, payload_length,
 			                                     &packet->payload.dc_res);
 
 		case KNX_DEVICE_CONFIGURATION_REQUEST:
@@ -89,12 +92,12 @@ bool knx_parse(const uint8_t* message, size_t length,
 
 		case KNX_TUNNEL_REQUEST:
 			packet->service = KNX_TUNNEL_REQUEST;
-			return knx_parse_tunnel_request(message + 6, claimed_len - 6,
+			return knx_parse_tunnel_request(payload_ptr, payload_length,
 			                                &packet->payload.tunnel_req);
 
 		case KNX_TUNNEL_RESPONSE:
 			packet->service = KNX_TUNNEL_RESPONSE;
-			return knx_parse_tunnel_response(message + 6, claimed_len - 6,
+			return knx_parse_tunnel_response(payload_ptr, payload_length,
 			                                 &packet->payload.tunnel_res);
 
 		case KNX_ROUTING_INDICATION:
