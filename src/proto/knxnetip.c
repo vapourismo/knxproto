@@ -29,11 +29,11 @@ bool knx_parse(const uint8_t* message, size_t length,
 		return false;
 
 	uint16_t claimed_len = (message[4] << 8) | message[5];
-	if (claimed_len > length || claimed_len < 6)
+	if (claimed_len > length || claimed_len < KNX_HEADER_SIZE)
 		return false;
 
-	uint16_t payload_length = claimed_len - 6;
-	const uint8_t* payload_ptr = message + 6;
+	uint16_t payload_length = claimed_len - KNX_HEADER_SIZE;
+	const uint8_t* payload_ptr = message + KNX_HEADER_SIZE;
 
 	packet->service = (message[2] << 8) | message[3];
 	switch (packet->service) {
@@ -81,6 +81,76 @@ bool knx_parse(const uint8_t* message, size_t length,
 			packet->service = KNX_ROUTING_INDICATION;
 			return knx_parse_routing_indication(payload_ptr, payload_length,
 			                                    &packet->payload.routing_ind);
+
+		default:
+			return false;
+	}
+}
+
+bool knx_generate_(uint8_t* buffer, knx_service service, const void* payload) {
+	switch (service) {
+		case KNX_CONNECTION_REQUEST:
+			if (!knx_generate_header_(buffer, service, KNX_CONNECTION_REQUEST_SIZE))
+				return false;
+
+			knx_generate_connection_request_(buffer + KNX_HEADER_SIZE, payload);
+			return true;
+
+		case KNX_CONNECTION_RESPONSE:
+			if (!knx_generate_header_(buffer, service, knx_connection_response_size(payload)))
+				return false;
+
+			knx_generate_connection_response_(buffer + KNX_HEADER_SIZE, payload);
+			return true;
+
+		case KNX_CONNECTION_STATE_REQUEST:
+			if (!knx_generate_header_(buffer, service, KNX_CONNECTION_STATE_REQUEST_SIZE))
+				return false;
+
+			knx_generate_connection_state_request_(buffer + KNX_HEADER_SIZE, payload);
+			return true;
+
+		case KNX_CONNECTION_STATE_RESPONSE:
+			if (!knx_generate_header_(buffer, service, KNX_CONNECTION_STATE_RESPONSE_SIZE))
+				return false;
+
+			knx_generate_connection_state_response_(buffer + KNX_HEADER_SIZE, payload);
+			return true;
+
+		case KNX_DISCONNECT_REQUEST:
+			if (!knx_generate_header_(buffer, service, KNX_DISCONNECT_REQUEST_SIZE))
+				return false;
+
+			knx_generate_disconnect_request_(buffer + KNX_HEADER_SIZE, payload);
+			return true;
+
+		case KNX_DISCONNECT_RESPONSE:
+			if (!knx_generate_header_(buffer, service, KNX_DISCONNECT_RESPONSE_SIZE))
+				return false;
+
+			knx_generate_disconnect_response_(buffer + KNX_HEADER_SIZE, payload);
+			return true;
+
+		case KNX_TUNNEL_REQUEST:
+			if (!knx_generate_header_(buffer, service, knx_tunnel_request_size(payload)))
+				return false;
+
+			knx_generate_tunnel_request_(buffer + KNX_HEADER_SIZE, payload);
+			return true;
+
+		case KNX_TUNNEL_RESPONSE:
+			if (!knx_generate_header_(buffer, service, KNX_TUNNEL_RESPONSE_SIZE))
+				return false;
+
+			knx_generate_tunnel_response_(buffer + KNX_HEADER_SIZE, payload);
+			return true;
+
+		case KNX_ROUTING_INDICATION:
+			if (!knx_generate_header_(buffer, service, knx_routing_indication_size(payload)))
+				return false;
+
+			knx_generate_routing_indication_(buffer + KNX_HEADER_SIZE, payload);
+			return true;
 
 		default:
 			return false;

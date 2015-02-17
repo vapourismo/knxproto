@@ -37,7 +37,7 @@ inline static bool host_info_equal(const knx_host_info* a,
 }
 
 deftest(knx_connection_request, {
-	knx_connection_request packet_in = {
+	const knx_connection_request packet_in = {
 		KNX_CONNECTION_REQUEST_TUNNEL,
 		KNX_LAYER_TUNNEL,
 		{KNX_PROTO_UDP, htonl(INADDR_LOOPBACK), 12345},
@@ -45,13 +45,12 @@ deftest(knx_connection_request, {
 	};
 
 	// Generate
-	msgbuilder mb;
-	msgbuilder_init(&mb, 0);
-	assert(knx_generate_connection_request(&mb, &packet_in));
+	uint8_t buffer[KNX_HEADER_SIZE + KNX_CONNECTION_REQUEST_SIZE];
+	assert(knx_generate_(buffer, KNX_CONNECTION_REQUEST, &packet_in));
 
 	// Parse
 	knx_packet packet_out;
-	assert(knx_parse(mb.buffer, mb.used, &packet_out));
+	assert(knx_parse(buffer, sizeof(buffer), &packet_out));
 
 	// Check
 	assert(packet_out.service == KNX_CONNECTION_REQUEST);
@@ -72,13 +71,12 @@ deftest(knx_connection_response, {
 	};
 
 	// Generate
-	msgbuilder mb;
-	msgbuilder_init(&mb, 0);
-	assert(knx_generate_connection_response(&mb, &packet_in));
+	uint8_t buffer[KNX_HEADER_SIZE + knx_connection_response_size(&packet_in)];
+	assert(knx_generate_(buffer, KNX_CONNECTION_RESPONSE, &packet_in));
 
 	// Parse
 	knx_packet packet_out;
-	assert(knx_parse(mb.buffer, mb.used, &packet_out));
+	assert(knx_parse(buffer, sizeof(buffer), &packet_out));
 
 	// Check
 	assert(packet_out.service == KNX_CONNECTION_RESPONSE);
@@ -96,13 +94,12 @@ deftest(knx_disconnect_request, {
 	};
 
 	// Generate
-	msgbuilder mb;
-	msgbuilder_init(&mb, 0);
-	assert(knx_generate_disconnect_request(&mb, &packet_in));
+	uint8_t buffer[KNX_HEADER_SIZE + KNX_DISCONNECT_REQUEST_SIZE];
+	assert(knx_generate_(buffer, KNX_DISCONNECT_REQUEST, &packet_in));
 
 	// Parse
 	knx_packet packet_out;
-	assert(knx_parse(mb.buffer, mb.used, &packet_out));
+	assert(knx_parse(buffer, sizeof(buffer), &packet_out));
 
 	// Check
 	assert(packet_out.service == KNX_DISCONNECT_REQUEST);
@@ -119,13 +116,12 @@ deftest(knx_disconnect_response, {
 	};
 
 	// Generate
-	msgbuilder mb;
-	msgbuilder_init(&mb, 0);
-	assert(knx_generate_disconnect_response(&mb, &packet_in));
+	uint8_t buffer[KNX_HEADER_SIZE + KNX_DISCONNECT_RESPONSE_SIZE];
+	assert(knx_generate_(buffer, KNX_DISCONNECT_RESPONSE, &packet_in));
 
 	// Parse
 	knx_packet packet_out;
-	assert(knx_parse(mb.buffer, mb.used, &packet_out));
+	assert(knx_parse(buffer, sizeof(buffer), &packet_out));
 
 	// Check
 	assert(packet_out.service == KNX_DISCONNECT_RESPONSE);
@@ -141,13 +137,12 @@ deftest(knx_connection_state_request, {
 	};
 
 	// Generate
-	msgbuilder mb;
-	msgbuilder_init(&mb, 0);
-	assert(knx_generate_connection_state_request(&mb, &packet_in));
+	uint8_t buffer[KNX_HEADER_SIZE + KNX_CONNECTION_STATE_REQUEST_SIZE];
+	assert(knx_generate_(buffer, KNX_CONNECTION_STATE_REQUEST, &packet_in));
 
 	// Parse
 	knx_packet packet_out;
-	assert(knx_parse(mb.buffer, mb.used, &packet_out));
+	assert(knx_parse(buffer, sizeof(buffer), &packet_out));
 
 	// Check
 	assert(packet_out.service == KNX_CONNECTION_STATE_REQUEST);
@@ -164,13 +159,12 @@ deftest(knx_connection_state_response, {
 	};
 
 	// Generate
-	msgbuilder mb;
-	msgbuilder_init(&mb, 0);
-	assert(knx_generate_connection_state_response(&mb, &packet_in));
+	uint8_t buffer[KNX_HEADER_SIZE + KNX_CONNECTION_STATE_RESPONSE_SIZE];
+	assert(knx_generate_(buffer, KNX_CONNECTION_STATE_RESPONSE, &packet_in));
 
 	// Parse
 	knx_packet packet_out;
-	assert(knx_parse(mb.buffer, mb.used, &packet_out));
+	assert(knx_parse(buffer, sizeof(buffer), &packet_out));
 
 	// Check
 	assert(packet_out.service == KNX_CONNECTION_STATE_RESPONSE);
@@ -189,13 +183,12 @@ deftest(knx_tunnel_request, {
 	};
 
 	// Generate
-	msgbuilder mb;
-	msgbuilder_init(&mb, 0);
-	assert(knx_generate_tunnel_request(&mb, &packet_in));
+	uint8_t buffer[KNX_HEADER_SIZE + knx_tunnel_request_size(&packet_in)];
+	assert(knx_generate_(buffer, KNX_TUNNEL_REQUEST, &packet_in));
 
 	// Parse
 	knx_packet packet_out;
-	assert(knx_parse(mb.buffer, mb.used, &packet_out));
+	assert(knx_parse(buffer, sizeof(buffer), &packet_out));
 
 	// Check
 	assert(packet_out.service == KNX_TUNNEL_REQUEST);
@@ -213,19 +206,41 @@ deftest(knx_tunnel_response, {
 	};
 
 	// Generate
-	msgbuilder mb;
-	msgbuilder_init(&mb, 0);
-	assert(knx_generate_tunnel_response(&mb, &packet_in));
+	uint8_t buffer[KNX_HEADER_SIZE + KNX_TUNNEL_RESPONSE_SIZE];
+	assert(knx_generate_(buffer, KNX_TUNNEL_RESPONSE, &packet_in));
 
 	// Parse
 	knx_packet packet_out;
-	assert(knx_parse(mb.buffer, mb.used, &packet_out));
+	assert(knx_parse(buffer, sizeof(buffer), &packet_out));
 
 	// Check
 	assert(packet_out.service == KNX_TUNNEL_RESPONSE);
 	assert(packet_out.payload.tunnel_res.channel == packet_in.channel);
 	assert(packet_out.payload.tunnel_res.seq_number == packet_in.seq_number);
 	assert(packet_out.payload.tunnel_res.status == packet_in.status);
+})
+
+deftest(knx_routing_indication, {
+	const uint8_t example_data[4] = {11, 22, 33, 44};
+
+	knx_routing_indication packet_in = {
+		4,
+		example_data
+	};
+
+	// Generate
+	uint8_t buffer[KNX_HEADER_SIZE + knx_routing_indication_size(&packet_in)];
+	assert(knx_generate_(buffer, KNX_ROUTING_INDICATION, &packet_in));
+
+	// Parse
+	knx_packet packet_out;
+	assert(knx_parse(buffer, sizeof(buffer), &packet_out));
+
+	// Check
+	assert(packet_out.service == KNX_ROUTING_INDICATION);
+	assert(packet_out.payload.routing_ind.size == packet_in.size);
+
+	assert(memcmp(packet_out.payload.routing_ind.data, packet_in.data, packet_in.size) == 0);
 })
 
 deftest(knxnetip, {
@@ -237,4 +252,5 @@ deftest(knxnetip, {
 	runsubtest(knx_connection_state_response);
 	runsubtest(knx_tunnel_request);
 	runsubtest(knx_tunnel_response);
+	runsubtest(knx_routing_indication);
 })
