@@ -31,16 +31,14 @@
 //   Octet 2: Sequence number
 //   Octet 3: Status
 
-bool knx_generate_tunnel_response(msgbuilder* mb,
-                                const knx_tunnel_response* res) {
+bool knx_generate_tunnel_response(msgbuilder* mb, const knx_tunnel_response* res) {
 	return
-		knx_generate_header(mb, KNX_TUNNEL_RESPONSE, 4) &&
+		knx_generate_header(mb, KNX_TUNNEL_RESPONSE, KNX_TUNNEL_RESPONSE_SIZE) &&
 		msgbuilder_append(mb, anona(const uint8_t, 4, res->channel, res->seq_number, res->status), 4);
 }
 
-bool knx_parse_tunnel_response(const uint8_t* message, size_t length,
-                               knx_tunnel_response* res) {
-	if (length < 4 || message[0] != 4)
+bool knx_parse_tunnel_response(const uint8_t* message, size_t length, knx_tunnel_response* res) {
+	if (length < KNX_TUNNEL_RESPONSE_SIZE || message[0] != KNX_TUNNEL_RESPONSE_SIZE)
 		return false;
 
 	res->channel = message[1];

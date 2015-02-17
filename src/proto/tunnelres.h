@@ -40,13 +40,16 @@ typedef struct {
 /**
  * Generate the message for a tunnel response.
  */
-bool knx_generate_tunnel_response(msgbuilder* mb,
-                                const knx_tunnel_response* res);
+bool knx_generate_tunnel_response(msgbuilder* mb, const knx_tunnel_response* res);
 
 /**
  * Parse a message (excluding header) which contains a tunnel response.
  */
-bool knx_parse_tunnel_response(const uint8_t* message, size_t length,
-                               knx_tunnel_response* res);
+bool knx_parse_tunnel_response(const uint8_t* message, size_t length, knx_tunnel_response* res);
+
+/**
+ * Tunnel response size
+ */
+#define KNX_TUNNEL_RESPONSE_SIZE 4
 
 #endif
