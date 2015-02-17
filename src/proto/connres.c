@@ -36,14 +36,17 @@
 //   Octet 0: Structure length
 //   Octet 1-3: Unknown
 
-bool knx_generate_connection_response(msgbuilder* mb,
-                                    const knx_connection_response* res) {
-	return
-		knx_generate_header(mb, KNX_CONNECTION_RESPONSE, 14) &&
-		msgbuilder_append(mb, anona(const uint8_t, res->channel, res->status), 2) &&
-		knx_generate_host_info(mb, &res->host) &&
-		msgbuilder_append_single(mb, 4) &&
-		msgbuilder_append(mb, res->extended, 3);
+bool knx_generate_connection_response(msgbuilder* mb, const knx_connection_response* res) {
+	if (!knx_generate_header(mb, KNX_CONNECTION_RESPONSE, knx_connection_response_size(res)))
+		return false;
+
+	if (res->status)
+		return msgbuilder_append(mb, anona(const uint8_t, res->channel, res->status), 2);
+	else
+		return msgbuilder_append(mb, anona(const uint8_t, res->channel, res->status), 2) &&
+		       knx_generate_host_info(mb, &res->host) &&
+		       msgbuilder_append_single(mb, 4) &&
+		       msgbuilder_append(mb, res->extended, 3);
 }
 
 bool knx_parse_connection_response(const uint8_t* message, size_t length,
@@ -54,12 +57,12 @@ bool knx_parse_connection_response(const uint8_t* message, size_t length,
 	res->channel = message[0];
 	res->status = message[1];
 
-	if (length >= 10 && !knx_parse_host_info(message + 2, &res->host))
-		return false;
+	if (length >= KNX_HOST_INFO_SIZE + 6) {
+		if (!knx_parse_host_info(message + 2, &res->host))
+			return false;
 
-	if (length >= 14)
-		// TODO: Figure out what the last 4 octets do.
 		memcpy(res->extended, message + 11, 3);
+	}
 
 	return true;
 }
