@@ -22,6 +22,28 @@
 #ifndef KNXCLIENT_PROTO_ROUTEIND_H
 #define KNXCLIENT_PROTO_ROUTEIND_H
 
+#include "../util/msgbuilder.h"
 
+#include <stdint.h>
+
+/**
+ * Routing Indication
+ */
+typedef struct {
+	uint16_t size;
+	const void* data;
+} knx_routing_indication;
+
+/**
+ *
+ */
+bool knx_append_routing_indication(msgbuilder* mb,
+                                   const knx_routing_indication* ind);
+
+/**
+ *
+ */
+bool knx_parse_routing_indication(const uint8_t* message, size_t length,
+                                  knx_routing_indication* ind);
 
 #endif
