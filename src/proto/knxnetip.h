@@ -31,6 +31,7 @@
 #include "dcres.h"
 #include "tunnelreq.h"
 #include "tunnelres.h"
+#include "routingind.h"
 
 #include "../util/msgbuilder.h"
 
@@ -52,6 +53,7 @@ typedef struct {
 		knx_connection_state_response conn_state_res;
 		knx_tunnel_request tunnel_req;
 		knx_tunnel_response tunnel_res;
+		knx_routing_indication routing_ind;
 	} payload;
 } knx_packet;
 

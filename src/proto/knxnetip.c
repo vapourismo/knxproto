@@ -102,7 +102,8 @@ bool knx_parse(const uint8_t* message, size_t length,
 
 		case KNX_ROUTING_INDICATION:
 			packet->service = KNX_ROUTING_INDICATION;
-			return false;
+			return knx_parse_routing_indication(payload_ptr, payload_length,
+			                                    &packet->payload.routing_ind);
 
 		default:
 			return false;
@@ -136,6 +137,9 @@ bool knx_generate(msgbuilder* mb, knx_service service, const void* payload) {
 
 		case KNX_TUNNEL_RESPONSE:
 			return knx_append_tunnel_response(mb, payload);
+
+		case KNX_ROUTING_INDICATION:
+			return knx_append_routing_indication(mb, payload);
 
 		default:
 			return false;
