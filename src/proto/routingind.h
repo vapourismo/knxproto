@@ -35,13 +35,13 @@ typedef struct {
 } knx_routing_indication;
 
 /**
- *
+ * Generate the message for a routing indication.
  */
 bool knx_generate_routing_indication(msgbuilder* mb,
                                    const knx_routing_indication* ind);
 
 /**
- *
+ * Parse a message (excluding header) which contains a routing indication.
  */
 bool knx_parse_routing_indication(const uint8_t* message, size_t length,
                                   knx_routing_indication* ind);
