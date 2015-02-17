@@ -51,4 +51,9 @@ bool knx_generate_connection_state_request(msgbuilder* mb,
 bool knx_parse_connection_state_request(const uint8_t* message, size_t length,
                                         knx_connection_state_request* req);
 
+/**
+ * Connection state request size
+ */
+#define KNX_CONNECTION_STATE_REQUEST_SIZE (2 + KNX_HOST_INFO_SIZE)
+
 #endif
