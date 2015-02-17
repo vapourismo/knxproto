@@ -40,7 +40,7 @@ bool knx_tunnel_process_outgoing(knx_tunnel_client* conn) {
 	return true;
 }
 
-void knx_tunnel_process_incoming(knx_tunnel_client* conn) {
+void knx_tunnel_process_incoming(knx_tunnel_client* conn, msgbuilder* mb) {
 	if (!dgramsock_ready(conn->sock, 0, 100000))
 		return;
 
@@ -131,8 +131,8 @@ void knx_tunnel_process_incoming(knx_tunnel_client* conn) {
 					0
 				};
 
-				// Queue a tunnel response
-				knx_outqueue_push(&conn->outgoing, KNX_TUNNEL_RESPONSE, &res);
+				// Send a tunnel response
+				dgramsock_send_knx(conn->sock, KNX_TUNNEL_RESPONSE, &res, &conn->gateway, mb);
 
 				// Push the message onto the incoming queue
 				knx_pkgqueue_enqueue(&conn->incoming, &pkg_in);
@@ -157,6 +157,13 @@ void knx_tunnel_process_incoming(knx_tunnel_client* conn) {
 }
 
 void knx_tunnel_worker(knx_tunnel_client* conn) {
+	msgbuilder mb;
+
+	if (!msgbuilder_init(&mb, 0)) {
+		conn->state = KNX_TUNNEL_DISCONNECTED;
+		return;
+	}
+
 	while (conn->state != KNX_TUNNEL_DISCONNECTED) {
 		// Check if we need to send a heartbeat
 		if (conn->state == KNX_TUNNEL_CONNECTED &&
@@ -170,11 +177,13 @@ void knx_tunnel_worker(knx_tunnel_client* conn) {
 		while (knx_tunnel_process_outgoing(conn));
 
 		// Receive one incoming message
-		knx_tunnel_process_incoming(conn);
+		knx_tunnel_process_incoming(conn, &mb);
 	}
 
 	// Clear outgoing queue entirely
 	while (knx_tunnel_process_outgoing(conn));
+
+	msgbuilder_destroy(&mb);
 }
 
 extern void* knx_tunnel_worker_thread(void* conn) {
