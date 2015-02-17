@@ -32,13 +32,13 @@
 bool knx_generate_header(msgbuilder* mb, knx_service srv, uint16_t length) {
 	// This preamble will always be there,
 	// unless the underlying KNXnet/IP version changes.
-	static const uint8_t preamble[2] = {6, 16};
+	static const uint8_t preamble[2] = {KNX_HEADER_SIZE, 16};
 
 	// Since the protocol specifies the payload length
 	// to be a 16-bit unsigned integer, we have to make
 	// sure the given length + header size do not exceed
 	// the uint16_t bounds.
-	if (length > UINT16_MAX - 6)
+	if (length > UINT16_MAX - KNX_HEADER_SIZE)
 		return false;
 
 	// Generate a 16-bit unsigned integer (big-endian).
