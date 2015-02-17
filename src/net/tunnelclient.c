@@ -139,6 +139,17 @@ void knx_tunnel_process_incoming(knx_tunnel_client* conn) {
 
 				break;
 
+			// Tunnel Response
+			case KNX_TUNNEL_RESPONSE:
+				if (conn->state != KNX_TUNNEL_CONNECTED ||
+				    conn->channel != pkg_in.payload.tunnel_req.channel)
+					break;
+
+				// Push the message onto the incoming queue
+				knx_pkgqueue_enqueue(&conn->incoming, &pkg_in);
+
+				break;
+
 			// Everything else should be ignored
 			default: break;
 		}
