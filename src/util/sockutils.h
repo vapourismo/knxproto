@@ -23,6 +23,7 @@
 #define KNXCLIENT_UTIL_DGRAMSOCK
 
 #include "address.h"
+#include "../proto/knxnetip.h"
 
 #include <stdbool.h>
 #include <unistd.h>
@@ -41,14 +42,14 @@ bool dgramsock_ready(int sock, time_t timeout_sec, long timeout_usec);
 /**
  * Receive data from a number of given endpoints.
  */
-ssize_t dgramsock_recv_from(int sock, void* buffer, size_t buffer_size,
-                            const ip4addr* endpoints, size_t num_endpoints);
+ssize_t dgramsock_recv(int sock, void* buffer, size_t buffer_size,
+                       const ip4addr* endpoints, size_t num_endpoints);
 
 /**
  * Send a datagram.
  */
 inline bool dgramsock_send(int sock, const void* buffer, size_t buffer_size,
-                             const ip4addr* target) {
+                           const ip4addr* target) {
 	ssize_t r = sendto(sock, buffer, buffer_size, 0,
 	                   (const struct sockaddr*) target, sizeof(ip4addr));
 
@@ -56,6 +57,28 @@ inline bool dgramsock_send(int sock, const void* buffer, size_t buffer_size,
 		return false;
 	else
 		return (size_t) r == buffer_size;
+}
+
+/**
+ * Send a KNXnet/IP packet.
+ */
+inline bool dgramsock_send_knx(int sock, knx_service srv, const void* payload,
+                               const ip4addr* target, msgbuilder* mb) {
+	if (!knx_generate(mb, srv, payload))
+		return false;
+
+	return dgramsock_send(sock, mb->buffer, mb->used, target);
+}
+
+/**
+ * Receive a KNXnet/IP packet.
+ */
+inline bool dgramsock_recv_knx(int sock, uint8_t* buffer, size_t size,
+                               knx_packet* packet, const ip4addr* endpoints,
+                               size_t num_endpoints) {
+	size_t rv = dgramsock_recv(sock, buffer, size, endpoints, num_endpoints);
+
+	return rv > 0 && knx_parse(buffer, rv, packet);
 }
 
 #endif
