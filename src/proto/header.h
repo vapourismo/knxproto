@@ -53,4 +53,9 @@ typedef enum {
  */
 bool knx_generate_header(msgbuilder* mb, knx_service srv, uint16_t length);
 
+/**
+ * KNXnet/IP Header Size
+ */
+#define KNX_HEADER_SIZE 6
+
 #endif
