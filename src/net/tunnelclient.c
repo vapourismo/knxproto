@@ -21,7 +21,7 @@
 
 #include "tunnelclient.h"
 
-#include "../util/dgramsock.h"
+#include "../util/knxnetsock.h"
 #include "../util/log.h"
 
 bool knx_tunnel_process_outgoing(knx_tunnel_client* conn) {
@@ -32,7 +32,7 @@ bool knx_tunnel_process_outgoing(knx_tunnel_client* conn) {
 	if (buffer_size < 0)
 		return false;
 
-	dgramsock_send(conn->sock, buffer, buffer_size, &conn->gateway);
+	knxnetsock_send(conn->sock, buffer, buffer_size, &conn->gateway);
 	log_debug("Sent (service = 0x%04X)", service);
 
 	free(buffer);
@@ -41,13 +41,13 @@ bool knx_tunnel_process_outgoing(knx_tunnel_client* conn) {
 }
 
 void knx_tunnel_process_incoming(knx_tunnel_client* conn) {
-	if (!dgramsock_ready(conn->sock, 0, 100000))
+	if (!knxnetsock_ready(conn->sock, 0, 100000))
 		return;
 
 	uint8_t buffer[100];
 
 	// FIXME: Do not allow every endpoint
-	ssize_t r = dgramsock_recv(conn->sock, buffer, 100, NULL, 0);
+	ssize_t r = knxnetsock_recv(conn->sock, buffer, 100, NULL, 0);
 	knx_packet pkg_in;
 
 	if (r > 0 && knx_parse(buffer, r, &pkg_in)) {
@@ -196,7 +196,7 @@ bool knx_tunnel_init(knx_tunnel_client* conn) {
 		goto fail_state_signal;
 	}
 
-	if ((conn->sock = dgramsock_create(NULL, false)) < 0) {
+	if ((conn->sock = knxnetsock_create(NULL, false)) < 0) {
 		log_error("Failed to create socket");
 		goto fail_sock;
 	}
@@ -208,7 +208,7 @@ bool knx_tunnel_init(knx_tunnel_client* conn) {
 
 	return true;
 
-	fail_outgoing:     dgramsock_close(conn->sock);
+	fail_outgoing:     knxnetsock_close(conn->sock);
 	fail_sock:         pthread_cond_destroy(&conn->state_signal);
 	fail_state_signal: pthread_mutex_destroy(&conn->state_lock);
 	fail_state_lock:   knx_pkgqueue_destroy(&conn->incoming);
@@ -242,7 +242,7 @@ bool knx_tunnel_connect(knx_tunnel_client* conn, const ip4addr* gateway) {
 
 		conn->state = KNX_TUNNEL_DISCONNECTED;
 
-		dgramsock_close(conn->sock);
+		knxnetsock_close(conn->sock);
 		knx_pkgqueue_destroy(&conn->incoming);
 		knx_outqueue_destroy(&conn->outgoing);
 
@@ -294,7 +294,7 @@ void knx_tunnel_destroy(knx_tunnel_client* conn) {
 	knx_outqueue_destroy(&conn->outgoing);
 
 	// Close socket
-	dgramsock_close(conn->sock);
+	knxnetsock_close(conn->sock);
 
 	// Destroy state protectors
 	pthread_mutex_destroy(&conn->state_lock);
