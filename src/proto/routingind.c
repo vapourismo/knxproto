@@ -1,6 +1,9 @@
 #include "routingind.h"
 #include "header.h"
 
+// Routing Indication:
+//   Octet 0-n: Payload
+
 bool knx_generate_routing_indication(msgbuilder* mb,
                                    const knx_routing_indication* ind) {
 	return
