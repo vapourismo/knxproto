@@ -24,7 +24,7 @@
 #include "../util/dgramsock.h"
 #include "../util/log.h"
 
-bool knx_tunnel_process_outgoing(knx_tunnel_connection* conn) {
+bool knx_tunnel_process_outgoing(knx_tunnel_client* conn) {
 	knx_service service;
 	uint8_t* buffer;
 	ssize_t buffer_size = knx_outqueue_pop(&conn->outgoing, &buffer, &service);
@@ -40,7 +40,7 @@ bool knx_tunnel_process_outgoing(knx_tunnel_connection* conn) {
 	return true;
 }
 
-void knx_tunnel_process_incoming(knx_tunnel_connection* conn) {
+void knx_tunnel_process_incoming(knx_tunnel_client* conn) {
 	if (!dgramsock_ready(conn->sock, 0, 100000))
 		return;
 
@@ -145,7 +145,7 @@ void knx_tunnel_process_incoming(knx_tunnel_connection* conn) {
 	}
 }
 
-void knx_tunnel_worker(knx_tunnel_connection* conn) {
+void knx_tunnel_worker(knx_tunnel_client* conn) {
 	while (conn->state != KNX_TUNNEL_DISCONNECTED) {
 		// Check if we need to send a heartbeat
 		if (conn->state == KNX_TUNNEL_CONNECTED &&
@@ -171,7 +171,7 @@ extern void* knx_tunnel_worker_thread(void* conn) {
 	pthread_exit(NULL);
 }
 
-bool knx_tunnel_init(knx_tunnel_connection* conn) {
+bool knx_tunnel_init(knx_tunnel_client* conn) {
 	conn->state = KNX_TUNNEL_DISCONNECTED;
 	knx_pkgqueue_init(&conn->incoming);
 
@@ -205,7 +205,7 @@ bool knx_tunnel_init(knx_tunnel_connection* conn) {
 	return false;
 }
 
-bool knx_tunnel_connect(knx_tunnel_connection* conn, const ip4addr* gateway) {
+bool knx_tunnel_connect(knx_tunnel_client* conn, const ip4addr* gateway) {
 	conn->gateway = *gateway;
 	conn->state = KNX_TUNNEL_CONNECTING;
 	conn->channel = 0;
@@ -240,7 +240,7 @@ bool knx_tunnel_connect(knx_tunnel_connection* conn, const ip4addr* gateway) {
 	return true;
 }
 
-bool knx_tunnel_wait_state(knx_tunnel_connection* conn) {
+bool knx_tunnel_wait_state(knx_tunnel_client* conn) {
 	pthread_mutex_lock(&conn->state_lock);
 	while (conn->state == KNX_TUNNEL_CONNECTING)
 		pthread_cond_wait(&conn->state_signal, &conn->state_lock);
@@ -249,7 +249,7 @@ bool knx_tunnel_wait_state(knx_tunnel_connection* conn) {
 	return conn->state == KNX_TUNNEL_CONNECTED;
 }
 
-// bool knx_tunnel_wait_state_timed(knx_tunnel_connection* conn, const struct timespec* ts) {
+// bool knx_tunnel_wait_state_timed(knx_tunnel_client* conn, const struct timespec* ts) {
 // 	pthread_mutex_lock(&conn->state_lock);
 // 	while (conn->state == KNX_TUNNEL_CONNECTING)
 // 		pthread_cond_timedwait(&conn->state_signal, &conn->state_lock, ts)
@@ -258,7 +258,7 @@ bool knx_tunnel_wait_state(knx_tunnel_connection* conn) {
 // 	return conn->state == KNX_TUNNEL_CONNECTED;
 // }
 
-void knx_tunnel_disconnect(knx_tunnel_connection* conn) {
+void knx_tunnel_disconnect(knx_tunnel_client* conn) {
 	if (conn->state == KNX_TUNNEL_CONNECTED) {
 		// Queue a disconnect request
 		knx_disconnect_request req = {conn->channel, 0, conn->host_info};
@@ -273,7 +273,7 @@ void knx_tunnel_disconnect(knx_tunnel_connection* conn) {
 	pthread_join(conn->worker_thread, NULL);
 }
 
-void knx_tunnel_destroy(knx_tunnel_connection* conn) {
+void knx_tunnel_destroy(knx_tunnel_client* conn) {
 	if (conn->state != KNX_TUNNEL_DISCONNECTED)
 		knx_tunnel_disconnect(conn);
 

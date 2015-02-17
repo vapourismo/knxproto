@@ -60,38 +60,38 @@ typedef struct {
 	uint8_t channel;
 	knx_host_info host_info;
 	time_t last_heartbeat;
-} knx_tunnel_connection;
+} knx_tunnel_client;
 
 /**
  * Create a tunnel client.
  */
-bool knx_tunnel_init(knx_tunnel_connection* conn);
+bool knx_tunnel_init(knx_tunnel_client* conn);
 
 /**
  * Connect to a gateway. This function returns `true` if a connection request
  * has been sent.
  */
-bool knx_tunnel_connect(knx_tunnel_connection* conn, const ip4addr* gateway);
+bool knx_tunnel_connect(knx_tunnel_client* conn, const ip4addr* gateway);
 
 /**
  * Check if a connection has been established, by waiting for a connection response.
  */
-bool knx_tunnel_wait_state(knx_tunnel_connection* conn);
+bool knx_tunnel_wait_state(knx_tunnel_client* conn);
 
 // /**
 //  * Similiar to `knx_tunnel_wait_state` but with an option to wait a
 //  */
-// bool knx_tunnel_wait_state_timed(knx_tunnel_connection* conn, const struct timespec* ts);
+// bool knx_tunnel_wait_state_timed(knx_tunnel_client* conn, const struct timespec* ts);
 
 /**
  * Disconnect from a gateway. If `wait_for_worker` is true, this function will
  * block until a disconnect response has been given by the gateway.
  */
-void knx_tunnel_disconnect(knx_tunnel_connection* conn);
+void knx_tunnel_disconnect(knx_tunnel_client* conn);
 
 /**
  * Destroy a tunnel client.
  */
-void knx_tunnel_destroy(knx_tunnel_connection* conn);
+void knx_tunnel_destroy(knx_tunnel_client* conn);
 
 #endif
