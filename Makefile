@@ -17,9 +17,9 @@ TESTDIR         = test
 
 # Artifacts
 HEADERFILES     = util/address.h util/dgramsock.h util/msgbuilder.h util/outqueue.h util/pkgqueue.h \
-                  proto/connreq.h proto/connres.h proto/connstatereq.h proto/connstateres.h proto/dcreq.h proto/dcres.h proto/header.h proto/hostinfo.h proto/knxnetip.h proto/tunnelreq.h proto/tunnelres.h proto/routeind.h \
+                  proto/connreq.h proto/connres.h proto/connstatereq.h proto/connstateres.h proto/dcreq.h proto/dcres.h proto/header.h proto/hostinfo.h proto/knxnetip.h proto/tunnelreq.h proto/tunnelres.h proto/routingind.h \
                   net/tunnelclient.h
-SOURCEFILES     = proto/connstateres.c proto/connreq.c proto/tunnelreq.c proto/connstatereq.c proto/connres.c proto/dcreq.c proto/hostinfo.c proto/knxnetip.c proto/header.c proto/tunnelres.c proto/dcres.c proto/routeind.c \
+SOURCEFILES     = proto/connstateres.c proto/connreq.c proto/tunnelreq.c proto/connstatereq.c proto/connres.c proto/dcreq.c proto/hostinfo.c proto/knxnetip.c proto/header.c proto/tunnelres.c proto/dcres.c proto/routingind.c \
                   util/outqueue.c util/dgramsock.c util/msgbuilder.c util/log.c util/pkgqueue.c \
                   net/tunnelclient.c
 
