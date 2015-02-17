@@ -209,6 +209,7 @@ bool knx_tunnel_connect(knx_tunnel_client* conn, const ip4addr* gateway) {
 	conn->gateway = *gateway;
 	conn->state = KNX_TUNNEL_CONNECTING;
 	conn->channel = 0;
+	conn->seq_number = 0;
 	conn->last_heartbeat = 0;
 
 	static const knx_connection_request req = {
@@ -287,4 +288,12 @@ void knx_tunnel_destroy(knx_tunnel_client* conn) {
 	// Destroy state protectors
 	pthread_mutex_destroy(&conn->state_lock);
 	pthread_cond_destroy(&conn->state_signal);
+}
+
+bool knx_tunnel_send(knx_tunnel_client* conn, const void* payload, size_t length) {
+	if (conn->state != KNX_TUNNEL_CONNECTED)
+		return false;
+
+	knx_tunnel_request req = {conn->channel, conn->seq_number++, length, payload};
+	return knx_outqueue_push(&conn->outgoing, KNX_TUNNEL_REQUEST, &req);
 }

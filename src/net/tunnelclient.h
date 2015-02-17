@@ -57,6 +57,7 @@ typedef struct {
 	pthread_cond_t state_signal;
 	knx_tunnel_state state;
 
+	uint8_t seq_number;
 	uint8_t channel;
 	knx_host_info host_info;
 	time_t last_heartbeat;
@@ -93,5 +94,10 @@ void knx_tunnel_disconnect(knx_tunnel_client* conn);
  * Destroy a tunnel client.
  */
 void knx_tunnel_destroy(knx_tunnel_client* conn);
+
+/**
+ * Send data which should be tunnelled through the gateway.
+ */
+bool knx_tunnel_send(knx_tunnel_client* conn, const void* payload, size_t length);
 
 #endif
