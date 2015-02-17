@@ -32,7 +32,7 @@
 bool knx_generate_connection_state_request(msgbuilder* mb,
                                          const knx_connection_state_request* req) {
 	return
-		knx_generate_header(mb, KNX_CONNECTIONSTATE_REQUEST, 10) &&
+		knx_generate_header(mb, KNX_CONNECTION_STATE_REQUEST, 10) &&
 		msgbuilder_append(mb, anona(const uint8_t, req->channel, req->status), 2) &&
 		knx_generate_host_info(mb, &req->host);
 }

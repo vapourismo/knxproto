@@ -150,7 +150,7 @@ deftest(knx_connection_state_request, {
 	assert(knx_parse(mb.buffer, mb.used, &packet_out));
 
 	// Check
-	assert(packet_out.service == KNX_CONNECTIONSTATE_REQUEST);
+	assert(packet_out.service == KNX_CONNECTION_STATE_REQUEST);
 	assert(packet_out.payload.conn_state_req.channel == packet_in.channel);
 	assert(packet_out.payload.conn_state_req.status == packet_in.status);
 	assert(host_info_equal(&packet_out.payload.conn_state_req.host,
@@ -173,7 +173,7 @@ deftest(knx_connection_state_response, {
 	assert(knx_parse(mb.buffer, mb.used, &packet_out));
 
 	// Check
-	assert(packet_out.service == KNX_CONNECTIONSTATE_RESPONSE);
+	assert(packet_out.service == KNX_CONNECTION_STATE_RESPONSE);
 	assert(packet_out.payload.conn_state_res.channel == packet_in.channel);
 	assert(packet_out.payload.conn_state_res.status == packet_in.status);
 })

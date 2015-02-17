@@ -47,13 +47,13 @@ bool knx_parse(const uint8_t* message, size_t length,
 			return knx_parse_connection_response(payload_ptr, payload_length,
 			                                     &packet->payload.conn_res);
 
-		case KNX_CONNECTIONSTATE_REQUEST:
-			packet->service = KNX_CONNECTIONSTATE_REQUEST;
+		case KNX_CONNECTION_STATE_REQUEST:
+			packet->service = KNX_CONNECTION_STATE_REQUEST;
 			return knx_parse_connection_state_request(payload_ptr, payload_length,
 			                                          &packet->payload.conn_state_req);
 
-		case KNX_CONNECTIONSTATE_RESPONSE:
-			packet->service = KNX_CONNECTIONSTATE_RESPONSE;
+		case KNX_CONNECTION_STATE_RESPONSE:
+			packet->service = KNX_CONNECTION_STATE_RESPONSE;
 			return knx_parse_connection_state_response(payload_ptr, payload_length,
 			                                           &packet->payload.conn_state_res);
 
@@ -97,10 +97,10 @@ bool knx_generate(msgbuilder* mb, knx_service service, const void* payload) {
 		case KNX_CONNECTION_RESPONSE:
 			return knx_generate_connection_response(mb, payload);
 
-		case KNX_CONNECTIONSTATE_REQUEST:
+		case KNX_CONNECTION_STATE_REQUEST:
 			return knx_generate_connection_state_request(mb, payload);
 
-		case KNX_CONNECTIONSTATE_RESPONSE:
+		case KNX_CONNECTION_STATE_RESPONSE:
 			return knx_generate_connection_state_response(mb, payload);
 
 		case KNX_DISCONNECT_REQUEST:

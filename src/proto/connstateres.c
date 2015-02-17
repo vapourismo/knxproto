@@ -31,7 +31,7 @@
 bool knx_generate_connection_state_response(msgbuilder* mb,
                                           const knx_connection_state_response* res) {
 	return
-		knx_generate_header(mb, KNX_CONNECTIONSTATE_RESPONSE, 2) &&
+		knx_generate_header(mb, KNX_CONNECTION_STATE_RESPONSE, 2) &&
 		msgbuilder_append(mb, anona(const uint8_t, res->channel, res->status), 2);
 }
 

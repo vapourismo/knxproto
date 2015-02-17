@@ -82,7 +82,7 @@ void knx_tunnel_process_incoming(knx_tunnel_client* conn, msgbuilder* mb) {
 				break;
 
 			// Heartbeat
-			case KNX_CONNECTIONSTATE_RESPONSE:
+			case KNX_CONNECTION_STATE_RESPONSE:
 				if (pkg_in.payload.conn_state_res.channel != conn->channel)
 					break;
 
@@ -170,7 +170,7 @@ void knx_tunnel_worker(knx_tunnel_client* conn) {
 		    difftime(time(NULL), conn->last_heartbeat) >= 30) {
 				knx_connection_state_request req = {conn->channel, 0, conn->host_info};
 
-				if (dgramsock_send_knx(conn->sock, KNX_CONNECTIONSTATE_REQUEST, &req, &conn->gateway, &mb))
+				if (dgramsock_send_knx(conn->sock, KNX_CONNECTION_STATE_REQUEST, &req, &conn->gateway, &mb))
 					conn->last_heartbeat = time(NULL);
 		}
 
