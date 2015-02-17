@@ -25,7 +25,7 @@
 
 bool knx_parse(const uint8_t* message, size_t length,
                knx_packet* packet) {
-	if (length < KNX_HEADER_SIZE || message[0] != 6 || message[1] != 16)
+	if (length < KNX_HEADER_SIZE || message[0] != KNX_HEADER_SIZE || message[1] != 16)
 		return false;
 
 	uint16_t claimed_len = (message[4] << 8) | message[5];
