@@ -161,7 +161,13 @@ bool knx_tunnel_wait_state(knx_tunnel_client* conn) {
 void* knx_tunnel_worker_thread(void* data) {
 	knx_tunnel_client* client = data;
 
-	while (client->state < KNX_TUNNEL_DISCONNECTED) {
+	// Process incoming while in connecting state
+	// and the timeout has not been passed
+	while (client->state == KNX_TUNNEL_CONNECTING &&
+	       difftime(time(NULL), client->last_heartbeat) <= 5)
+		knx_tunnel_process_incoming(client);
+
+	while (client->state == KNX_TUNNEL_CONNECTED) {
 		// Check if we need to send a heartbeat
 		if (client->state == KNX_TUNNEL_CONNECTED && difftime(time(NULL), client->last_heartbeat) >= 30) {
 			knx_connection_state_request req = {client->channel, 0, client->host_info};
@@ -173,6 +179,13 @@ void* knx_tunnel_worker_thread(void* data) {
 		knx_tunnel_process_incoming(client);
 	}
 
+	// Change state
+	pthread_mutex_lock(&client->mutex);
+
+	client->state = KNX_TUNNEL_DISCONNECTED;
+	pthread_cond_signal(&client->cond);
+
+	pthread_mutex_unlock(&client->mutex);
 	pthread_exit(NULL);
 }
 
@@ -211,6 +224,7 @@ bool knx_tunnel_connect(knx_tunnel_client* client, int sock, const ip4addr* gate
 	client->state = KNX_TUNNEL_CONNECTING;
 	client->seq_number = 0;
 	client->ack_seq_number = UINT8_MAX;
+	client->last_heartbeat = time(NULL);
 
 	knx_connection_request req = {
 		KNX_CONNECTION_REQUEST_TUNNEL,
