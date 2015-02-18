@@ -52,8 +52,9 @@ typedef struct {
 	// knx_pkgqueue incoming;
 	// knx_outqueue outgoing;
 
-	pthread_mutex_t state_lock;
-	pthread_cond_t state_cond;
+	pthread_mutex_t mutex;
+	pthread_cond_t cond;
+
 	knx_tunnel_state state;
 
 	uint8_t seq_number;
@@ -91,7 +92,6 @@ void knx_tunnel_disconnect(knx_tunnel_client* conn);
 
 /**
  * Send data which should be tunnelled through the gateway.
- * This function is not thread-safe because it relies on atomic increase in sequence numbers.
  */
 bool knx_tunnel_send(knx_tunnel_client* conn, const void* payload, size_t length);
 

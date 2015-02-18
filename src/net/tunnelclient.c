@@ -66,17 +66,17 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 
 					log_info("Connected (channel = %i)", client->channel);
 
-					pthread_mutex_lock(&client->state_lock);
+					pthread_mutex_lock(&client->mutex);
 					client->state = KNX_TUNNEL_CONNECTED;
-					pthread_cond_signal(&client->state_cond);
-					pthread_mutex_unlock(&client->state_lock);
+					pthread_cond_signal(&client->cond);
+					pthread_mutex_unlock(&client->mutex);
 				} else {
 					log_error("Connection failed (code = %i)", pkg_in.payload.conn_res.status);
 
-					pthread_mutex_lock(&client->state_lock);
+					pthread_mutex_lock(&client->mutex);
 					client->state = KNX_TUNNEL_DISCONNECTED;
-					pthread_cond_signal(&client->state_cond);
-					pthread_mutex_unlock(&client->state_lock);
+					pthread_cond_signal(&client->cond);
+					pthread_mutex_unlock(&client->mutex);
 				}
 
 				break;
@@ -91,10 +91,10 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 
 				// Anything other than 0 means the bad news
 				if (pkg_in.payload.conn_state_res.status != 0) {
-					pthread_mutex_lock(&client->state_lock);
+					pthread_mutex_lock(&client->mutex);
 					client->state = KNX_TUNNEL_DISCONNECTED;
-					pthread_cond_signal(&client->state_cond);
-					pthread_mutex_unlock(&client->state_lock);
+					pthread_cond_signal(&client->cond);
+					pthread_mutex_unlock(&client->mutex);
 				}
 
 				break;
@@ -111,10 +111,10 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 					         pkg_in.payload.dc_req.status);
 
 				// Entering this state will stop the worker gently
-				pthread_mutex_lock(&client->state_lock);
+				pthread_mutex_lock(&client->mutex);
 				client->state = KNX_TUNNEL_DISCONNECTED;
-				pthread_cond_signal(&client->state_cond);
-				pthread_mutex_unlock(&client->state_lock);
+				pthread_cond_signal(&client->cond);
+				pthread_mutex_unlock(&client->mutex);
 
 				break;
 
@@ -186,12 +186,12 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 // 	conn->state = KNX_TUNNEL_DISCONNECTED;
 // 	knx_pkgqueue_init(&conn->incoming);
 
-// 	if (pthread_mutex_init(&conn->state_lock, NULL) != 0) {
+// 	if (pthread_mutex_init(&conn->mutex, NULL) != 0) {
 // 		log_error("Failed to create state lock");
 // 		goto fail_state_lock;
 // 	}
 
-// 	if (pthread_cond_init(&conn->state_cond, NULL) != 0) {
+// 	if (pthread_cond_init(&conn->cond, NULL) != 0) {
 // 		log_error("Failed to create state signal");
 // 		goto fail_state_signal;
 // 	}
@@ -209,8 +209,8 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 // 	return true;
 
 // 	fail_outgoing:     close(conn->sock);
-// 	fail_sock:         pthread_cond_destroy(&conn->state_cond);
-// 	fail_state_signal: pthread_mutex_destroy(&conn->state_lock);
+// 	fail_sock:         pthread_cond_destroy(&conn->cond);
+// 	fail_state_signal: pthread_mutex_destroy(&conn->mutex);
 // 	fail_state_lock:   knx_pkgqueue_destroy(&conn->incoming);
 
 // 	return false;
@@ -253,10 +253,10 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 // }
 
 bool knx_tunnel_wait_state(knx_tunnel_client* conn) {
-	pthread_mutex_lock(&conn->state_lock);
+	pthread_mutex_lock(&conn->mutex);
 	while (conn->state == KNX_TUNNEL_CONNECTING)
-		pthread_cond_wait(&conn->state_cond, &conn->state_lock);
-	pthread_mutex_unlock(&conn->state_lock);
+		pthread_cond_wait(&conn->cond, &conn->mutex);
+	pthread_mutex_unlock(&conn->mutex);
 
 	return conn->state == KNX_TUNNEL_CONNECTED;
 }
@@ -269,9 +269,9 @@ bool knx_tunnel_wait_state(knx_tunnel_client* conn) {
 // 	}
 
 // 	// Set state to signal the worker thread to terminate
-// 	pthread_mutex_lock(&conn->state_lock);
+// 	pthread_mutex_lock(&conn->mutex);
 // 	conn->state = KNX_TUNNEL_DISCONNECTED;
-// 	pthread_mutex_unlock(&conn->state_lock);
+// 	pthread_mutex_unlock(&conn->mutex);
 
 // 	pthread_join(conn->worker_thread, NULL);
 // }
@@ -288,8 +288,8 @@ bool knx_tunnel_wait_state(knx_tunnel_client* conn) {
 // 	close(conn->sock);
 
 // 	// Destroy state protectors
-// 	pthread_mutex_destroy(&conn->state_lock);
-// 	pthread_cond_destroy(&conn->state_cond);
+// 	pthread_mutex_destroy(&conn->mutex);
+// 	pthread_cond_destroy(&conn->cond);
 // }
 
 void* knx_tunnel_worker_thread(void* data) {
@@ -311,17 +311,17 @@ void* knx_tunnel_worker_thread(void* data) {
 }
 
 bool knx_tunnel_init_thread_coms(knx_tunnel_client* client) {
-	if (pthread_mutex_init(&client->state_lock, NULL) != 0)
+	if (pthread_mutex_init(&client->mutex, NULL) != 0)
 		return false;
 
-	if (pthread_cond_init(&client->state_cond, NULL) != 0) {
-		pthread_mutex_destroy(&client->state_lock);
+	if (pthread_cond_init(&client->cond, NULL) != 0) {
+		pthread_mutex_destroy(&client->mutex);
 		return false;
 	}
 
 	if (pthread_create(&client->worker, NULL, &knx_tunnel_worker_thread, client) != 0) {
-		pthread_mutex_destroy(&client->state_lock);
-		pthread_cond_destroy(&client->state_cond);
+		pthread_mutex_destroy(&client->mutex);
+		pthread_cond_destroy(&client->cond);
 
 		return false;
 	}
@@ -376,10 +376,10 @@ void knx_tunnel_disconnect(knx_tunnel_client* client) {
 		log_error("Failed to send disconnect request");
 
 	// Set new state
-	pthread_mutex_lock(&client->state_lock);
+	pthread_mutex_lock(&client->mutex);
 	client->state = KNX_TUNNEL_DISCONNECTED;
-	pthread_cond_signal(&client->state_cond);
-	pthread_mutex_unlock(&client->state_lock);
+	pthread_cond_signal(&client->cond);
+	pthread_mutex_unlock(&client->mutex);
 }
 
 bool knx_tunnel_send(knx_tunnel_client* client, const void* payload, size_t length) {
