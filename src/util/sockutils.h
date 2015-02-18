@@ -75,4 +75,6 @@ inline bool dgramsock_recv_knx(int sock, uint8_t* buffer, size_t size,
 	return rv > 0 && knx_parse(buffer, rv, packet);
 }
 
+bool dgramsock_recv_knx_(int sock, knx_packet* packet, const ip4addr* endpoints, size_t num_endpoints);
+
 #endif
