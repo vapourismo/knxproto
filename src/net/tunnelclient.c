@@ -251,24 +251,29 @@ bool knx_tunnel_connect(knx_tunnel_client* client, int sock, const ip4addr* gate
 }
 
 void knx_tunnel_disconnect(knx_tunnel_client* client) {
-	if (client->state == KNX_TUNNEL_DISCONNECTED)
-		return;
+	if (client->state != KNX_TUNNEL_DISCONNECTED) {
+		knx_disconnect_request dc_req = {
+			client->channel,
+			0,
+			client->host_info
+		};
 
-	knx_disconnect_request dc_req = {
-		client->channel,
-		0,
-		client->host_info
-	};
+		// Send disconnect request
+		if (!dgramsock_send_knx(client->sock, KNX_DISCONNECT_REQUEST, &dc_req, &client->gateway))
+			log_error("Failed to send disconnect request");
 
-	// Send disconnect request
-	if (!dgramsock_send_knx(client->sock, KNX_DISCONNECT_REQUEST, &dc_req, &client->gateway))
-		log_error("Failed to send disconnect request");
+		// Set new state
+		pthread_mutex_lock(&client->mutex);
+		client->state = KNX_TUNNEL_DISCONNECTED;
+		pthread_cond_signal(&client->cond);
+		pthread_mutex_unlock(&client->mutex);
+	}
 
-	// Set new state
-	pthread_mutex_lock(&client->mutex);
-	client->state = KNX_TUNNEL_DISCONNECTED;
-	pthread_cond_signal(&client->cond);
-	pthread_mutex_unlock(&client->mutex);
+	// Join thread and cleanup resources
+	pthread_join(client->worker, NULL);
+	pthread_mutex_destroy(&client->mutex);
+	pthread_mutex_destroy(&client->send_mutex);
+	pthread_cond_destroy(&client->cond);
 }
 
 bool knx_tunnel_send(knx_tunnel_client* client, const void* payload, size_t length) {
