@@ -62,18 +62,7 @@ inline bool dgramsock_send(int sock, const void* buffer, size_t buffer_size,
 /**
  * Send a KNXnet/IP packet.
  */
-inline bool dgramsock_send_knx(int sock, knx_service srv, const void* payload,
-                               const ip4addr* target, msgbuilder* mb) {
-	if (!knx_generate(mb, srv, payload))
-		return false;
-
-	return dgramsock_send(sock, mb->buffer, mb->used, target);
-}
-
-/**
- * Send a KNXnet/IP packet.
- */
-bool dgramsock_send_knx_(int sock, knx_service srv, const void* payload, const ip4addr* target);
+bool dgramsock_send_knx(int sock, knx_service srv, const void* payload, const ip4addr* target);
 
 /**
  * Receive a KNXnet/IP packet.

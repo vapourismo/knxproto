@@ -132,7 +132,7 @@ void knx_tunnel_process_incoming(knx_tunnel_client* conn) {
 				};
 
 				// Send a tunnel response
-				dgramsock_send_knx_(conn->sock, KNX_TUNNEL_RESPONSE, &res, &conn->gateway);
+				dgramsock_send_knx(conn->sock, KNX_TUNNEL_RESPONSE, &res, &conn->gateway);
 
 				// Push the message onto the incoming queue
 				knx_pkgqueue_enqueue(&conn->incoming, &pkg_in);
@@ -163,7 +163,7 @@ void knx_tunnel_worker(knx_tunnel_client* conn) {
 		    difftime(time(NULL), conn->last_heartbeat) >= 30) {
 				knx_connection_state_request req = {conn->channel, 0, conn->host_info};
 
-				if (dgramsock_send_knx_(conn->sock, KNX_CONNECTION_STATE_REQUEST, &req, &conn->gateway))
+				if (dgramsock_send_knx(conn->sock, KNX_CONNECTION_STATE_REQUEST, &req, &conn->gateway))
 					conn->last_heartbeat = time(NULL);
 		}
 

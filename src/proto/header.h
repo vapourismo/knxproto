@@ -22,8 +22,6 @@
 #ifndef KNXCLIENT_PROTO_HEADER_H
 #define KNXCLIENT_PROTO_HEADER_H
 
-#include "../util/msgbuilder.h"
-
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -51,8 +49,7 @@ typedef enum {
 /**
  * Append a KNXnet/IP header which advocates the given service and payload length.
  */
-bool knx_generate_header(msgbuilder* mb, knx_service srv, uint16_t length);
-bool knx_generate_header_(uint8_t* buffer, knx_service srv, uint16_t length);
+bool knx_generate_header(uint8_t* buffer, knx_service srv, uint16_t length);
 
 /**
  * KNXnet/IP Header Size

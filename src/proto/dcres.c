@@ -28,13 +28,7 @@
 //   Octet 0: Channel
 //   Octet 1: Status
 
-bool knx_generate_disconnect_response(msgbuilder* mb, const knx_disconnect_response* res) {
-	return
-		knx_generate_header(mb, KNX_DISCONNECT_RESPONSE, KNX_DISCONNECT_RESPONSE_SIZE) &&
-		msgbuilder_append(mb, anona(const uint8_t, res->channel, res->status), 2);
-}
-
-void knx_generate_disconnect_response_(uint8_t* buffer, const knx_disconnect_response* res) {
+void knx_generate_disconnect_response(uint8_t* buffer, const knx_disconnect_response* res) {
 	*buffer++ = res->channel;
 	*buffer++ = res->status;
 }

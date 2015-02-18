@@ -24,8 +24,6 @@
 
 #include "hostinfo.h"
 
-#include "../util/msgbuilder.h"
-
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
@@ -43,8 +41,7 @@ typedef struct {
 /**
  * Generate the message for a connection response.
  */
-bool knx_generate_connection_response(msgbuilder* mb, const knx_connection_response* res);
-void knx_generate_connection_response_(uint8_t* buffer, const knx_connection_response* res);
+void knx_generate_connection_response(uint8_t* buffer, const knx_connection_response* res);
 
 /**
  * Parse a message (excluding header) which contains a connection response.

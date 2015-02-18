@@ -22,8 +22,6 @@
 #ifndef KNXCLIENT_PROTO_CONNSTATERES_H
 #define KNXCLIENT_PROTO_CONNSTATERES_H
 
-#include "../util/msgbuilder.h"
-
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -39,8 +37,7 @@ typedef struct {
 /**
  * Generate the message for a connection response.
  */
-bool knx_generate_connection_state_response(msgbuilder* mb, const knx_connection_state_response* res);
-void knx_generate_connection_state_response_(uint8_t* buffer, const knx_connection_state_response* res);
+void knx_generate_connection_state_response(uint8_t* buffer, const knx_connection_state_response* res);
 
 /**
  * Parse a message (excluding header) which contains a connection response.

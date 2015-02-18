@@ -22,9 +22,9 @@
 #ifndef KNXCLIENT_PROTO_ROUTINGIND_H
 #define KNXCLIENT_PROTO_ROUTINGIND_H
 
-#include "../util/msgbuilder.h"
-
 #include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
 
 /**
  * Routing Indication
@@ -37,8 +37,7 @@ typedef struct {
 /**
  * Generate the message for a routing indication.
  */
-bool knx_generate_routing_indication(msgbuilder* mb, const knx_routing_indication* ind);
-void knx_generate_routing_indication_(uint8_t* buffer, const knx_routing_indication* ind);
+void knx_generate_routing_indication(uint8_t* buffer, const knx_routing_indication* ind);
 
 /**
  * Parse a message (excluding header) which contains a routing indication.

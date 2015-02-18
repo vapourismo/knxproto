@@ -22,8 +22,6 @@
 #ifndef KNXCLIENT_UTIL_OUTQUEUE_H
 #define KNXCLIENT_UTIL_OUTQUEUE_H
 
-#include "msgbuilder.h"
-
 #include "../proto/knxnetip.h"
 
 #include <pthread.h>
@@ -48,8 +46,6 @@ typedef struct {
 
 	struct knx_outqueue_elem* head;
 	struct knx_outqueue_elem* tail;
-
-	msgbuilder mb;
 } knx_outqueue;
 
 /**

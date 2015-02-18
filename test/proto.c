@@ -22,7 +22,6 @@
 #include "testfw.h"
 
 #include "../src/proto/knxnetip.h"
-#include "../src/util/msgbuilder.h"
 
 #include <stdbool.h>
 #include <string.h>
@@ -46,7 +45,7 @@ deftest(knx_connection_request, {
 
 	// Generate
 	uint8_t buffer[KNX_HEADER_SIZE + KNX_CONNECTION_REQUEST_SIZE];
-	assert(knx_generate_(buffer, KNX_CONNECTION_REQUEST, &packet_in));
+	assert(knx_generate(buffer, KNX_CONNECTION_REQUEST, &packet_in));
 
 	// Parse
 	knx_packet packet_out;
@@ -72,7 +71,7 @@ deftest(knx_connection_response, {
 
 	// Generate
 	uint8_t buffer[KNX_HEADER_SIZE + knx_connection_response_size(&packet_in)];
-	assert(knx_generate_(buffer, KNX_CONNECTION_RESPONSE, &packet_in));
+	assert(knx_generate(buffer, KNX_CONNECTION_RESPONSE, &packet_in));
 
 	// Parse
 	knx_packet packet_out;
@@ -95,7 +94,7 @@ deftest(knx_disconnect_request, {
 
 	// Generate
 	uint8_t buffer[KNX_HEADER_SIZE + KNX_DISCONNECT_REQUEST_SIZE];
-	assert(knx_generate_(buffer, KNX_DISCONNECT_REQUEST, &packet_in));
+	assert(knx_generate(buffer, KNX_DISCONNECT_REQUEST, &packet_in));
 
 	// Parse
 	knx_packet packet_out;
@@ -117,7 +116,7 @@ deftest(knx_disconnect_response, {
 
 	// Generate
 	uint8_t buffer[KNX_HEADER_SIZE + KNX_DISCONNECT_RESPONSE_SIZE];
-	assert(knx_generate_(buffer, KNX_DISCONNECT_RESPONSE, &packet_in));
+	assert(knx_generate(buffer, KNX_DISCONNECT_RESPONSE, &packet_in));
 
 	// Parse
 	knx_packet packet_out;
@@ -138,7 +137,7 @@ deftest(knx_connection_state_request, {
 
 	// Generate
 	uint8_t buffer[KNX_HEADER_SIZE + KNX_CONNECTION_STATE_REQUEST_SIZE];
-	assert(knx_generate_(buffer, KNX_CONNECTION_STATE_REQUEST, &packet_in));
+	assert(knx_generate(buffer, KNX_CONNECTION_STATE_REQUEST, &packet_in));
 
 	// Parse
 	knx_packet packet_out;
@@ -160,7 +159,7 @@ deftest(knx_connection_state_response, {
 
 	// Generate
 	uint8_t buffer[KNX_HEADER_SIZE + KNX_CONNECTION_STATE_RESPONSE_SIZE];
-	assert(knx_generate_(buffer, KNX_CONNECTION_STATE_RESPONSE, &packet_in));
+	assert(knx_generate(buffer, KNX_CONNECTION_STATE_RESPONSE, &packet_in));
 
 	// Parse
 	knx_packet packet_out;
@@ -184,7 +183,7 @@ deftest(knx_tunnel_request, {
 
 	// Generate
 	uint8_t buffer[KNX_HEADER_SIZE + knx_tunnel_request_size(&packet_in)];
-	assert(knx_generate_(buffer, KNX_TUNNEL_REQUEST, &packet_in));
+	assert(knx_generate(buffer, KNX_TUNNEL_REQUEST, &packet_in));
 
 	// Parse
 	knx_packet packet_out;
@@ -207,7 +206,7 @@ deftest(knx_tunnel_response, {
 
 	// Generate
 	uint8_t buffer[KNX_HEADER_SIZE + KNX_TUNNEL_RESPONSE_SIZE];
-	assert(knx_generate_(buffer, KNX_TUNNEL_RESPONSE, &packet_in));
+	assert(knx_generate(buffer, KNX_TUNNEL_RESPONSE, &packet_in));
 
 	// Parse
 	knx_packet packet_out;
@@ -230,7 +229,7 @@ deftest(knx_routing_indication, {
 
 	// Generate
 	uint8_t buffer[KNX_HEADER_SIZE + knx_routing_indication_size(&packet_in)];
-	assert(knx_generate_(buffer, KNX_ROUTING_INDICATION, &packet_in));
+	assert(knx_generate(buffer, KNX_ROUTING_INDICATION, &packet_in));
 
 	// Parse
 	knx_packet packet_out;

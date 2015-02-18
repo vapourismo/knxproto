@@ -31,14 +31,7 @@
 //   Octet 2-5: IPv4 address
 //   Octet 6-7: Port number
 
-bool knx_generate_host_info(msgbuilder* mb, const knx_host_info* host) {
-	return
-		msgbuilder_append(mb, anona(const uint8_t, KNX_HOST_INFO_SIZE, host->protocol), 2) &&
-		msgbuilder_append(mb, (const uint8_t*) &host->address, 4) &&
-		msgbuilder_append(mb, (const uint8_t*) &host->port, 2);
-}
-
-void knx_generate_host_info_(uint8_t* buffer, const knx_host_info* host) {
+void knx_generate_host_info(uint8_t* buffer, const knx_host_info* host) {
 	buffer[0] = KNX_HOST_INFO_SIZE;
 	buffer[1] = host->protocol;
 

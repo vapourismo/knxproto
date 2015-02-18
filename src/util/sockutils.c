@@ -79,11 +79,11 @@ ssize_t dgramsock_recv(int sock, void* buffer, size_t buffer_size,
 	return 0;
 }
 
-bool dgramsock_send_knx_(int sock, knx_service srv, const void* payload, const ip4addr* target) {
+bool dgramsock_send_knx(int sock, knx_service srv, const void* payload, const ip4addr* target) {
 	size_t size = KNX_HEADER_SIZE + knx_payload_size(srv, payload);
 	uint8_t buffer[size];
 
-	if (!knx_generate_(buffer, srv, payload))
+	if (!knx_generate(buffer, srv, payload))
 		return false;
 
 	return dgramsock_send(sock, buffer, size, target);

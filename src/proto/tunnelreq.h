@@ -22,8 +22,6 @@
 #ifndef KNXCLIENT_PROTO_TUNNELREQ_H
 #define KNXCLIENT_PROTO_TUNNELREQ_H
 
-#include "../util/msgbuilder.h"
-
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -41,8 +39,7 @@ typedef struct {
 /**
  * Generate the message for a tunnel request.
  */
-bool knx_generate_tunnel_request(msgbuilder* mb, const knx_tunnel_request* req);
-void knx_generate_tunnel_request_(uint8_t* buffer, const knx_tunnel_request* req);
+void knx_generate_tunnel_request(uint8_t* buffer, const knx_tunnel_request* req);
 
 /**
  * Parse a message (excluding header) which contains a tunnel request.

@@ -26,14 +26,7 @@
 
 bool knx_outqueue_init(knx_outqueue* queue) {
 	queue->head = queue->tail = NULL;
-	pthread_mutex_init(&queue->lock, NULL);
-
-	if (!msgbuilder_init(&queue->mb, 0)) {
-		free(queue);
-		return false;
-	}
-
-	return true;
+	return pthread_mutex_init(&queue->lock, NULL) == 0;
 }
 
 void knx_outqueue_clear(knx_outqueue* queue) {
@@ -53,7 +46,6 @@ void knx_outqueue_clear(knx_outqueue* queue) {
 void knx_outqueue_destroy(knx_outqueue* queue) {
 	knx_outqueue_clear(queue);
 	pthread_mutex_destroy(&queue->lock);
-	msgbuilder_destroy(&queue->mb);
 }
 
 bool knx_outqueue_push(knx_outqueue* queue, knx_service service, const void* payload) {
@@ -65,14 +57,13 @@ bool knx_outqueue_push(knx_outqueue* queue, knx_service service, const void* pay
 	elem->service = service;
 	elem->next = NULL;
 
-	pthread_mutex_lock(&queue->lock);
+	elem->length = knx_payload_size(service, payload) + KNX_HEADER_SIZE;
+	elem->message = newa(uint8_t, elem->length);
 
-	if (!knx_generate(&queue->mb, service, payload)) {
-		pthread_mutex_unlock(&queue->lock);
+	if (!knx_generate(elem->message, service, payload))
 		return false;
-	}
 
-	elem->length = msgbuilder_move(&queue->mb, &elem->message);
+	pthread_mutex_lock(&queue->lock);
 
 	if (queue->head)
 		queue->tail = queue->tail->next = elem;

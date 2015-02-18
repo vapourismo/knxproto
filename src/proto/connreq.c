@@ -36,19 +36,11 @@
 //   Octet 2: KNX Layer
 //   Octet 3: Reserved (should be 0)
 
-bool knx_generate_connection_request(msgbuilder* mb, const knx_connection_request* conn_req) {
-	return
-		knx_generate_header(mb, KNX_CONNECTION_REQUEST, KNX_CONNECTION_REQUEST_SIZE) &&
-		knx_generate_host_info(mb, &conn_req->control_host) &&
-		knx_generate_host_info(mb, &conn_req->tunnel_host) &&
-		msgbuilder_append(mb, anona(const uint8_t, 4, conn_req->type, conn_req->layer, 0), 4);
-}
-
-void knx_generate_connection_request_(uint8_t* buffer, const knx_connection_request* conn_req) {
-	knx_generate_host_info_(buffer, &conn_req->control_host);
+void knx_generate_connection_request(uint8_t* buffer, const knx_connection_request* conn_req) {
+	knx_generate_host_info(buffer, &conn_req->control_host);
 	buffer += KNX_HOST_INFO_SIZE;
 
-	knx_generate_host_info_(buffer, &conn_req->tunnel_host);
+	knx_generate_host_info(buffer, &conn_req->tunnel_host);
 	buffer += KNX_HOST_INFO_SIZE;
 
 	*buffer++ = 4;

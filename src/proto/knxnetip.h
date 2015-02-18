@@ -33,8 +33,6 @@
 #include "tunnelres.h"
 #include "routingind.h"
 
-#include "../util/msgbuilder.h"
-
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -66,8 +64,7 @@ bool knx_parse(const uint8_t* msg, size_t length,
 /**
  * Generate a message.
  */
-bool knx_generate(msgbuilder* mb, knx_service service, const void* payload);
-bool knx_generate_(uint8_t* buffer, knx_service service, const void* payload);
+bool knx_generate(uint8_t* buffer, knx_service service, const void* payload);
 
 /**
  * Calculate the space needed to generate a packet.
