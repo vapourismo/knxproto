@@ -79,72 +79,82 @@ bool knx_parse(const uint8_t* message, size_t length,
 }
 
 bool knx_generate_(uint8_t* buffer, knx_service service, const void* payload) {
+	if (!knx_generate_header_(buffer, service, knx_payload_size(service, payload)))
+		return false;
+
 	switch (service) {
 		case KNX_CONNECTION_REQUEST:
-			if (!knx_generate_header_(buffer, service, KNX_CONNECTION_REQUEST_SIZE))
-				return false;
-
 			knx_generate_connection_request_(buffer + KNX_HEADER_SIZE, payload);
 			return true;
 
 		case KNX_CONNECTION_RESPONSE:
-			if (!knx_generate_header_(buffer, service, knx_connection_response_size(payload)))
-				return false;
-
 			knx_generate_connection_response_(buffer + KNX_HEADER_SIZE, payload);
 			return true;
 
 		case KNX_CONNECTION_STATE_REQUEST:
-			if (!knx_generate_header_(buffer, service, KNX_CONNECTION_STATE_REQUEST_SIZE))
-				return false;
-
 			knx_generate_connection_state_request_(buffer + KNX_HEADER_SIZE, payload);
 			return true;
 
 		case KNX_CONNECTION_STATE_RESPONSE:
-			if (!knx_generate_header_(buffer, service, KNX_CONNECTION_STATE_RESPONSE_SIZE))
-				return false;
-
 			knx_generate_connection_state_response_(buffer + KNX_HEADER_SIZE, payload);
 			return true;
 
 		case KNX_DISCONNECT_REQUEST:
-			if (!knx_generate_header_(buffer, service, KNX_DISCONNECT_REQUEST_SIZE))
-				return false;
-
 			knx_generate_disconnect_request_(buffer + KNX_HEADER_SIZE, payload);
 			return true;
 
 		case KNX_DISCONNECT_RESPONSE:
-			if (!knx_generate_header_(buffer, service, KNX_DISCONNECT_RESPONSE_SIZE))
-				return false;
-
 			knx_generate_disconnect_response_(buffer + KNX_HEADER_SIZE, payload);
 			return true;
 
 		case KNX_TUNNEL_REQUEST:
-			if (!knx_generate_header_(buffer, service, knx_tunnel_request_size(payload)))
-				return false;
-
 			knx_generate_tunnel_request_(buffer + KNX_HEADER_SIZE, payload);
 			return true;
 
 		case KNX_TUNNEL_RESPONSE:
-			if (!knx_generate_header_(buffer, service, KNX_TUNNEL_RESPONSE_SIZE))
-				return false;
-
 			knx_generate_tunnel_response_(buffer + KNX_HEADER_SIZE, payload);
 			return true;
 
 		case KNX_ROUTING_INDICATION:
-			if (!knx_generate_header_(buffer, service, knx_routing_indication_size(payload)))
-				return false;
-
 			knx_generate_routing_indication_(buffer + KNX_HEADER_SIZE, payload);
 			return true;
 
 		default:
 			return false;
+	}
+}
+
+size_t knx_payload_size(knx_service service, const void* payload) {
+	switch (service) {
+		case KNX_CONNECTION_REQUEST:
+			return KNX_CONNECTION_REQUEST_SIZE;
+
+		case KNX_CONNECTION_RESPONSE:
+			return knx_connection_response_size(payload);
+
+		case KNX_CONNECTION_STATE_REQUEST:
+			return KNX_CONNECTION_STATE_REQUEST_SIZE;
+
+		case KNX_CONNECTION_STATE_RESPONSE:
+			return KNX_CONNECTION_STATE_RESPONSE_SIZE;
+
+		case KNX_DISCONNECT_REQUEST:
+			return KNX_DISCONNECT_REQUEST_SIZE;
+
+		case KNX_DISCONNECT_RESPONSE:
+			return KNX_DISCONNECT_RESPONSE_SIZE;
+
+		case KNX_TUNNEL_REQUEST:
+			return knx_tunnel_request_size(payload);
+
+		case KNX_TUNNEL_RESPONSE:
+			return KNX_TUNNEL_RESPONSE_SIZE;
+
+		case KNX_ROUTING_INDICATION:
+			return knx_routing_indication_size(payload);
+
+		default:
+			return 0;
 	}
 }
 

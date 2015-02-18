@@ -69,4 +69,9 @@ bool knx_parse(const uint8_t* msg, size_t length,
 bool knx_generate(msgbuilder* mb, knx_service service, const void* payload);
 bool knx_generate_(uint8_t* buffer, knx_service service, const void* payload);
 
+/**
+ * Calculate the space needed to generate a packet.
+ */
+size_t knx_payload_size(knx_service service, const void* payload);
+
 #endif
