@@ -56,6 +56,23 @@ bool dgramsock_ready(int sock, time_t timeout_sec, long timeout_usec) {
 	return select(sock + 1, &fds, NULL, NULL, &tm) > 0;
 }
 
+inline bool dgramsock_valid_sender(const ip4addr* endpoints, size_t num_endpoints,
+                                   const ip4addr* sender, socklen_t sender_len) {
+	if (!endpoints || !num_endpoints)
+		return true;
+
+	if (sender_len != sizeof(ip4addr) || sender->sin_family != AF_INET)
+		return false;
+
+	for (size_t i = 0; i < num_endpoints; i++) {
+		if (endpoints[i].sin_addr.s_addr == sender->sin_addr.s_addr &&
+		    endpoints[i].sin_port        == sender->sin_port)
+				return true;
+	}
+
+	return false;
+}
+
 ssize_t dgramsock_recv(int sock, void* buffer, size_t buffer_size,
                        const ip4addr* endpoints, size_t num_endpoints) {
 	ip4addr remote;
@@ -63,20 +80,10 @@ ssize_t dgramsock_recv(int sock, void* buffer, size_t buffer_size,
 
 	ssize_t rv = recvfrom(sock, buffer, buffer_size, 0, (struct sockaddr*) &remote, &remote_size);
 
-	if (rv < 0 || !endpoints || !num_endpoints)
+	if (rv > 0 && dgramsock_valid_sender(endpoints, num_endpoints, &remote, remote_size))
 		return rv;
-
-	if (remote_size != sizeof(remote))
-		return 0;
-
-	for (size_t i = 0; i < num_endpoints; i++) {
-		if (endpoints[i].sin_family      == remote.sin_family &&
-		    endpoints[i].sin_addr.s_addr == remote.sin_addr.s_addr &&
-		    endpoints[i].sin_port        == remote.sin_port)
-				return rv;
-	}
-
-	return 0;
+	else
+		return -1;
 }
 
 bool dgramsock_send_knx(int sock, knx_service srv, const void* payload, const ip4addr* target) {
@@ -90,16 +97,18 @@ bool dgramsock_send_knx(int sock, knx_service srv, const void* payload, const ip
 }
 
 ssize_t dgramsock_peek_knx(int sock) {
+	ip4addr sender;
+	socklen_t sender_len = sizeof(sender);
+
 	uint8_t buffer[KNX_HEADER_SIZE];
+	while (recvfrom(sock, buffer, KNX_HEADER_SIZE, MSG_PEEK, &sender, &sender_len) == KNX_HEADER_SIZE) {
+		uint16_t length;
+		if (knx_unpack_header(buffer, NULL, &length))
+			return length;
 
-	ssize_t rv = recvfrom(sock, buffer, KNX_HEADER_SIZE, MSG_PEEK, NULL, NULL);
+		// This is not a KNXnet/IP packet so we'll discard it.
+		recvfrom(sock, NULL, 0, 0, NULL, NULL);
+	}
 
-	if (rv < 0)
-		return -1;
-
-	uint16_t length;
-	if (knx_unpack_header(buffer, NULL, &length))
-		return length;
-	else
-		return 0;
+	return -1;
 }
