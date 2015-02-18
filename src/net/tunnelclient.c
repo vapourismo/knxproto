@@ -24,30 +24,30 @@
 #include "../util/sockutils.h"
 #include "../util/log.h"
 
-bool knx_tunnel_process_outgoing(knx_tunnel_client* conn) {
-	knx_service service;
-	uint8_t* buffer;
-	ssize_t buffer_size = knx_outqueue_pop(&conn->outgoing, &buffer, &service);
+// bool knx_tunnel_process_outgoing(knx_tunnel_client* conn) {
+// 	knx_service service;
+// 	uint8_t* buffer;
+// 	ssize_t buffer_size = knx_outqueue_pop(&conn->outgoing, &buffer, &service);
 
-	if (buffer_size < 0)
-		return false;
+// 	if (buffer_size < 0)
+// 		return false;
 
-	dgramsock_send(conn->sock, buffer, buffer_size, &conn->gateway);
-	log_debug("Sent (service = 0x%04X)", service);
+// 	dgramsock_send(conn->sock, buffer, buffer_size, &conn->gateway);
+// 	log_debug("Sent (service = 0x%04X)", service);
 
-	free(buffer);
+// 	free(buffer);
 
-	return true;
-}
+// 	return true;
+// }
 
-void knx_tunnel_process_incoming(knx_tunnel_client* conn) {
-	if (!dgramsock_ready(conn->sock, 0, 100000))
+inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
+	if (!dgramsock_ready(client->sock, 0, 100000))
 		return;
 
 	uint8_t buffer[100];
 
 	// FIXME: Do not allow every endpoint
-	ssize_t r = dgramsock_recv(conn->sock, buffer, 100, NULL, 0);
+	ssize_t r = dgramsock_recv(client->sock, buffer, 100, NULL, 0);
 	knx_packet pkg_in;
 
 	if (r > 0 && knx_parse(buffer, r, &pkg_in)) {
@@ -56,97 +56,95 @@ void knx_tunnel_process_incoming(knx_tunnel_client* conn) {
 		switch (pkg_in.service) {
 			// Result of a connection request (duh)
 			case KNX_CONNECTION_RESPONSE:
-				if (conn->state != KNX_TUNNEL_CONNECTING)
+				if (client->state != KNX_TUNNEL_CONNECTING)
 					break;
 
 				if (pkg_in.payload.conn_res.status == 0) {
 					// Save channel and host info
-					conn->channel = pkg_in.payload.conn_res.channel;
-					conn->host_info = pkg_in.payload.conn_res.host;
+					client->channel = pkg_in.payload.conn_res.channel;
+					client->host_info = pkg_in.payload.conn_res.host;
 
-					log_info("Connected (channel = %i)", conn->channel);
+					log_info("Connected (channel = %i)", client->channel);
 
-					pthread_mutex_lock(&conn->state_lock);
-					conn->state = KNX_TUNNEL_CONNECTED;
-					pthread_cond_signal(&conn->state_signal);
-					pthread_mutex_unlock(&conn->state_lock);
+					pthread_mutex_lock(&client->state_lock);
+					client->state = KNX_TUNNEL_CONNECTED;
+					pthread_cond_signal(&client->state_cond);
+					pthread_mutex_unlock(&client->state_lock);
 				} else {
 					log_error("Connection failed (code = %i)", pkg_in.payload.conn_res.status);
 
-					pthread_mutex_lock(&conn->state_lock);
-					conn->state = KNX_TUNNEL_DISCONNECTED;
-					pthread_cond_signal(&conn->state_signal);
-					pthread_mutex_unlock(&conn->state_lock);
+					pthread_mutex_lock(&client->state_lock);
+					client->state = KNX_TUNNEL_DISCONNECTED;
+					pthread_cond_signal(&client->state_cond);
+					pthread_mutex_unlock(&client->state_lock);
 				}
 
 				break;
 
 			// Heartbeat
 			case KNX_CONNECTION_STATE_RESPONSE:
-				if (pkg_in.payload.conn_state_res.channel != conn->channel)
+				if (pkg_in.payload.conn_state_res.channel != client->channel)
 					break;
 
 				log_debug("Heartbeat (status = %i)", pkg_in.payload.conn_state_res.status);
 
 				// Anything other than 0 means the bad news
 				if (pkg_in.payload.conn_state_res.status != 0) {
-					// TODO: Find out if we need to queue a disconnect request?
-
-					pthread_mutex_lock(&conn->state_lock);
-					conn->state = KNX_TUNNEL_DISCONNECTED;
-					pthread_cond_signal(&conn->state_signal);
-					pthread_mutex_unlock(&conn->state_lock);
+					pthread_mutex_lock(&client->state_lock);
+					client->state = KNX_TUNNEL_DISCONNECTED;
+					pthread_cond_signal(&client->state_cond);
+					pthread_mutex_unlock(&client->state_lock);
 				}
 
 				break;
 
 			// Result of a disconnect request (duh)
 			case KNX_DISCONNECT_RESPONSE:
-				if (pkg_in.payload.dc_res.channel != conn->channel)
+				if (pkg_in.payload.dc_res.channel != client->channel)
 					break;
 
 				// If connection was previously intact
-				if (conn->state != KNX_TUNNEL_DISCONNECTED)
+				if (client->state != KNX_TUNNEL_DISCONNECTED)
 					log_info("Disconnected (channel = %i, status = %i)",
 					         pkg_in.payload.dc_req.channel,
 					         pkg_in.payload.dc_req.status);
 
 				// Entering this state will stop the worker gently
-				pthread_mutex_lock(&conn->state_lock);
-				conn->state = KNX_TUNNEL_DISCONNECTED;
-				pthread_cond_signal(&conn->state_signal);
-				pthread_mutex_unlock(&conn->state_lock);
+				pthread_mutex_lock(&client->state_lock);
+				client->state = KNX_TUNNEL_DISCONNECTED;
+				pthread_cond_signal(&client->state_cond);
+				pthread_mutex_unlock(&client->state_lock);
 
 				break;
 
 			// Tunnel Request
 			case KNX_TUNNEL_REQUEST:
-				if (conn->state != KNX_TUNNEL_CONNECTED ||
-				    conn->channel != pkg_in.payload.tunnel_req.channel)
+				if (client->state != KNX_TUNNEL_CONNECTED ||
+				    client->channel != pkg_in.payload.tunnel_req.channel)
 					break;
 
 				knx_tunnel_response res = {
-					conn->channel,
+					client->channel,
 					pkg_in.payload.tunnel_req.seq_number,
 					0
 				};
 
 				// Send a tunnel response
-				dgramsock_send_knx(conn->sock, KNX_TUNNEL_RESPONSE, &res, &conn->gateway);
+				dgramsock_send_knx(client->sock, KNX_TUNNEL_RESPONSE, &res, &client->gateway);
 
 				// Push the message onto the incoming queue
-				knx_pkgqueue_enqueue(&conn->incoming, &pkg_in);
+				// knx_pkgqueue_enqueue(&client->incoming, &pkg_in);
 
 				break;
 
 			// Tunnel Response
 			case KNX_TUNNEL_RESPONSE:
-				if (conn->state != KNX_TUNNEL_CONNECTED ||
-				    conn->channel != pkg_in.payload.tunnel_req.channel)
+				if (client->state != KNX_TUNNEL_CONNECTED ||
+				    client->channel != pkg_in.payload.tunnel_req.channel)
 					break;
 
 				// Push the message onto the incoming queue
-				knx_pkgqueue_enqueue(&conn->incoming, &pkg_in);
+				// knx_pkgqueue_enqueue(&client->incoming, &pkg_in);
 
 				break;
 
@@ -156,156 +154,237 @@ void knx_tunnel_process_incoming(knx_tunnel_client* conn) {
 	}
 }
 
-void knx_tunnel_worker(knx_tunnel_client* conn) {
-	while (conn->state != KNX_TUNNEL_DISCONNECTED) {
-		// Check if we need to send a heartbeat
-		if (conn->state == KNX_TUNNEL_CONNECTED &&
-		    difftime(time(NULL), conn->last_heartbeat) >= 30) {
-				knx_connection_state_request req = {conn->channel, 0, conn->host_info};
+// void knx_tunnel_worker(knx_tunnel_client* conn) {
+// 	while (conn->state != KNX_TUNNEL_DISCONNECTED) {
+// 		// Check if we need to send a heartbeat
+// 		if (conn->state == KNX_TUNNEL_CONNECTED &&
+// 		    difftime(time(NULL), conn->last_heartbeat) >= 30) {
+// 				knx_connection_state_request req = {conn->channel, 0, conn->host_info};
 
-				if (dgramsock_send_knx(conn->sock, KNX_CONNECTION_STATE_REQUEST, &req, &conn->gateway))
-					conn->last_heartbeat = time(NULL);
+// 				if (dgramsock_send_knx(conn->sock, KNX_CONNECTION_STATE_REQUEST, &req, &conn->gateway))
+// 					conn->last_heartbeat = time(NULL);
+// 		}
+
+// 		// Send outgoing messages
+// 		while (knx_tunnel_process_outgoing(conn));
+
+// 		// Receive one incoming message
+// 		knx_tunnel_process_incoming(conn);
+// 	}
+
+// 	// Clear outgoing queue entirely
+// 	while (knx_tunnel_process_outgoing(conn));
+// }
+
+// extern void* knx_tunnel_worker_thread(void* conn) {
+// 	knx_tunnel_worker(conn);
+// 	pthread_exit(NULL);
+// }
+
+// bool knx_tunnel_init(knx_tunnel_client* conn) {
+// 	conn->state = KNX_TUNNEL_DISCONNECTED;
+// 	knx_pkgqueue_init(&conn->incoming);
+
+// 	if (pthread_mutex_init(&conn->state_lock, NULL) != 0) {
+// 		log_error("Failed to create state lock");
+// 		goto fail_state_lock;
+// 	}
+
+// 	if (pthread_cond_init(&conn->state_cond, NULL) != 0) {
+// 		log_error("Failed to create state signal");
+// 		goto fail_state_signal;
+// 	}
+
+// 	if ((conn->sock = dgramsock_create(NULL, false)) < 0) {
+// 		log_error("Failed to create socket");
+// 		goto fail_sock;
+// 	}
+
+// 	if (!knx_outqueue_init(&conn->outgoing)) {
+// 		log_error("Failed to create outgoing queue");
+// 		goto fail_outgoing;
+// 	}
+
+// 	return true;
+
+// 	fail_outgoing:     close(conn->sock);
+// 	fail_sock:         pthread_cond_destroy(&conn->state_cond);
+// 	fail_state_signal: pthread_mutex_destroy(&conn->state_lock);
+// 	fail_state_lock:   knx_pkgqueue_destroy(&conn->incoming);
+
+// 	return false;
+// }
+
+// bool knx_tunnel_connect(knx_tunnel_client* conn, const ip4addr* gateway) {
+// 	conn->gateway = *gateway;
+// 	conn->state = KNX_TUNNEL_CONNECTING;
+// 	conn->channel = 0;
+// 	conn->seq_number = 0;
+// 	conn->last_heartbeat = 0;
+
+// 	static const knx_connection_request req = {
+// 		KNX_CONNECTION_REQUEST_TUNNEL,
+// 		KNX_LAYER_TUNNEL,
+// 		KNX_HOST_INFO_NAT(KNX_PROTO_UDP),
+// 		KNX_HOST_INFO_NAT(KNX_PROTO_UDP)
+// 	};
+
+// 	// Queue a connection request
+// 	if (!knx_outqueue_push(&conn->outgoing, KNX_CONNECTION_REQUEST, &req)) {
+// 		conn->state = KNX_TUNNEL_DISCONNECTED;
+// 		return false;
+// 	}
+
+// 	// Start the worker thread
+// 	if (pthread_create(&conn->worker_thread, NULL, &knx_tunnel_worker_thread, conn) != 0) {
+// 		log_error("Failed to create worker thread");
+
+// 		conn->state = KNX_TUNNEL_DISCONNECTED;
+
+// 		close(conn->sock);
+// 		knx_pkgqueue_destroy(&conn->incoming);
+// 		knx_outqueue_destroy(&conn->outgoing);
+
+// 		return false;
+// 	}
+
+// 	return true;
+// }
+
+// bool knx_tunnel_wait_state(knx_tunnel_client* conn) {
+// 	pthread_mutex_lock(&conn->state_lock);
+// 	while (conn->state == KNX_TUNNEL_CONNECTING)
+// 		pthread_cond_wait(&conn->state_cond, &conn->state_lock);
+// 	pthread_mutex_unlock(&conn->state_lock);
+
+// 	return conn->state == KNX_TUNNEL_CONNECTED;
+// }
+//
+// void knx_tunnel_disconnect(knx_tunnel_client* conn) {
+// 	if (conn->state == KNX_TUNNEL_CONNECTED) {
+// 		// Queue a disconnect request
+// 		knx_disconnect_request req = {conn->channel, 0, conn->host_info};
+// 		knx_outqueue_push(&conn->outgoing, KNX_DISCONNECT_REQUEST, &req);
+// 	}
+
+// 	// Set state to signal the worker thread to terminate
+// 	pthread_mutex_lock(&conn->state_lock);
+// 	conn->state = KNX_TUNNEL_DISCONNECTED;
+// 	pthread_mutex_unlock(&conn->state_lock);
+
+// 	pthread_join(conn->worker_thread, NULL);
+// }
+
+// void knx_tunnel_destroy(knx_tunnel_client* conn) {
+// 	if (conn->state != KNX_TUNNEL_DISCONNECTED)
+// 		knx_tunnel_disconnect(conn);
+
+// 	// Free buffers and queues
+// 	knx_pkgqueue_destroy(&conn->incoming);
+// 	knx_outqueue_destroy(&conn->outgoing);
+
+// 	// Close socket
+// 	close(conn->sock);
+
+// 	// Destroy state protectors
+// 	pthread_mutex_destroy(&conn->state_lock);
+// 	pthread_cond_destroy(&conn->state_cond);
+// }
+
+// bool knx_tunnel_send(knx_tunnel_client* conn, const void* payload, size_t length) {
+// 	if (conn->state != KNX_TUNNEL_CONNECTED)
+// 		return false;
+
+// 	knx_tunnel_request req = {conn->channel, conn->seq_number++, length, payload};
+// 	return knx_outqueue_push(&conn->outgoing, KNX_TUNNEL_REQUEST, &req);
+// }
+
+void* knx_tunnel_worker_thread(void* data) {
+	knx_tunnel_client* client = data;
+
+	while (client->state < KNX_TUNNEL_DISCONNECTED) {
+		// Check if we need to send a heartbeat
+		if (client->state == KNX_TUNNEL_CONNECTED && difftime(time(NULL), client->last_heartbeat) >= 30) {
+			knx_connection_state_request req = {client->channel, 0, client->host_info};
+
+			if (dgramsock_send_knx(client->sock, KNX_CONNECTION_STATE_REQUEST, &req, &client->gateway))
+				client->last_heartbeat = time(NULL);
 		}
 
-		// Send outgoing messages
-		while (knx_tunnel_process_outgoing(conn));
-
-		// Receive one incoming message
-		knx_tunnel_process_incoming(conn);
+		knx_tunnel_process_incoming(client);
 	}
 
-	// Clear outgoing queue entirely
-	while (knx_tunnel_process_outgoing(conn));
-}
-
-extern void* knx_tunnel_worker_thread(void* conn) {
-	knx_tunnel_worker(conn);
 	pthread_exit(NULL);
 }
 
-bool knx_tunnel_init(knx_tunnel_client* conn) {
-	conn->state = KNX_TUNNEL_DISCONNECTED;
-	knx_pkgqueue_init(&conn->incoming);
+bool knx_tunnel_init_thread_coms(knx_tunnel_client* client) {
+	if (pthread_mutex_init(&client->state_lock, NULL) != 0)
+		return false;
 
-	if (pthread_mutex_init(&conn->state_lock, NULL) != 0) {
-		log_error("Failed to create state lock");
-		goto fail_state_lock;
+	if (pthread_cond_init(&client->state_cond, NULL) != 0) {
+		pthread_mutex_destroy(&client->state_lock);
+		return false;
 	}
 
-	if (pthread_cond_init(&conn->state_signal, NULL) != 0) {
-		log_error("Failed to create state signal");
-		goto fail_state_signal;
-	}
+	if (pthread_create(&client->worker, NULL, &knx_tunnel_worker_thread, client) != 0) {
+		pthread_mutex_destroy(&client->state_lock);
+		pthread_cond_destroy(&client->state_cond);
 
-	if ((conn->sock = dgramsock_create(NULL, false)) < 0) {
-		log_error("Failed to create socket");
-		goto fail_sock;
-	}
-
-	if (!knx_outqueue_init(&conn->outgoing)) {
-		log_error("Failed to create outgoing queue");
-		goto fail_outgoing;
+		return false;
 	}
 
 	return true;
-
-	fail_outgoing:     close(conn->sock);
-	fail_sock:         pthread_cond_destroy(&conn->state_signal);
-	fail_state_signal: pthread_mutex_destroy(&conn->state_lock);
-	fail_state_lock:   knx_pkgqueue_destroy(&conn->incoming);
-
-	return false;
 }
 
-bool knx_tunnel_connect(knx_tunnel_client* conn, const ip4addr* gateway) {
-	conn->gateway = *gateway;
-	conn->state = KNX_TUNNEL_CONNECTING;
-	conn->channel = 0;
-	conn->seq_number = 0;
-	conn->last_heartbeat = 0;
+bool knx_tunnel_connect(knx_tunnel_client* client, int sock, const ip4addr* gateway) {
+	if (sock < 0 || !gateway)
+		return false;
 
-	static const knx_connection_request req = {
+	client->sock = sock;
+	client->gateway = *gateway;
+	client->state = KNX_TUNNEL_CONNECTING;
+
+	knx_connection_request req = {
 		KNX_CONNECTION_REQUEST_TUNNEL,
 		KNX_LAYER_TUNNEL,
 		KNX_HOST_INFO_NAT(KNX_PROTO_UDP),
 		KNX_HOST_INFO_NAT(KNX_PROTO_UDP)
 	};
 
-	// Queue a connection request
-	if (!knx_outqueue_push(&conn->outgoing, KNX_CONNECTION_REQUEST, &req)) {
-		conn->state = KNX_TUNNEL_DISCONNECTED;
+	// Initiate connection
+	if (!dgramsock_send_knx(sock, KNX_CONNECTION_REQUEST, &req, gateway)) {
+		log_error("Failed to send connection request");
 		return false;
 	}
 
-	// Start the worker thread
-	if (pthread_create(&conn->worker_thread, NULL, &knx_tunnel_worker_thread, conn) != 0) {
-		log_error("Failed to create worker thread");
+	// Initialise thread components
+	if (!knx_tunnel_init_thread_coms(client)) {
+		log_error("Failed to initialise thread components");
 
-		conn->state = KNX_TUNNEL_DISCONNECTED;
-
-		close(conn->sock);
-		knx_pkgqueue_destroy(&conn->incoming);
-		knx_outqueue_destroy(&conn->outgoing);
-
+		client->state = KNX_TUNNEL_DISCONNECTED;
 		return false;
 	}
 
 	return true;
 }
 
-bool knx_tunnel_wait_state(knx_tunnel_client* conn) {
-	pthread_mutex_lock(&conn->state_lock);
-	while (conn->state == KNX_TUNNEL_CONNECTING)
-		pthread_cond_wait(&conn->state_signal, &conn->state_lock);
-	pthread_mutex_unlock(&conn->state_lock);
+void knx_tunnel_disconnect(knx_tunnel_client* client) {
+	if (client->state == KNX_TUNNEL_DISCONNECTED)
+		return;
 
-	return conn->state == KNX_TUNNEL_CONNECTED;
-}
+	knx_disconnect_request dc_req = {
+		client->channel,
+		0,
+		client->host_info
+	};
 
-// bool knx_tunnel_wait_state_timed(knx_tunnel_client* conn, const struct timespec* ts) {
-// 	pthread_mutex_lock(&conn->state_lock);
-// 	while (conn->state == KNX_TUNNEL_CONNECTING)
-// 		pthread_cond_timedwait(&conn->state_signal, &conn->state_lock, ts)
-// 	pthread_mutex_unlock(&conn->state_lock);
-//
-// 	return conn->state == KNX_TUNNEL_CONNECTED;
-// }
+	// Send disconnect request
+	if (!dgramsock_send_knx(client->sock, KNX_DISCONNECT_REQUEST, &dc_req, &client->gateway))
+		log_error("Failed to send disconnect request");
 
-void knx_tunnel_disconnect(knx_tunnel_client* conn) {
-	if (conn->state == KNX_TUNNEL_CONNECTED) {
-		// Queue a disconnect request
-		knx_disconnect_request req = {conn->channel, 0, conn->host_info};
-		knx_outqueue_push(&conn->outgoing, KNX_DISCONNECT_REQUEST, &req);
-	}
-
-	// Set state to signal the worker thread to terminate
-	pthread_mutex_lock(&conn->state_lock);
-	conn->state = KNX_TUNNEL_DISCONNECTED;
-	pthread_mutex_unlock(&conn->state_lock);
-
-	pthread_join(conn->worker_thread, NULL);
-}
-
-void knx_tunnel_destroy(knx_tunnel_client* conn) {
-	if (conn->state != KNX_TUNNEL_DISCONNECTED)
-		knx_tunnel_disconnect(conn);
-
-	// Free buffers and queues
-	knx_pkgqueue_destroy(&conn->incoming);
-	knx_outqueue_destroy(&conn->outgoing);
-
-	// Close socket
-	close(conn->sock);
-
-	// Destroy state protectors
-	pthread_mutex_destroy(&conn->state_lock);
-	pthread_cond_destroy(&conn->state_signal);
-}
-
-bool knx_tunnel_send(knx_tunnel_client* conn, const void* payload, size_t length) {
-	if (conn->state != KNX_TUNNEL_CONNECTED)
-		return false;
-
-	knx_tunnel_request req = {conn->channel, conn->seq_number++, length, payload};
-	return knx_outqueue_push(&conn->outgoing, KNX_TUNNEL_REQUEST, &req);
+	// Set new state
+	pthread_mutex_lock(&client->state_lock);
+	client->state = KNX_TUNNEL_DISCONNECTED;
+	pthread_cond_signal(&client->state_cond);
+	pthread_mutex_unlock(&client->state_lock);
 }

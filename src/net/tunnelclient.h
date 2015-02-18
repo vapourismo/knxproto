@@ -47,14 +47,13 @@ typedef enum {
 typedef struct {
 	int sock;
 	ip4addr gateway;
+	pthread_t worker;
 
-	pthread_t worker_thread;
-
-	knx_pkgqueue incoming;
-	knx_outqueue outgoing;
+	// knx_pkgqueue incoming;
+	// knx_outqueue outgoing;
 
 	pthread_mutex_t state_lock;
-	pthread_cond_t state_signal;
+	pthread_cond_t state_cond;
 	knx_tunnel_state state;
 
 	uint8_t seq_number;
@@ -63,26 +62,21 @@ typedef struct {
 	time_t last_heartbeat;
 } knx_tunnel_client;
 
-/**
- * Create a tunnel client.
- */
-bool knx_tunnel_init(knx_tunnel_client* conn);
+// /**
+//  * Create a tunnel client.
+//  */
+// bool knx_tunnel_init(knx_tunnel_client* conn);
 
 /**
  * Connect to a gateway. This function returns `true` if a connection request
- * has been sent.
+ * has been sent and the worker thread is active.
  */
-bool knx_tunnel_connect(knx_tunnel_client* conn, const ip4addr* gateway);
-
-/**
- * Check if a connection has been established, by waiting for a connection response.
- */
-bool knx_tunnel_wait_state(knx_tunnel_client* conn);
+bool knx_tunnel_connect(knx_tunnel_client* conn, int sock, const ip4addr* gateway);
 
 // /**
-//  * Similiar to `knx_tunnel_wait_state` but with an option to wait a
+//  * Check if a connection has been established, by waiting for a connection response.
 //  */
-// bool knx_tunnel_wait_state_timed(knx_tunnel_client* conn, const struct timespec* ts);
+// bool knx_tunnel_wait_state(knx_tunnel_client* conn);
 
 /**
  * Disconnect from a gateway. If `wait_for_worker` is true, this function will
@@ -90,14 +84,14 @@ bool knx_tunnel_wait_state(knx_tunnel_client* conn);
  */
 void knx_tunnel_disconnect(knx_tunnel_client* conn);
 
-/**
- * Destroy a tunnel client.
- */
-void knx_tunnel_destroy(knx_tunnel_client* conn);
+// /**
+//  * Destroy a tunnel client.
+//  */
+// void knx_tunnel_destroy(knx_tunnel_client* conn);
 
-/**
- * Send data which should be tunnelled through the gateway.
- */
-bool knx_tunnel_send(knx_tunnel_client* conn, const void* payload, size_t length);
+// /**
+//  * Send data which should be tunnelled through the gateway.
+//  */
+// bool knx_tunnel_send(knx_tunnel_client* conn, const void* payload, size_t length);
 
 #endif
