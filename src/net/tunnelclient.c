@@ -28,10 +28,18 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 	if (!dgramsock_ready(client->sock, 0, 100000))
 		return;
 
-	uint8_t buffer[100];
+	ssize_t buffer_size = dgramsock_peek_knx(client->sock);
+	if (buffer_size < 0) {
+		// This is not a KNXnet/IP packet so we'll discard it
+		recvfrom(client->sock, NULL, 0, 0, NULL, NULL);
+
+		return;
+	}
+
+	uint8_t buffer[buffer_size];
 
 	// FIXME: Do not allow every endpoint
-	ssize_t r = dgramsock_recv(client->sock, buffer, 100, NULL, 0);
+	ssize_t r = dgramsock_recv(client->sock, buffer, buffer_size, NULL, 0);
 	knx_packet pkg_in;
 
 	if (r > 0 && knx_parse(buffer, r, &pkg_in)) {
