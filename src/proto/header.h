@@ -52,6 +52,11 @@ typedef enum {
 bool knx_generate_header(uint8_t* buffer, knx_service srv, uint16_t length);
 
 /**
+ * Unpack a header
+ */
+bool knx_unpack_header(const uint8_t* buffer, knx_service* service, uint16_t* length);
+
+/**
  * KNXnet/IP Header Size
  */
 #define KNX_HEADER_SIZE 6

@@ -53,3 +53,16 @@ bool knx_generate_header(uint8_t* buffer, knx_service srv, uint16_t length) {
 
 	return true;
 }
+
+bool knx_unpack_header(const uint8_t* buffer, knx_service* service, uint16_t* length) {
+	if (buffer[0] != KNX_HEADER_SIZE || buffer[1] != 16)
+		return false;
+
+	if (service)
+		*service = buffer[2] << 8 | buffer[3];
+
+	if (length)
+		*length = buffer[4] << 8 | buffer[5];
+
+	return true;
+}
