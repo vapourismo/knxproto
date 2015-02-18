@@ -104,7 +104,7 @@ ssize_t dgramsock_peek_knx(int sock) {
 	if (recvfrom(sock, buffer, KNX_HEADER_SIZE, MSG_PEEK, &sender, &sender_len) == KNX_HEADER_SIZE) {
 		uint16_t length;
 		if (knx_unpack_header(buffer, NULL, &length))
-			return length;
+			return length >= KNX_HEADER_SIZE ? length : 0;
 
 		// This is not a KNXnet/IP packet so we'll discard it.
 		recvfrom(sock, NULL, 0, 0, NULL, NULL);
