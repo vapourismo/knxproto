@@ -83,7 +83,8 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 
 			// Heartbeat
 			case KNX_CONNECTION_STATE_RESPONSE:
-				if (pkg_in.payload.conn_state_res.channel != client->channel)
+				if (pkg_in.payload.conn_state_res.channel != client->channel ||
+				    client->state != KNX_TUNNEL_CONNECTED)
 					break;
 
 				log_debug("Heartbeat (status = %i)", pkg_in.payload.conn_state_res.status);
@@ -291,14 +292,6 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 // 	pthread_cond_destroy(&conn->state_cond);
 // }
 
-// bool knx_tunnel_send(knx_tunnel_client* conn, const void* payload, size_t length) {
-// 	if (conn->state != KNX_TUNNEL_CONNECTED)
-// 		return false;
-
-// 	knx_tunnel_request req = {conn->channel, conn->seq_number++, length, payload};
-// 	return knx_outqueue_push(&conn->outgoing, KNX_TUNNEL_REQUEST, &req);
-// }
-
 void* knx_tunnel_worker_thread(void* data) {
 	knx_tunnel_client* client = data;
 
@@ -387,4 +380,12 @@ void knx_tunnel_disconnect(knx_tunnel_client* client) {
 	client->state = KNX_TUNNEL_DISCONNECTED;
 	pthread_cond_signal(&client->state_cond);
 	pthread_mutex_unlock(&client->state_lock);
+}
+
+bool knx_tunnel_send(knx_tunnel_client* client, const void* payload, size_t length) {
+	if (client->state != KNX_TUNNEL_CONNECTED)
+		return false;
+
+	knx_tunnel_request req = {client->channel, client->seq_number++, length, payload};
+	return dgramsock_send_knx(client->sock, KNX_TUNNEL_REQUEST, &req, &client->gateway);
 }
