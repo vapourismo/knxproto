@@ -79,29 +79,6 @@ ssize_t dgramsock_recv(int sock, void* buffer, size_t buffer_size,
 	return 0;
 }
 
-ssize_t dgramsock_recv_(int sock, void* buffer, size_t buffer_size, int flags,
-                        const ip4addr* endpoints, size_t num_endpoints) {
-	ip4addr remote;
-	socklen_t remote_size = sizeof(remote);
-
-	ssize_t rv = recvfrom(sock, buffer, buffer_size, flags, (struct sockaddr*) &remote, &remote_size);
-
-	if (rv < 0 || !endpoints || !num_endpoints)
-		return rv;
-
-	if (remote_size != sizeof(remote))
-		return 0;
-
-	for (size_t i = 0; i < num_endpoints; i++) {
-		if (endpoints[i].sin_family      == remote.sin_family &&
-		    endpoints[i].sin_addr.s_addr == remote.sin_addr.s_addr &&
-		    endpoints[i].sin_port        == remote.sin_port)
-				return rv;
-	}
-
-	return 0;
-}
-
 bool dgramsock_send_knx(int sock, knx_service srv, const void* payload, const ip4addr* target) {
 	size_t size = KNX_HEADER_SIZE + knx_payload_size(srv, payload);
 	uint8_t buffer[size];
@@ -112,17 +89,17 @@ bool dgramsock_send_knx(int sock, knx_service srv, const void* payload, const ip
 	return dgramsock_send(sock, buffer, size, target);
 }
 
-bool dgramsock_recv_knx_(int sock, knx_packet* packet, const ip4addr* endpoints, size_t num_endpoints) {
+ssize_t dgramsock_peek_knx(int sock) {
 	uint8_t buffer[KNX_HEADER_SIZE];
-	ssize_t rv = dgramsock_recv_(sock, buffer, KNX_HEADER_SIZE, MSG_PEEK, endpoints, num_endpoints);
+
+	ssize_t rv = recvfrom(sock, buffer, KNX_HEADER_SIZE, MSG_PEEK, NULL, NULL);
+
+	if (rv < 0)
+		return -1;
 
 	uint16_t length;
-	if (rv == KNX_HEADER_SIZE && knx_unpack_header(buffer, NULL, &length)) {
-		uint8_t real_buffer[length];
-		return
-			dgramsock_recv_(sock, real_buffer, length, 0, endpoints, num_endpoints) == length &&
-			knx_parse(real_buffer, length, packet);
-	}
-
-	return false;
+	if (knx_unpack_header(buffer, NULL, &length))
+		return length;
+	else
+		return 0;
 }

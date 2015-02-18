@@ -70,11 +70,14 @@ bool dgramsock_send_knx(int sock, knx_service srv, const void* payload, const ip
 inline bool dgramsock_recv_knx(int sock, uint8_t* buffer, size_t size,
                                knx_packet* packet, const ip4addr* endpoints,
                                size_t num_endpoints) {
-	size_t rv = dgramsock_recv(sock, buffer, size, endpoints, num_endpoints);
-
-	return rv > 0 && knx_parse(buffer, rv, packet);
+	return
+		dgramsock_recv(sock, buffer, size, endpoints, num_endpoints) > 0 &&
+		knx_parse(buffer, rv, packet);
 }
 
-bool dgramsock_recv_knx_(int sock, knx_packet* packet, const ip4addr* endpoints, size_t num_endpoints);
+/**
+ * Peek for a KNXnet/IP packet and return it's length.
+ */
+ssize_t dgramsock_peek_knx(int sock);
 
 #endif
