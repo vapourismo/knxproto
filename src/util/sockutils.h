@@ -71,6 +71,19 @@ inline bool dgramsock_send_knx(int sock, knx_service srv, const void* payload,
 }
 
 /**
+ * Send a KNXnet/IP packet.
+ */
+inline bool dgramsock_send_knx_(int sock, knx_service srv, const void* payload, const ip4addr* target) {
+	size_t size = KNX_HEADER_SIZE + knx_payload_size(srv, payload);
+	uint8_t buffer[size];
+
+	if (!knx_generate_(buffer, srv, payload))
+		return false;
+
+	return dgramsock_send(sock, buffer, size, target);
+}
+
+/**
  * Receive a KNXnet/IP packet.
  */
 inline bool dgramsock_recv_knx(int sock, uint8_t* buffer, size_t size,
