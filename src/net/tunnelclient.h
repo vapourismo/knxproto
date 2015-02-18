@@ -73,10 +73,10 @@ typedef struct {
  */
 bool knx_tunnel_connect(knx_tunnel_client* conn, int sock, const ip4addr* gateway);
 
-// /**
-//  * Check if a connection has been established, by waiting for a connection response.
-//  */
-// bool knx_tunnel_wait_state(knx_tunnel_client* conn);
+/**
+ * Check if a connection has been established, by waiting for a connection response.
+ */
+bool knx_tunnel_wait_state(knx_tunnel_client* conn);
 
 /**
  * Disconnect from a gateway. If `wait_for_worker` is true, this function will

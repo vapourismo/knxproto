@@ -252,14 +252,14 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 // 	return true;
 // }
 
-// bool knx_tunnel_wait_state(knx_tunnel_client* conn) {
-// 	pthread_mutex_lock(&conn->state_lock);
-// 	while (conn->state == KNX_TUNNEL_CONNECTING)
-// 		pthread_cond_wait(&conn->state_cond, &conn->state_lock);
-// 	pthread_mutex_unlock(&conn->state_lock);
+bool knx_tunnel_wait_state(knx_tunnel_client* conn) {
+	pthread_mutex_lock(&conn->state_lock);
+	while (conn->state == KNX_TUNNEL_CONNECTING)
+		pthread_cond_wait(&conn->state_cond, &conn->state_lock);
+	pthread_mutex_unlock(&conn->state_lock);
 
-// 	return conn->state == KNX_TUNNEL_CONNECTED;
-// }
+	return conn->state == KNX_TUNNEL_CONNECTED;
+}
 //
 // void knx_tunnel_disconnect(knx_tunnel_client* conn) {
 // 	if (conn->state == KNX_TUNNEL_CONNECTED) {
