@@ -57,7 +57,11 @@ typedef struct {
 
 	knx_tunnel_state state;
 
+	pthread_mutex_t send_mutex;
+
 	uint8_t seq_number;
+	uint8_t ack_seq_number;
+
 	uint8_t channel;
 	knx_host_info host_info;
 	time_t last_heartbeat;

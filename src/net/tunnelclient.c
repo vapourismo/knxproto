@@ -141,11 +141,14 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 			// Tunnel Response
 			case KNX_TUNNEL_RESPONSE:
 				if (client->state != KNX_TUNNEL_CONNECTED ||
-				    client->channel != pkg_in.payload.tunnel_req.channel)
+				    client->channel != pkg_in.payload.tunnel_res.channel)
 					break;
 
-				// Push the message onto the incoming queue
-				// knx_pkgqueue_enqueue(&client->incoming, &pkg_in);
+				// Signal acknowledgement
+				pthread_mutex_lock(&client->mutex);
+				client->ack_seq_number = pkg_in.payload.tunnel_res.seq_number;
+				pthread_cond_signal(&client->cond);
+				pthread_mutex_unlock(&client->mutex);
 
 				break;
 
@@ -314,13 +317,20 @@ bool knx_tunnel_init_thread_coms(knx_tunnel_client* client) {
 	if (pthread_mutex_init(&client->mutex, NULL) != 0)
 		return false;
 
+	if (pthread_mutex_init(&client->send_mutex, NULL) != 0) {
+		pthread_mutex_destroy(&client->mutex);
+		return false;
+	}
+
 	if (pthread_cond_init(&client->cond, NULL) != 0) {
 		pthread_mutex_destroy(&client->mutex);
+		pthread_mutex_destroy(&client->send_mutex);
 		return false;
 	}
 
 	if (pthread_create(&client->worker, NULL, &knx_tunnel_worker_thread, client) != 0) {
 		pthread_mutex_destroy(&client->mutex);
+		pthread_mutex_destroy(&client->send_mutex);
 		pthread_cond_destroy(&client->cond);
 
 		return false;
@@ -336,6 +346,8 @@ bool knx_tunnel_connect(knx_tunnel_client* client, int sock, const ip4addr* gate
 	client->sock = sock;
 	client->gateway = *gateway;
 	client->state = KNX_TUNNEL_CONNECTING;
+	client->seq_number = 0;
+	client->ack_seq_number = UINT8_MAX;
 
 	knx_connection_request req = {
 		KNX_CONNECTION_REQUEST_TUNNEL,
@@ -383,9 +395,27 @@ void knx_tunnel_disconnect(knx_tunnel_client* client) {
 }
 
 bool knx_tunnel_send(knx_tunnel_client* client, const void* payload, size_t length) {
-	if (client->state != KNX_TUNNEL_CONNECTED)
+	if (client->state == KNX_TUNNEL_DISCONNECTED || !knx_tunnel_wait_state(client))
 		return false;
 
+	pthread_mutex_lock(&client->send_mutex);
+
 	knx_tunnel_request req = {client->channel, client->seq_number++, length, payload};
-	return dgramsock_send_knx(client->sock, KNX_TUNNEL_REQUEST, &req, &client->gateway);
+
+	if (!dgramsock_send_knx(client->sock, KNX_TUNNEL_REQUEST, &req, &client->gateway)) {
+		client->seq_number = req.seq_number;
+		pthread_mutex_unlock(&client->send_mutex);
+		return false;
+	}
+
+	pthread_mutex_lock(&client->mutex);
+	while (client->state == KNX_TUNNEL_CONNECTED && client->ack_seq_number != req.seq_number)
+		pthread_cond_wait(&client->cond, &client->mutex);
+
+	bool r = client->ack_seq_number == req.seq_number;
+
+	pthread_mutex_unlock(&client->mutex);
+	pthread_mutex_unlock(&client->send_mutex);
+
+	return r;
 }
