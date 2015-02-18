@@ -67,11 +67,6 @@ typedef struct {
 	time_t last_heartbeat;
 } knx_tunnel_client;
 
-// /**
-//  * Create a tunnel client.
-//  */
-// bool knx_tunnel_init(knx_tunnel_client* conn);
-
 /**
  * Connect to a gateway. This function returns `true` if a connection request
  * has been sent and the worker thread is active.
@@ -88,11 +83,6 @@ bool knx_tunnel_wait_state(knx_tunnel_client* conn);
  * block until a disconnect response has been given by the gateway.
  */
 void knx_tunnel_disconnect(knx_tunnel_client* conn);
-
-// /**
-//  * Destroy a tunnel client.
-//  */
-// void knx_tunnel_destroy(knx_tunnel_client* conn);
 
 /**
  * Send data which should be tunnelled through the gateway.
