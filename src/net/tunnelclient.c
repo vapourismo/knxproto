@@ -380,3 +380,15 @@ ssize_t knx_tunnel_recv(knx_tunnel_client* client, uint8_t** buffer) {
 	pthread_mutex_unlock(&client->mutex);
 	return size;
 }
+
+void knx_tunnel_clear_queue(knx_tunnel_client* client) {
+	knx_tunnel_message* msg = client->msg_head;
+
+	while (msg) {
+		knx_tunnel_message* free_me = msg;
+		msg = msg->next;
+
+		free(free_me->message);
+		free(free_me);
+	}
+}

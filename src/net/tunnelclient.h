@@ -99,4 +99,10 @@ bool knx_tunnel_send(knx_tunnel_client* conn, const void* payload, size_t length
  */
 ssize_t knx_tunnel_recv(knx_tunnel_client* client, uint8_t** buffer);
 
+/**
+ * Remove every element from the queue.
+ * You must not call this before the tunnel connection has ended.
+ */
+void knx_tunnel_clear_queue(knx_tunnel_client* client);
+
 #endif
