@@ -24,6 +24,8 @@
 #include "../util/sockutils.h"
 #include "../util/log.h"
 
+#include <sys/time.h>
+
 inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 	if (!dgramsock_ready(client->sock, 0, 100000))
 		return;
@@ -153,9 +155,35 @@ bool knx_tunnel_wait_state(knx_tunnel_client* conn) {
 	pthread_mutex_lock(&conn->mutex);
 	while (conn->state == KNX_TUNNEL_CONNECTING)
 		pthread_cond_wait(&conn->cond, &conn->mutex);
+
+	bool r = conn->state == KNX_TUNNEL_CONNECTED;
 	pthread_mutex_unlock(&conn->mutex);
 
-	return conn->state == KNX_TUNNEL_CONNECTED;
+	return r;
+}
+
+bool knx_tunnel_timed_wait_state(knx_tunnel_client* conn, long sec, long nsec) {
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+
+	struct timespec ts = {
+		.tv_sec = tv.tv_sec + sec,
+		.tv_nsec = tv.tv_sec * 1000 + nsec
+	};
+
+	while (ts.tv_nsec >= 1000000000) {
+		ts.tv_sec++;
+		ts.tv_nsec -= 1000000000;
+	}
+
+	pthread_mutex_lock(&conn->mutex);
+	while (conn->state == KNX_TUNNEL_CONNECTING &&
+	       pthread_cond_timedwait(&conn->cond, &conn->mutex, &ts) == 0);
+
+	bool r = conn->state == KNX_TUNNEL_CONNECTED;
+	pthread_mutex_unlock(&conn->mutex);
+
+	return r;
 }
 
 void* knx_tunnel_worker_thread(void* data) {

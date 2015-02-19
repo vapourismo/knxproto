@@ -79,6 +79,11 @@ bool knx_tunnel_connect(knx_tunnel_client* conn, int sock, const ip4addr* gatewa
 bool knx_tunnel_wait_state(knx_tunnel_client* conn);
 
 /**
+ *
+ */
+bool knx_tunnel_timed_wait_state(knx_tunnel_client* conn, time_t timeout_sec, long timeout_nsec);
+
+/**
  * Disconnect from a gateway. If `wait_for_worker` is true, this function will
  * block until a disconnect response has been given by the gateway.
  */
