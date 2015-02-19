@@ -151,17 +151,6 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 	}
 }
 
-bool knx_tunnel_wait_state(knx_tunnel_client* conn) {
-	pthread_mutex_lock(&conn->mutex);
-	while (conn->state == KNX_TUNNEL_CONNECTING)
-		pthread_cond_wait(&conn->cond, &conn->mutex);
-
-	bool r = conn->state == KNX_TUNNEL_CONNECTED;
-	pthread_mutex_unlock(&conn->mutex);
-
-	return r;
-}
-
 bool knx_tunnel_timed_wait_state(knx_tunnel_client* conn, long sec, long nsec) {
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
@@ -190,9 +179,7 @@ void* knx_tunnel_worker_thread(void* data) {
 	knx_tunnel_client* client = data;
 
 	// Process incoming while in connecting state
-	// and the timeout has not been passed
-	while (client->state == KNX_TUNNEL_CONNECTING &&
-	       difftime(time(NULL), client->last_heartbeat) <= 5)
+	while (client->state == KNX_TUNNEL_CONNECTING)
 		knx_tunnel_process_incoming(client);
 
 	while (client->state == KNX_TUNNEL_CONNECTED) {
@@ -236,7 +223,6 @@ bool knx_tunnel_init_thread_coms(knx_tunnel_client* client) {
 		pthread_mutex_destroy(&client->mutex);
 		pthread_mutex_destroy(&client->send_mutex);
 		pthread_cond_destroy(&client->cond);
-
 		return false;
 	}
 
@@ -275,7 +261,13 @@ bool knx_tunnel_connect(knx_tunnel_client* client, int sock, const ip4addr* gate
 		return false;
 	}
 
-	return true;
+	// Wait for connecting state to transition to connected state
+	bool r = knx_tunnel_timed_wait_state(client, 5, 0);
+
+	// Connection could not be established
+	if (!r) knx_tunnel_disconnect(client);
+
+	return r;
 }
 
 void knx_tunnel_disconnect(knx_tunnel_client* client) {
@@ -305,7 +297,7 @@ void knx_tunnel_disconnect(knx_tunnel_client* client) {
 }
 
 bool knx_tunnel_send(knx_tunnel_client* client, const void* payload, size_t length) {
-	if (client->state == KNX_TUNNEL_DISCONNECTED || !knx_tunnel_wait_state(client))
+	if (client->state == KNX_TUNNEL_DISCONNECTED)
 		return false;
 
 	pthread_mutex_lock(&client->send_mutex);
