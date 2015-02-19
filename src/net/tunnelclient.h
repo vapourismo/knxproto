@@ -23,9 +23,6 @@
 #define KNXCLIENT_NET_TUNNELCLIENT_H
 
 #include "../proto/knxnetip.h"
-
-#include "../util/pkgqueue.h"
-#include "../util/outqueue.h"
 #include "../util/address.h"
 
 #include <pthread.h>
