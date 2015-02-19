@@ -95,7 +95,7 @@ void knx_tunnel_disconnect(knx_tunnel_client* conn);
 bool knx_tunnel_send(knx_tunnel_client* conn, const void* payload, size_t length);
 
 /**
- *
+ * Returns a positiv integer on success. The resulting buffer has to be freed.
  */
 ssize_t knx_tunnel_recv(knx_tunnel_client* client, uint8_t** buffer);
 
