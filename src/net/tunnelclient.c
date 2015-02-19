@@ -177,7 +177,7 @@ bool knx_tunnel_timed_wait_state(knx_tunnel_client* conn, long sec, long nsec) {
 
 	struct timespec ts = {
 		.tv_sec = tv.tv_sec + sec,
-		.tv_nsec = tv.tv_sec * 1000 + nsec
+		.tv_nsec = tv.tv_usec * 1000 + nsec
 	};
 
 	while (ts.tv_nsec >= 1000000000) {
