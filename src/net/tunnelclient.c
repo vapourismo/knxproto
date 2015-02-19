@@ -139,6 +139,8 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 				if (client->msg_queue_size + pkg_in.payload.tunnel_req.size <= KNX_TUNNEL_QUEUE_SIZE_CAP &&
 				    (msg = new(knx_tunnel_message)) &&
 				    (msg->message = newa(uint8_t, pkg_in.payload.tunnel_req.size))) {
+
+					msg->next = NULL;
 					msg->size = pkg_in.payload.tunnel_req.size;
 					memcpy(msg->message, pkg_in.payload.tunnel_req.data, msg->size);
 
