@@ -136,7 +136,10 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 					msg->size = pkg_in.payload.tunnel_req.size;
 					memcpy(msg->message, pkg_in.payload.tunnel_req.data, msg->size);
 
-					client->msg_tail = client->msg_tail->next = msg;
+					if (client->msg_head)
+						client->msg_tail = client->msg_tail->next = msg;
+					else
+						client->msg_tail = client->msg_head = msg;
 
 					pthread_cond_broadcast(&client->cond);
 				} else if (msg)
