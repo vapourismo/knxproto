@@ -217,10 +217,11 @@ bool knx_tunnel_init_thread_coms(knx_tunnel_client* client) {
 	if (pthread_create(&client->worker, NULL, &knx_tunnel_worker_thread, client) == 0)
 		return true;
 
-	clean_cond:
-		pthread_cond_destroy(&client->cond);
+	pthread_cond_destroy(&client->cond);
+
 	clean_send_mutex:
 		pthread_mutex_destroy(&client->send_mutex);
+
 	clean_mutex:
 		pthread_mutex_destroy(&client->mutex);
 
