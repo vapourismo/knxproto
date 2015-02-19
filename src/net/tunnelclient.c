@@ -208,25 +208,23 @@ bool knx_tunnel_init_thread_coms(knx_tunnel_client* client) {
 	if (pthread_mutex_init(&client->mutex, NULL) != 0)
 		return false;
 
-	if (pthread_mutex_init(&client->send_mutex, NULL) != 0) {
-		pthread_mutex_destroy(&client->mutex);
-		return false;
-	}
+	if (pthread_mutex_init(&client->send_mutex, NULL) != 0)
+		goto clean_mutex;
 
-	if (pthread_cond_init(&client->cond, NULL) != 0) {
-		pthread_mutex_destroy(&client->mutex);
-		pthread_mutex_destroy(&client->send_mutex);
-		return false;
-	}
+	if (pthread_cond_init(&client->cond, NULL) != 0)
+		goto clean_send_mutex;
 
-	if (pthread_create(&client->worker, NULL, &knx_tunnel_worker_thread, client) != 0) {
-		pthread_mutex_destroy(&client->mutex);
-		pthread_mutex_destroy(&client->send_mutex);
+	if (pthread_create(&client->worker, NULL, &knx_tunnel_worker_thread, client) == 0)
+		return true;
+
+	clean_cond:
 		pthread_cond_destroy(&client->cond);
-		return false;
-	}
+	clean_send_mutex:
+		pthread_mutex_destroy(&client->send_mutex);
+	clean_mutex:
+		pthread_mutex_destroy(&client->mutex);
 
-	return true;
+	return false;
 }
 
 bool knx_tunnel_connect(knx_tunnel_client* client, int sock, const ip4addr* gateway) {
