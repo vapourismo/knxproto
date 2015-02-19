@@ -61,14 +61,14 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 
 					pthread_mutex_lock(&client->mutex);
 					client->state = KNX_TUNNEL_CONNECTED;
-					pthread_cond_signal(&client->cond);
+					pthread_cond_broadcast(&client->cond);
 					pthread_mutex_unlock(&client->mutex);
 				} else {
 					log_error("Connection failed (code = %i)", pkg_in.payload.conn_res.status);
 
 					pthread_mutex_lock(&client->mutex);
 					client->state = KNX_TUNNEL_DISCONNECTED;
-					pthread_cond_signal(&client->cond);
+					pthread_cond_broadcast(&client->cond);
 					pthread_mutex_unlock(&client->mutex);
 				}
 
@@ -86,7 +86,7 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 				if (pkg_in.payload.conn_state_res.status != 0) {
 					pthread_mutex_lock(&client->mutex);
 					client->state = KNX_TUNNEL_DISCONNECTED;
-					pthread_cond_signal(&client->cond);
+					pthread_cond_broadcast(&client->cond);
 					pthread_mutex_unlock(&client->mutex);
 				}
 
@@ -106,7 +106,7 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 				// Entering this state will stop the worker gently
 				pthread_mutex_lock(&client->mutex);
 				client->state = KNX_TUNNEL_DISCONNECTED;
-				pthread_cond_signal(&client->cond);
+				pthread_cond_broadcast(&client->cond);
 				pthread_mutex_unlock(&client->mutex);
 
 				break;
@@ -140,7 +140,7 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 				// Signal acknowledgement
 				pthread_mutex_lock(&client->mutex);
 				client->ack_seq_number = pkg_in.payload.tunnel_res.seq_number;
-				pthread_cond_signal(&client->cond);
+				pthread_cond_broadcast(&client->cond);
 				pthread_mutex_unlock(&client->mutex);
 
 				break;
@@ -198,7 +198,7 @@ void* knx_tunnel_worker_thread(void* data) {
 	pthread_mutex_lock(&client->mutex);
 
 	client->state = KNX_TUNNEL_DISCONNECTED;
-	pthread_cond_signal(&client->cond);
+	pthread_cond_broadcast(&client->cond);
 
 	pthread_mutex_unlock(&client->mutex);
 	pthread_exit(NULL);
@@ -283,7 +283,7 @@ void knx_tunnel_disconnect(knx_tunnel_client* client) {
 		// Set new state
 		pthread_mutex_lock(&client->mutex);
 		client->state = KNX_TUNNEL_DISCONNECTED;
-		pthread_cond_signal(&client->cond);
+		pthread_cond_broadcast(&client->cond);
 		pthread_mutex_unlock(&client->mutex);
 	}
 
