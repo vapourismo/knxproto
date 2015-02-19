@@ -27,6 +27,10 @@
 
 #include <sys/time.h>
 
+// Temporary configuration
+#define KNX_TUNNEL_CONNECTION_TIMEOUT 5       // 5 Seconds
+#define KNX_TUNNEL_QUEUE_SIZE_CAP 1073741824  // 1 MiB queue cap
+
 inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 	if (!dgramsock_ready(client->sock, 0, 100000))
 		return;
@@ -130,9 +134,11 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 				// Push the message onto the incoming queue
 				pthread_mutex_lock(&client->mutex);
 
-				knx_tunnel_message* msg = new(knx_tunnel_message);
+				knx_tunnel_message* msg = NULL;
 
-				if (msg && (msg->message = newa(uint8_t, pkg_in.payload.tunnel_req.size))) {
+				if (client->msg_queue_size + pkg_in.payload.tunnel_req.size <= KNX_TUNNEL_QUEUE_SIZE_CAP &&
+				    (msg = new(knx_tunnel_message)) &&
+				    (msg->message = newa(uint8_t, pkg_in.payload.tunnel_req.size))) {
 					msg->size = pkg_in.payload.tunnel_req.size;
 					memcpy(msg->message, pkg_in.payload.tunnel_req.data, msg->size);
 
@@ -141,10 +147,14 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 					else
 						client->msg_tail = client->msg_head = msg;
 
+					client->msg_queue_size += msg->size;
+
 					pthread_cond_signal(&client->cond);
 				} else if (msg) {
 					log_error("Allocating new queue element failed");
 					free(msg);
+				} else if (client->msg_queue_size + pkg_in.payload.tunnel_req.size > KNX_TUNNEL_QUEUE_SIZE_CAP) {
+					log_info("Reached maximum queue size");
 				}
 
 				pthread_mutex_unlock(&client->mutex);
@@ -258,6 +268,7 @@ bool knx_tunnel_connect(knx_tunnel_client* client, int sock, const ip4addr* gate
 	client->seq_number = 0;
 	client->ack_seq_number = UINT8_MAX;
 	client->last_heartbeat = time(NULL);
+	client->msg_queue_size = 0;
 	client->msg_head = client->msg_tail = NULL;
 
 	knx_connection_request req = {
@@ -282,7 +293,7 @@ bool knx_tunnel_connect(knx_tunnel_client* client, int sock, const ip4addr* gate
 	}
 
 	// Wait for connecting state to transition to connected state
-	bool r = knx_tunnel_timed_wait_state(client, 5, 0);
+	bool r = knx_tunnel_timed_wait_state(client, KNX_TUNNEL_CONNECTION_TIMEOUT, 0);
 
 	// Connection could not be established
 	if (!r) knx_tunnel_disconnect(client);
@@ -360,6 +371,7 @@ ssize_t knx_tunnel_recv(knx_tunnel_client* client, uint8_t** buffer) {
 		if (buffer) *buffer = head->message;
 
 		client->msg_head = head->next;
+		client->msg_queue_size -= size;
 
 		free(head);
 		pthread_cond_signal(&client->cond);

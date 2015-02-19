@@ -59,6 +59,7 @@ typedef struct {
 	ip4addr gateway;
 	pthread_t worker;
 
+	size_t msg_queue_size;
 	knx_tunnel_message* msg_head;
 	knx_tunnel_message* msg_tail;
 
