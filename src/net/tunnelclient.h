@@ -42,6 +42,16 @@ typedef enum {
 } knx_tunnel_state;
 
 /**
+ * Message from the gateway
+ */
+typedef struct knx_tunnel_message {
+	uint8_t* message;
+	size_t size;
+
+	struct knx_tunnel_message* next;
+} knx_tunnel_message;
+
+/**
  * Tunnel Connection
  */
 typedef struct {
@@ -49,8 +59,8 @@ typedef struct {
 	ip4addr gateway;
 	pthread_t worker;
 
-	// knx_pkgqueue incoming;
-	// knx_outqueue outgoing;
+	knx_tunnel_message* msg_head;
+	knx_tunnel_message* msg_tail;
 
 	pthread_mutex_t mutex;
 	pthread_cond_t cond;
@@ -82,5 +92,10 @@ void knx_tunnel_disconnect(knx_tunnel_client* conn);
  * Send data which should be tunnelled through the gateway.
  */
 bool knx_tunnel_send(knx_tunnel_client* conn, const void* payload, size_t length);
+
+/**
+ *
+ */
+ssize_t knx_tunnel_recv(knx_tunnel_client* client, uint8_t** buffer);
 
 #endif

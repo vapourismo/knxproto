@@ -23,6 +23,7 @@
 
 #include "../util/sockutils.h"
 #include "../util/log.h"
+#include "../util/alloc.h"
 
 #include <sys/time.h>
 
@@ -127,7 +128,21 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 				dgramsock_send_knx(client->sock, KNX_TUNNEL_RESPONSE, &res, &client->gateway);
 
 				// Push the message onto the incoming queue
-				// knx_pkgqueue_enqueue(&client->incoming, &pkg_in);
+				pthread_mutex_lock(&client->mutex);
+
+				knx_tunnel_message* msg = new(knx_tunnel_message);
+
+				if (msg && (msg->message = newa(uint8_t, pkg_in.payload.tunnel_req.size))) {
+					msg->size = pkg_in.payload.tunnel_req.size;
+					memcpy(msg->message, pkg_in.payload.tunnel_req.data, msg->size);
+
+					client->msg_tail = client->msg_tail->next = msg;
+
+					pthread_cond_broadcast(&client->cond);
+				} else if (msg)
+					free(msg);
+
+				pthread_mutex_unlock(&client->mutex);
 
 				break;
 
@@ -238,6 +253,7 @@ bool knx_tunnel_connect(knx_tunnel_client* client, int sock, const ip4addr* gate
 	client->seq_number = 0;
 	client->ack_seq_number = UINT8_MAX;
 	client->last_heartbeat = time(NULL);
+	client->msg_head = client->msg_tail = NULL;
 
 	knx_connection_request req = {
 		KNX_CONNECTION_REQUEST_TUNNEL,
@@ -319,4 +335,30 @@ bool knx_tunnel_send(knx_tunnel_client* client, const void* payload, size_t leng
 	pthread_mutex_unlock(&client->send_mutex);
 
 	return r;
+}
+
+ssize_t knx_tunnel_recv(knx_tunnel_client* client, uint8_t** buffer) {
+	if (client->state == KNX_TUNNEL_DISCONNECTED)
+		return false;
+
+	pthread_mutex_lock(&client->mutex);
+
+	while (client->state == KNX_TUNNEL_CONNECTED && client->msg_head == NULL)
+		pthread_cond_wait(&client->cond, &client->mutex);
+
+	ssize_t size = -1;
+
+	if (client->state == KNX_TUNNEL_CONNECTED && client->msg_head != NULL) {
+		knx_tunnel_message* head = client->msg_head;
+
+		size = head->size;
+		if (buffer) *buffer = head->message;
+
+		client->msg_head = head->next;
+
+		free(head);
+	}
+
+	pthread_mutex_lock(&client->mutex);
+	return size;
 }
