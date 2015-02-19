@@ -353,7 +353,7 @@ ssize_t knx_tunnel_recv(knx_tunnel_client* client, uint8_t** buffer) {
 
 	ssize_t size = -1;
 
-	if (client->state == KNX_TUNNEL_CONNECTED && client->msg_head != NULL) {
+	if (client->msg_head != NULL) {
 		knx_tunnel_message* head = client->msg_head;
 
 		size = head->size;
@@ -362,6 +362,7 @@ ssize_t knx_tunnel_recv(knx_tunnel_client* client, uint8_t** buffer) {
 		client->msg_head = head->next;
 
 		free(head);
+		pthread_cond_signal(&client->cond);
 	}
 
 	pthread_mutex_unlock(&client->mutex);
