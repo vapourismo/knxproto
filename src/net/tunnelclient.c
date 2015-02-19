@@ -141,9 +141,11 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 					else
 						client->msg_tail = client->msg_head = msg;
 
-					pthread_cond_broadcast(&client->cond);
-				} else if (msg)
+					pthread_cond_signal(&client->cond);
+				} else if (msg) {
+					log_error("Allocating new queue element failed");
 					free(msg);
+				}
 
 				pthread_mutex_unlock(&client->mutex);
 
@@ -342,7 +344,7 @@ bool knx_tunnel_send(knx_tunnel_client* client, const void* payload, size_t leng
 
 ssize_t knx_tunnel_recv(knx_tunnel_client* client, uint8_t** buffer) {
 	if (client->state == KNX_TUNNEL_DISCONNECTED)
-		return false;
+		return -1;
 
 	pthread_mutex_lock(&client->mutex);
 
@@ -362,6 +364,6 @@ ssize_t knx_tunnel_recv(knx_tunnel_client* client, uint8_t** buffer) {
 		free(head);
 	}
 
-	pthread_mutex_lock(&client->mutex);
+	pthread_mutex_unlock(&client->mutex);
 	return size;
 }
