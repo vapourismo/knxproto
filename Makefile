@@ -3,6 +3,8 @@ RM              = rm -rf
 MKDIR           = mkdir -p
 EXEC            = exec
 INSTALL         = install
+DEBUGGER        = gdb -ex run
+MEMCHECKER      = valgrind -v --leak-check=full
 
 # Install Directories
 BASENAME        := knxclient
@@ -54,6 +56,12 @@ clean:
 
 test: $(TESTOUTPUT)
 	LD_LIBRARY_PATH=$(DISTDIR) $(TESTOUTPUT)
+
+gdb: $(TESTOUTPUT)
+	LD_LIBRARY_PATH=$(DISTDIR) $(DEBUGGER) $(TESTOUTPUT)
+
+valgrind: $(TESTOUTPUT)
+	LD_LIBRARY_PATH=$(DISTDIR) $(MEMCHECKER) $(TESTOUTPUT)
 
 install: $(OUTPUT)
 	$(INSTALL) -m755 -d $(INCLUDEDIR) $(LIBDIR)
