@@ -215,6 +215,8 @@ void* knx_tunnel_worker_thread(void* data) {
 		knx_tunnel_process_incoming(client);
 
 	while (client->state == KNX_TUNNEL_CONNECTED) {
+		// TODO: Check if the heartbeat request needs to be resent
+
 		// Check if we need to send a heartbeat
 		if (client->state == KNX_TUNNEL_CONNECTED && difftime(time(NULL), client->last_heartbeat) >= 30) {
 			knx_connection_state_request req = {client->channel, 0, client->host_info};
