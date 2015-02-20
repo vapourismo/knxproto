@@ -135,15 +135,16 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 				pthread_mutex_lock(&client->mutex);
 
 				knx_tunnel_message* msg = NULL;
-
 				if (client->msg_queue_size + pkg_in.payload.tunnel_req.size <= KNX_TUNNEL_QUEUE_SIZE_CAP &&
 				    (msg = new(knx_tunnel_message)) &&
 				    (msg->message = newa(uint8_t, pkg_in.payload.tunnel_req.size))) {
 
+					// Prepare element
 					msg->next = NULL;
 					msg->size = pkg_in.payload.tunnel_req.size;
 					memcpy(msg->message, pkg_in.payload.tunnel_req.data, msg->size);
 
+					// Insert element
 					if (client->msg_head)
 						client->msg_tail = client->msg_tail->next = msg;
 					else
