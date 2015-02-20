@@ -30,9 +30,10 @@
 // Temporary configuration
 #define KNX_TUNNEL_CONNECTION_TIMEOUT 5       // 5 Seconds
 #define KNX_TUNNEL_QUEUE_SIZE_CAP 1073741824  // 1 MiB queue cap
+#define KNX_TUNNEL_READ_TIMEOUT 100000        // 100ms
 
 inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
-	if (!dgramsock_ready(client->sock, 0, 100000))
+	if (!dgramsock_ready(client->sock, 0, KNX_TUNNEL_READ_TIMEOUT))
 		return;
 
 	ssize_t buffer_size = dgramsock_peek_knx(client->sock);
