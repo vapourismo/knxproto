@@ -20,10 +20,10 @@ TESTDIR         = test
 # Artifacts
 HEADERFILES     = util/address.h util/sockutils.h \
                   proto/connreq.h proto/connres.h proto/connstatereq.h proto/connstateres.h proto/dcreq.h proto/dcres.h proto/header.h proto/hostinfo.h proto/knxnetip.h proto/tunnelreq.h proto/tunnelres.h proto/routingind.h \
-                  net/tunnelclient.h
+                  net/tunnelclient.h net/routerclient.h
 SOURCEFILES     = proto/connstateres.c proto/connreq.c proto/tunnelreq.c proto/connstatereq.c proto/connres.c proto/dcreq.c proto/hostinfo.c proto/knxnetip.c proto/header.c proto/tunnelres.c proto/dcres.c proto/routingind.c \
                   util/sockutils.c util/log.c \
-                  net/tunnelclient.c
+                  net/tunnelclient.c net/routerclient.c
 
 TESTFILES       = $(wildcard $(TESTDIR)/*.c)
 HEADEROBJS      = $(HEADERFILES:%=$(SOURCEDIR)/%)
