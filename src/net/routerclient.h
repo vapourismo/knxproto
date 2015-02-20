@@ -22,6 +22,8 @@
 #ifndef KNXCLIENT_NET_ROUTERCLIENT_H
 #define KNXCLIENT_NET_ROUTERCLIENT_H
 
+#include "../util/address.h"
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <pthread.h>
@@ -37,21 +39,33 @@ typedef struct knx_router_message {
 } knx_router_message;
 
 /**
+ * Router state
+ */
+typedef enum {
+	KNX_ROUTER_INACTIVE,
+	KNX_ROUTER_LISTENING
+} knx_router_state;
+
+/**
  *  Router Client
  */
 typedef struct {
 	int sock;
+	ip4addr router;
+
 	pthread_t worker;
+
+	knx_router_state state;
 } knx_router_client;
 
 /**
  * Connect to a router multicast group.
  */
-bool knx_router_connect(knx_router_client* client, int sock);
+bool knx_router_connect(knx_router_client* client, int sock, const ip4addr* router);
 
 /**
  * Disconnect from router multicast group.
  */
-bool knx_router_disconnect(knx_router_client* client);
+void knx_router_disconnect(knx_router_client* client);
 
 #endif

@@ -21,10 +21,53 @@
 
 #include "routerclient.h"
 
-bool knx_router_connect(knx_router_client* client, int sock) {
-	return false;
+#include "../util/log.h"
+#include "../util/alloc.h"
+
+#include <sys/socket.h>
+#include <netinet/in.h>
+
+void* knx_router_worker_thread(void* data) {
+	knx_router_client* client = data;
+
+	// Join multicast group
+	struct ip_mreq req = {
+		.imr_interface = {INADDR_ANY},
+		.imr_multiaddr = client->router.sin_addr,
+	};
+
+	if (setsockopt(client->sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, &req, sizeof(req)) < 0) {
+		log_error("Could not join multicast group");
+		return NULL;
+	}
+
+	setsockopt(client->sock, IPPROTO_IP, IP_MULTICAST_LOOP, anona(int, 0), sizeof(int));
+
+	// Set state
+	client->state = KNX_ROUTER_LISTENING;
+
+	while (client->state == KNX_ROUTER_LISTENING) {
+		// TODO: Receive and queue message
+	}
+
+	// Leave multicast group
+	if (setsockopt(client->sock, IPPROTO_IP, IP_DROP_MEMBERSHIP, &req, sizeof(req)) < 0)
+		log_error("Could not leave multicast group");
+
+	pthread_exit(NULL);
 }
 
-bool knx_router_disconnect(knx_router_client* client) {
-	return false;
+bool knx_router_connect(knx_router_client* client, int sock, const ip4addr* router) {
+	if (sock < 0)
+		return false;
+
+	client->sock = sock;
+	client->router = *router;
+
+	return pthread_create(&client->worker, NULL, &knx_router_worker_thread, client) == 0;
+}
+
+void knx_router_disconnect(knx_router_client* client) {
+	client->state = KNX_ROUTER_LISTENING;
+	pthread_join(client->worker, NULL);
 }
