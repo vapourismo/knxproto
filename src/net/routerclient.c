@@ -21,11 +21,17 @@
 
 #include "routerclient.h"
 
+#include "../proto/knxnetip.h"
+
 #include "../util/log.h"
 #include "../util/alloc.h"
+#include "../util/sockutils.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>
+
+#define KNX_ROUTER_QUEUE_SIZE_CAP 1073741824  // 1 MiB queue cap
+#define KNX_ROUTER_READ_TIMEOUT 100000        // 100ms
 
 void* knx_router_worker_thread(void* data) {
 	knx_router_client* client = data;
@@ -47,7 +53,58 @@ void* knx_router_worker_thread(void* data) {
 	client->state = KNX_ROUTER_LISTENING;
 
 	while (client->state == KNX_ROUTER_LISTENING) {
-		// TODO: Receive and queue message
+		if (!dgramsock_ready(client->sock, 0, KNX_ROUTER_READ_TIMEOUT))
+			continue;
+
+		// Prefetch header and check if we want that packet
+		ssize_t buffer_size = dgramsock_peek_knx(client->sock);
+		if (buffer_size < 0) {
+			// This is not a KNXnet/IP packet so we'll discard it
+			recvfrom(client->sock, NULL, 0, 0, NULL, NULL);
+
+			continue;
+		}
+
+
+		// Gather packet
+		uint8_t buffer[buffer_size];
+		ssize_t r = dgramsock_recv(client->sock, buffer, buffer_size, NULL, 0);
+
+		knx_packet pkg_in;
+
+		// Parse and check if the packet is a routing indication
+		if (r > 0 && knx_parse(buffer, r, &pkg_in) && pkg_in.service == KNX_ROUTING_INDICATION) {
+			// Push the message onto the incoming queue
+			pthread_mutex_lock(&client->mutex);
+
+			knx_router_message* msg = NULL;
+			if (client->msg_queue_size + pkg_in.payload.routing_ind.size <= KNX_ROUTER_QUEUE_SIZE_CAP &&
+			    (msg = new(knx_router_message)) &&
+			    (msg->message = newa(uint8_t, pkg_in.payload.routing_ind.size))) {
+
+				// Prepare element
+				msg->next = NULL;
+				msg->size = pkg_in.payload.routing_ind.size;
+				memcpy(msg->message, pkg_in.payload.routing_ind.data, msg->size);
+
+				// Insert element
+				if (client->msg_head)
+					client->msg_tail = client->msg_tail->next = msg;
+				else
+					client->msg_tail = client->msg_head = msg;
+
+				client->msg_queue_size += msg->size + sizeof(knx_router_message);
+
+				pthread_cond_signal(&client->cond);
+			} else if (msg) {
+				log_error("Allocating new queue element failed");
+				free(msg);
+			} else if (client->msg_queue_size + pkg_in.payload.routing_ind.size > KNX_ROUTER_QUEUE_SIZE_CAP) {
+				log_info("Reached maximum queue size");
+			}
+
+			pthread_mutex_unlock(&client->mutex);
+		}
 	}
 
 	// Leave multicast group

@@ -55,6 +55,13 @@ typedef struct {
 
 	pthread_t worker;
 
+	size_t msg_queue_size;
+	knx_router_message* msg_head;
+	knx_router_message* msg_tail;
+
+	pthread_mutex_t mutex;
+	pthread_cond_t cond;
+
 	knx_router_state state;
 } knx_router_client;
 
