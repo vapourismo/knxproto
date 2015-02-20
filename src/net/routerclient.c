@@ -128,3 +128,43 @@ void knx_router_disconnect(knx_router_client* client) {
 	client->state = KNX_ROUTER_LISTENING;
 	pthread_join(client->worker, NULL);
 }
+
+ssize_t knx_router_recv(knx_router_client* client, uint8_t** buffer) {
+	if (client->state == KNX_ROUTER_INACTIVE)
+		return -1;
+
+	pthread_mutex_lock(&client->mutex);
+
+	while (client->state == KNX_ROUTER_LISTENING && client->msg_head == NULL)
+		pthread_cond_wait(&client->cond, &client->mutex);
+
+	ssize_t size = -1;
+
+	if (client->msg_head != NULL) {
+		knx_router_message* head = client->msg_head;
+
+		size = head->size;
+		if (buffer) *buffer = head->message;
+
+		client->msg_head = head->next;
+		client->msg_queue_size -= size + sizeof(knx_router_message);
+
+		free(head);
+		pthread_cond_signal(&client->cond);
+	}
+
+	pthread_mutex_unlock(&client->mutex);
+	return size;
+}
+
+void knx_router_clear_queue(knx_router_client* client) {
+	knx_router_message* msg = client->msg_head;
+
+	while (msg) {
+		knx_router_message* free_me = msg;
+		msg = msg->next;
+
+		free(free_me->message);
+		free(free_me);
+	}
+}

@@ -75,4 +75,15 @@ bool knx_router_connect(knx_router_client* client, int sock, const ip4addr* rout
  */
 void knx_router_disconnect(knx_router_client* client);
 
+/**
+ * Retrieve an incoming message.
+ */
+ssize_t knx_router_recv(knx_router_client* client, uint8_t** buffer);
+
+/**
+ * Clear the message queue.
+ */
+void knx_router_clear_queue(knx_router_client* client);
+
+
 #endif
