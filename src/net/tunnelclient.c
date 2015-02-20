@@ -149,7 +149,7 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 					else
 						client->msg_tail = client->msg_head = msg;
 
-					client->msg_queue_size += msg->size;
+					client->msg_queue_size += msg->size + sizeof(knx_tunnel_message);
 
 					pthread_cond_signal(&client->cond);
 				} else if (msg) {
@@ -373,7 +373,7 @@ ssize_t knx_tunnel_recv(knx_tunnel_client* client, uint8_t** buffer) {
 		if (buffer) *buffer = head->message;
 
 		client->msg_head = head->next;
-		client->msg_queue_size -= size;
+		client->msg_queue_size -= size + sizeof(knx_tunnel_message);
 
 		free(head);
 		pthread_cond_signal(&client->cond);
