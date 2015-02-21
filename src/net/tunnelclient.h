@@ -89,7 +89,7 @@ void knx_tunnel_disconnect(knx_tunnel_client* conn);
 /**
  * Send data which should be tunnelled through the gateway.
  */
-bool knx_tunnel_send(knx_tunnel_client* conn, const void* payload, size_t length);
+bool knx_tunnel_send(knx_tunnel_client* conn, const void* payload, uint16_t length);
 
 /**
  * Returns a positiv integer on success. The resulting buffer has to be freed.

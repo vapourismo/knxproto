@@ -333,7 +333,7 @@ void knx_tunnel_disconnect(knx_tunnel_client* client) {
 	pthread_cond_destroy(&client->cond);
 }
 
-bool knx_tunnel_send(knx_tunnel_client* client, const void* payload, size_t length) {
+bool knx_tunnel_send(knx_tunnel_client* client, const void* payload, uint16_t length) {
 	if (client->state == KNX_TUNNEL_DISCONNECTED)
 		return false;
 
