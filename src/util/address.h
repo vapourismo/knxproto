@@ -25,6 +25,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <string.h>
+#include <stdint.h>
 
 /**
  * IPv4 Address
@@ -40,5 +41,10 @@ inline void ip4addr_from_string(ip4addr* addr, const char* addrstr, uint16_t por
 	addr->sin_port = htons(port);
 	inet_pton(AF_INET, addrstr, &addr->sin_addr);
 }
+
+/**
+ * KNX Address
+ */
+typedef uint16_t knx_addr;
 
 #endif
