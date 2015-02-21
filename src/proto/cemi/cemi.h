@@ -22,12 +22,56 @@
 #ifndef KNXCLIENT_PROTO_CEMI_CEMI_H
 #define KNXCLIENT_PROTO_CEMI_CEMI_H
 
+#include <stdbool.h>
+#include <stdint.h>
+#include <stddef.h>
+
 /**
  * KNX CEMI Types
  */
 typedef enum {
-	KNX_CEMI_LDATA_REQ,
-	KNX_CEMI_LDATA_IND
+	KNX_CEMI_LDATA_REQ = 0x11,
+	KNX_CEMI_LDATA_IND = 0x29
 } knx_cemi_service;
+
+/**
+ * CEMI Frame
+ */
+typedef struct {
+	knx_cemi_service service;
+	uint8_t add_info_length;
+	const uint8_t* add_info;
+	union {
+		int _;
+	} payload;
+} knx_cemi_frame;
+
+/**
+ * CEMI Header Size
+ */
+#define KNX_CEMI_HEADER_SIZE 2
+
+/**
+ *
+ */
+void knx_cemi_unpack_header(const uint8_t* buffer, knx_cemi_service* service, uint8_t* info_length);
+
+/**
+ * Parse a message which contains a CEMI frame.
+ */
+bool knx_cemi_parse(const uint8_t* message, size_t length, knx_cemi_frame* frame);
+
+/**
+ * Generate a CEMI frame.
+ */
+bool knx_cemi_generate(uint8_t* buffer, knx_cemi_service service,
+                       uint8_t* add_info, uint8_t add_info_length, const void* payload);
+
+/**
+ * Same as `knx_cemi_generate` but without any additional info.
+ */
+inline bool knx_cemi_generate_(uint8_t* buffer, knx_cemi_service service, const void* payload) {
+	return knx_cemi_generate(buffer, service, NULL, 0, payload);
+}
 
 #endif
