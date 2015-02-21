@@ -61,10 +61,9 @@ bool knx_cemi_generate(uint8_t* buffer, knx_cemi_service service,
 
 	switch (service) {
 		case KNX_CEMI_LDATA_IND:
-			return false;
-
 		case KNX_CEMI_LDATA_REQ:
-			return false;
+			knx_generate_ldata(buffer, payload);
+			return true;
 
 		default: return false;
 	}

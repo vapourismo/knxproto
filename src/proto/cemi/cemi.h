@@ -22,6 +22,8 @@
 #ifndef KNXCLIENT_PROTO_CEMI_CEMI_H
 #define KNXCLIENT_PROTO_CEMI_CEMI_H
 
+#include "ldata.h"
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -42,7 +44,7 @@ typedef struct {
 	uint8_t add_info_length;
 	const uint8_t* add_info;
 	union {
-		int _;
+		knx_ldata ldata;
 	} payload;
 } knx_cemi_frame;
 
@@ -52,7 +54,7 @@ typedef struct {
 #define KNX_CEMI_HEADER_SIZE 2
 
 /**
- *
+ * Unpack CEMI header.
  */
 void knx_cemi_unpack_header(const uint8_t* buffer, knx_cemi_service* service, uint8_t* info_length);
 
