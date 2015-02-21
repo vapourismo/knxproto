@@ -91,12 +91,12 @@ typedef struct {
 /**
  * Generate an L_Data frame.
  */
-void knx_generate_ldata(uint8_t* buffer, const knx_ldata* req);
+void knx_ldata_generate(uint8_t* buffer, const knx_ldata* req);
 
 /**
  * Parse a message containing a L_Data frame
  */
-bool knx_parse_ldata(uint8_t* buffer, size_t length, knx_ldata* output);
+bool knx_ldata_parse(uint8_t* buffer, size_t length, knx_ldata* output);
 
 /**
  * Calculate the requires space for the given L_Data frame.

@@ -21,7 +21,7 @@
 
 #include "ldata.h"
 
-void knx_generate_ldata(uint8_t* buffer, const knx_ldata* req) {
+void knx_ldata_generate(uint8_t* buffer, const knx_ldata* req) {
 	*buffer++ = req->control1;
 	*buffer++ = req->control2;
 
@@ -70,7 +70,7 @@ void knx_generate_ldata(uint8_t* buffer, const knx_ldata* req) {
 	}
 }
 
-bool knx_parse_ldata(uint8_t* buffer, size_t length, knx_ldata* out) {
+bool knx_ldata_parse(uint8_t* buffer, size_t length, knx_ldata* out) {
 	if (length < 8)
 		return false;
 

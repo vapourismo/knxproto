@@ -41,7 +41,7 @@ bool knx_cemi_parse(uint8_t* message, size_t length, knx_cemi_frame* frame) {
 	switch (frame->service) {
 		case KNX_CEMI_LDATA_IND:
 		case KNX_CEMI_LDATA_REQ:
-			return knx_parse_ldata(message + KNX_CEMI_HEADER_SIZE + frame->add_info_length,
+			return knx_ldata_parse(message + KNX_CEMI_HEADER_SIZE + frame->add_info_length,
 			                       length - KNX_CEMI_HEADER_SIZE - frame->add_info_length,
 			                       &frame->payload.ldata);
 
@@ -62,7 +62,7 @@ bool knx_cemi_generate(uint8_t* buffer, knx_cemi_service service,
 	switch (service) {
 		case KNX_CEMI_LDATA_IND:
 		case KNX_CEMI_LDATA_REQ:
-			knx_generate_ldata(buffer, payload);
+			knx_ldata_generate(buffer, payload);
 			return true;
 
 		default: return false;
