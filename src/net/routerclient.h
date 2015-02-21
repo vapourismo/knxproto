@@ -29,61 +29,28 @@
 #include <pthread.h>
 
 /**
- * Message from the router
- */
-typedef struct knx_router_message {
-	uint8_t* message;
-	size_t size;
-
-	struct knx_router_message* next;
-} knx_router_message;
-
-/**
- * Router state
- */
-typedef enum {
-	KNX_ROUTER_INACTIVE,
-	KNX_ROUTER_LISTENING
-} knx_router_state;
-
-/**
  *  Router Client
  */
 typedef struct {
 	int sock;
 	ip4addr router;
 
-	pthread_t worker;
-
-	size_t msg_queue_size;
-	knx_router_message* msg_head;
-	knx_router_message* msg_tail;
-
-	pthread_mutex_t mutex;
-	pthread_cond_t cond;
-
-	knx_router_state state;
+	struct ip_mreq mreq;
 } knx_router_client;
 
 /**
- * Connect to a router multicast group.
+ * Join the router's multicast group.
  */
 bool knx_router_connect(knx_router_client* client, int sock, const ip4addr* router);
 
 /**
- * Disconnect from router multicast group.
+ * Leave the router's multicast group.
  */
-void knx_router_disconnect(knx_router_client* client);
+bool knx_router_disconnect(const knx_router_client* client);
 
 /**
  * Retrieve an incoming message.
  */
-ssize_t knx_router_recv(knx_router_client* client, uint8_t** buffer);
-
-/**
- * Clear the message queue.
- */
-void knx_router_clear_queue(knx_router_client* client);
-
+ssize_t knx_router_recv(knx_router_client* client, uint8_t** buffer, bool block);
 
 #endif
