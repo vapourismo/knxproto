@@ -31,7 +31,7 @@
 //   Octet 2-5: IPv4 address
 //   Octet 6-7: Port number
 
-void knx_generate_host_info(uint8_t* buffer, const knx_host_info* host) {
+void knx_host_info_generate(uint8_t* buffer, const knx_host_info* host) {
 	buffer[0] = KNX_HOST_INFO_SIZE;
 	buffer[1] = host->protocol;
 

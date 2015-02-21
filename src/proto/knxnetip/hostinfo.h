@@ -51,7 +51,7 @@ typedef struct {
 /**
  * Append host information.
  */
-void knx_generate_host_info(uint8_t* buffer, const knx_host_info* host);
+void knx_host_info_generate(uint8_t* buffer, const knx_host_info* host);
 
 /**
  * Retrieve host information.

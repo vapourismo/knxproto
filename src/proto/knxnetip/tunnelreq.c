@@ -32,7 +32,7 @@
 //   Octet 3:   Reserved
 //   Octet 4-n: Payload
 
-void knx_generate_tunnel_request(uint8_t* buffer, const knx_tunnel_request* req) {
+void knx_tunnel_request_generate(uint8_t* buffer, const knx_tunnel_request* req) {
 	*buffer++ = 4;
 	*buffer++ = req->channel;
 	*buffer++ = req->seq_number;

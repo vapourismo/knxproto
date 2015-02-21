@@ -35,12 +35,12 @@
 //   Octet 0: Structure length
 //   Octet 1-3: Unknown
 
-void knx_generate_connection_response(uint8_t* buffer, const knx_connection_response* res) {
+void knx_connection_response_generate(uint8_t* buffer, const knx_connection_response* res) {
 	*buffer++ = res->channel;
 	*buffer++ = res->status;
 
 	if (res->status == 0) {
-		knx_generate_host_info(buffer, &res->host);
+		knx_host_info_generate(buffer, &res->host);
 		buffer += KNX_HOST_INFO_SIZE;
 
 		*buffer++ = 4;

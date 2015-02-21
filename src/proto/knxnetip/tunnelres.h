@@ -38,7 +38,7 @@ typedef struct {
 /**
  * Generate the message for a tunnel response.
  */
-void knx_generate_tunnel_response(uint8_t* buffer, const knx_tunnel_response* res);
+void knx_tunnel_response_generate(uint8_t* buffer, const knx_tunnel_response* res);
 
 /**
  * Parse a message (excluding header) which contains a tunnel response.

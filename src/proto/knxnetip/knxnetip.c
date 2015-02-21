@@ -30,7 +30,7 @@
 //   Octet 2-3: Service number
 //   Octet 4-5: Packet length including header size
 
-bool knx_generate_header(uint8_t* buffer, knx_service srv, uint16_t length) {
+bool knx_header_generate(uint8_t* buffer, knx_service srv, uint16_t length) {
 	// Since the protocol specifies the payload length
 	// to be a 16-bit unsigned integer, we have to make
 	// sure the given length + header size do not exceed
@@ -124,44 +124,44 @@ bool knx_parse(const uint8_t* message, size_t length,
 }
 
 bool knx_generate(uint8_t* buffer, knx_service service, const void* payload) {
-	if (!knx_generate_header(buffer, service, knx_payload_size(service, payload)))
+	if (!knx_header_generate(buffer, service, knx_payload_size(service, payload)))
 		return false;
 
 	switch (service) {
 		case KNX_CONNECTION_REQUEST:
-			knx_generate_connection_request(buffer + KNX_HEADER_SIZE, payload);
+			knx_connection_request_generate(buffer + KNX_HEADER_SIZE, payload);
 			return true;
 
 		case KNX_CONNECTION_RESPONSE:
-			knx_generate_connection_response(buffer + KNX_HEADER_SIZE, payload);
+			knx_connection_response_generate(buffer + KNX_HEADER_SIZE, payload);
 			return true;
 
 		case KNX_CONNECTION_STATE_REQUEST:
-			knx_generate_connection_state_request(buffer + KNX_HEADER_SIZE, payload);
+			knx_connection_state_request_generate(buffer + KNX_HEADER_SIZE, payload);
 			return true;
 
 		case KNX_CONNECTION_STATE_RESPONSE:
-			knx_generate_connection_state_response(buffer + KNX_HEADER_SIZE, payload);
+			knx_connection_state_response_generate(buffer + KNX_HEADER_SIZE, payload);
 			return true;
 
 		case KNX_DISCONNECT_REQUEST:
-			knx_generate_disconnect_request(buffer + KNX_HEADER_SIZE, payload);
+			knx_disconnect_request_generate(buffer + KNX_HEADER_SIZE, payload);
 			return true;
 
 		case KNX_DISCONNECT_RESPONSE:
-			knx_generate_disconnect_response(buffer + KNX_HEADER_SIZE, payload);
+			knx_disconnect_response_generate(buffer + KNX_HEADER_SIZE, payload);
 			return true;
 
 		case KNX_TUNNEL_REQUEST:
-			knx_generate_tunnel_request(buffer + KNX_HEADER_SIZE, payload);
+			knx_tunnel_request_generate(buffer + KNX_HEADER_SIZE, payload);
 			return true;
 
 		case KNX_TUNNEL_RESPONSE:
-			knx_generate_tunnel_response(buffer + KNX_HEADER_SIZE, payload);
+			knx_tunnel_response_generate(buffer + KNX_HEADER_SIZE, payload);
 			return true;
 
 		case KNX_ROUTING_INDICATION:
-			knx_generate_routing_indication(buffer + KNX_HEADER_SIZE, payload);
+			knx_routing_indication_generate(buffer + KNX_HEADER_SIZE, payload);
 			return true;
 
 		default:

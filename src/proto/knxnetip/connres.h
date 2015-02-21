@@ -41,7 +41,7 @@ typedef struct {
 /**
  * Generate the message for a connection response.
  */
-void knx_generate_connection_response(uint8_t* buffer, const knx_connection_response* res);
+void knx_connection_response_generate(uint8_t* buffer, const knx_connection_response* res);
 
 /**
  * Parse a message (excluding header) which contains a connection response.

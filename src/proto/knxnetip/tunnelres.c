@@ -29,7 +29,7 @@
 //   Octet 2: Sequence number
 //   Octet 3: Status
 
-void knx_generate_tunnel_response(uint8_t* buffer, const knx_tunnel_response* res) {
+void knx_tunnel_response_generate(uint8_t* buffer, const knx_tunnel_response* res) {
 	*buffer++ = 4;
 	*buffer++ = res->channel;
 	*buffer++ = res->seq_number;

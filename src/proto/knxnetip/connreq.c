@@ -35,11 +35,11 @@
 //   Octet 2: KNX Layer
 //   Octet 3: Reserved (should be 0)
 
-void knx_generate_connection_request(uint8_t* buffer, const knx_connection_request* conn_req) {
-	knx_generate_host_info(buffer, &conn_req->control_host);
+void knx_connection_request_generate(uint8_t* buffer, const knx_connection_request* conn_req) {
+	knx_host_info_generate(buffer, &conn_req->control_host);
 	buffer += KNX_HOST_INFO_SIZE;
 
-	knx_generate_host_info(buffer, &conn_req->tunnel_host);
+	knx_host_info_generate(buffer, &conn_req->tunnel_host);
 	buffer += KNX_HOST_INFO_SIZE;
 
 	*buffer++ = 4;

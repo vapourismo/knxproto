@@ -40,7 +40,7 @@ typedef struct {
 /**
  * Generate the message for a disconnect request.
  */
-void knx_generate_disconnect_request(uint8_t* buffer, const knx_disconnect_request* req);
+void knx_disconnect_request_generate(uint8_t* buffer, const knx_disconnect_request* req);
 
 /**
  * Parse a message (excluding header) which contains a disconnect request.

@@ -28,11 +28,11 @@
 //   Octet 1:   Status
 //   Octet 2-9: Host info
 
-void knx_generate_connection_state_request(uint8_t* buffer, const knx_connection_state_request* req) {
+void knx_connection_state_request_generate(uint8_t* buffer, const knx_connection_state_request* req) {
 	*buffer++ = req->channel;
 	*buffer++ = req->status;
 
-	knx_generate_host_info(buffer, &req->host);
+	knx_host_info_generate(buffer, &req->host);
 }
 
 bool knx_parse_connection_state_request(const uint8_t* message, size_t length,

@@ -40,7 +40,7 @@ typedef struct {
 /**
  * Generate the message for a connection state request.
  */
-void knx_generate_connection_state_request(uint8_t* buffer, const knx_connection_state_request* req);
+void knx_connection_state_request_generate(uint8_t* buffer, const knx_connection_state_request* req);
 
 /**
  * Parse a message (excluding header) which contains a connection state request.

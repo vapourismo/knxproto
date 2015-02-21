@@ -55,7 +55,7 @@ typedef struct {
 /**
  * Generate the message for a connection request.
  */
-void knx_generate_connection_request(uint8_t* buffer, const knx_connection_request* conn_req);
+void knx_connection_request_generate(uint8_t* buffer, const knx_connection_request* conn_req);
 
 /**
  * Parse a message (excluding header) which contains a connection request.

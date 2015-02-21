@@ -26,7 +26,7 @@
 // Routing Indication:
 //   Octet 0-n: Payload
 
-void knx_generate_routing_indication(uint8_t* buffer, const knx_routing_indication* ind) {
+void knx_routing_indication_generate(uint8_t* buffer, const knx_routing_indication* ind) {
 	memcpy(buffer, ind->data, ind->size);
 }
 

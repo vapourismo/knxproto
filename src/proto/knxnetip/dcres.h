@@ -37,7 +37,7 @@ typedef struct {
 /**
  * Generate the message for a disconnect response.
  */
-void knx_generate_disconnect_response(uint8_t* buffer, const knx_disconnect_response* res);
+void knx_disconnect_response_generate(uint8_t* buffer, const knx_disconnect_response* res);
 
 /**
  * Parse a message (excluding header) which contains a disconnect response.

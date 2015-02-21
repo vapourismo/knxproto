@@ -27,7 +27,7 @@
 //   Octet 0: Channel
 //   Octet 1: Status
 
-void knx_generate_connection_state_response(uint8_t* buffer, const knx_connection_state_response* res) {
+void knx_connection_state_response_generate(uint8_t* buffer, const knx_connection_state_response* res) {
 	*buffer++ = res->channel;
 	*buffer++ = res->status;
 }
