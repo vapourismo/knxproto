@@ -92,7 +92,7 @@ ssize_t knx_router_recv(const knx_router_client* client, uint8_t** result_buffer
 		return -1;
 }
 
-bool knx_router_send(const knx_router_client* client, const uint8_t* payload, size_t length) {
+bool knx_router_send(const knx_router_client* client, const uint8_t* payload, uint16_t length) {
 	knx_routing_indication route_ind = {
 		length,
 		payload

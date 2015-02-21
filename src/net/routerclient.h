@@ -56,6 +56,6 @@ ssize_t knx_router_recv(const knx_router_client* client, uint8_t** buffer, bool 
 /**
  * Send a message.
  */
-bool knx_router_send(const knx_router_client* client, const uint8_t* payload, size_t length);
+bool knx_router_send(const knx_router_client* client, const uint8_t* payload, uint16_t length);
 
 #endif
