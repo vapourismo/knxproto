@@ -49,7 +49,8 @@ bool knx_router_connect(knx_router_client* client, int sock, const ip4addr* rout
 bool knx_router_disconnect(const knx_router_client* client);
 
 /**
- * Retrieve an incoming message.
+ * Retrieve an incoming message. Returns a positive integer on success.
+ * The resulting buffer has to be freed.
  */
 ssize_t knx_router_recv(const knx_router_client* client, uint8_t** buffer, bool block);
 
