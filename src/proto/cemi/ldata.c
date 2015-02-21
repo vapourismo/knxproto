@@ -60,13 +60,55 @@ void knx_generate_ldata(uint8_t* buffer, const knx_ldata* req) {
 			// Last 2 bits of APCI + payload
 			if (req->payload.apdu.length_over_6bit == 0) {
 				*buffer++ = (req->payload.apdu.apci & 3) << 6 |
-				            (req->payload.apdu.data ? *req->payload.apdu.data & 0x3f : 0);
+				            (req->payload.apdu.data ? *req->payload.apdu.data & 0x3F : 0);
 			} else {
 				*buffer++ = (req->payload.apdu.apci & 3) << 6;
 				memcpy(buffer, req->payload.apdu.data, req->payload.apdu.length_over_6bit);
 			}
 
 			break;
+	}
+}
+
+bool knx_parse_ldata(uint8_t* buffer, size_t length, knx_ldata* out) {
+	if (length < 8)
+		return false;
+
+	out->control1 = buffer[0];
+	out->control2 = buffer[1];
+
+	out->source = buffer[2] << 8 | buffer[3];
+	out->source = buffer[4] << 8 | buffer[5];
+
+	out->tpci = buffer[7] >> 6 & 3;
+	out->seq_number = 0;
+
+	switch (out->tpci) {
+		case KNX_LDATA_TPCI_NUMBERED_DATA:
+			out->seq_number = buffer[7] >> 2 & 15;
+
+		case KNX_LDATA_TPCI_UNNUMBERED_DATA:
+			if (length != 8 + buffer[6] || !buffer[6]) {
+				out->payload.apdu.length_over_6bit = 0;
+				out->payload.apdu.data = NULL;
+				return false;
+			}
+
+			out->payload.apdu.apci = (buffer[7] & 2) << 2 | (buffer[8] >> 6 & 2);
+
+			buffer[8] &= 0x3F;
+			out->payload.apdu.data = buffer + 8;
+			out->payload.apdu.length_over_6bit = buffer[6] == 1 ? 1 : buffer[6] - 1;
+
+			return true;
+
+		case KNX_LDATA_TPCI_NUMBERED_CONTROL:
+			out->seq_number = buffer[7] >> 2 & 15;
+
+		case KNX_LDATA_TPCI_UNNUMBERED_CONTROL:
+			out->payload.control = buffer[7] & 3;
+			return true;
+
 	}
 }
 

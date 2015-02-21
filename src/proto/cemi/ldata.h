@@ -94,6 +94,11 @@ typedef struct {
 void knx_generate_ldata(uint8_t* buffer, const knx_ldata* req);
 
 /**
+ * Parse a message containing a L_Data frame
+ */
+bool knx_parse_ldata(uint8_t* buffer, size_t length, knx_ldata* output);
+
+/**
  * Calculate the requires space for the given L_Data frame.
  */
 size_t knx_ldata_size(const knx_ldata* req);
