@@ -397,4 +397,6 @@ void knx_tunnel_clear_queue(knx_tunnel_client* client) {
 		free(free_me->message);
 		free(free_me);
 	}
+
+	client->msg_head = client->msg_tail = NULL;
 }
