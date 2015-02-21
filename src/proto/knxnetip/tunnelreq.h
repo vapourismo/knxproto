@@ -19,34 +19,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_PROTO_DCRES_H
-#define KNXCLIENT_PROTO_DCRES_H
+#ifndef KNXCLIENT_PROTO_KNXNETIP_TUNNELREQ_H
+#define KNXCLIENT_PROTO_KNXNETIP_TUNNELREQ_H
 
-#include <stdint.h>
-#include <stddef.h>
 #include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
 /**
- * Disconnect Response
+ * Tunnel Request
  */
 typedef struct {
 	uint8_t channel;
-	uint8_t status;
-} knx_disconnect_response;
+	uint8_t seq_number;
+	uint16_t size;
+	const void* data;
+} knx_tunnel_request;
 
 /**
- * Generate the message for a disconnect response.
+ * Generate the message for a tunnel request.
  */
-void knx_generate_disconnect_response(uint8_t* buffer, const knx_disconnect_response* res);
+void knx_generate_tunnel_request(uint8_t* buffer, const knx_tunnel_request* req);
 
 /**
- * Parse a message (excluding header) which contains a disconnect response.
+ * Parse a message (excluding header) which contains a tunnel request.
  */
-bool knx_parse_disconnect_response(const uint8_t* message, size_t length, knx_disconnect_response* res);
+bool knx_parse_tunnel_request(const uint8_t* message, size_t length, knx_tunnel_request* req);
 
 /**
- * Disconnect response size
+ * Tunnel request size
  */
-#define KNX_DISCONNECT_RESPONSE_SIZE 2
+inline size_t knx_tunnel_request_size(const knx_tunnel_request* req) {
+	return 4 + req->size;
+}
 
 #endif

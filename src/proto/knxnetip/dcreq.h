@@ -19,27 +19,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "connstateres.h"
-#include "header.h"
+#ifndef KNXCLIENT_PROTO_KNXNETIP_DCREQ_H
+#define KNXCLIENT_PROTO_KNXNETIP_DCREQ_H
 
-#include "../util/alloc.h"
+#include "hostinfo.h"
 
-// Connection State Response:
-//   Octet 0: Channel
-//   Octet 1: Status
+#include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
 
-void knx_generate_connection_state_response(uint8_t* buffer, const knx_connection_state_response* res) {
-	*buffer++ = res->channel;
-	*buffer++ = res->status;
-}
+/**
+ * Disconnect Request
+ */
+typedef struct {
+	uint8_t channel;
+	uint8_t status;
+	knx_host_info host;
+} knx_disconnect_request;
 
-bool knx_parse_connection_state_response(const uint8_t* message, size_t length,
-                                         knx_connection_state_response* res) {
-	if (length < KNX_CONNECTION_STATE_RESPONSE_SIZE)
-		return false;
+/**
+ * Generate the message for a disconnect request.
+ */
+void knx_generate_disconnect_request(uint8_t* buffer, const knx_disconnect_request* req);
 
-	res->channel = message[0];
-	res->status = message[1];
+/**
+ * Parse a message (excluding header) which contains a disconnect request.
+ */
+bool knx_parse_disconnect_request(const uint8_t* message, size_t length, knx_disconnect_request* req);
 
-	return true;
-}
+/**
+ * Disconnect request size
+ */
+#define KNX_DISCONNECT_REQUEST_SIZE (2 + KNX_HOST_INFO_SIZE)
+
+#endif

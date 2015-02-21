@@ -19,33 +19,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "tunnelres.h"
+#include "connstateres.h"
+#include "header.h"
 
-#include "../proto/header.h"
+#include "../../util/alloc.h"
 
-#include "../util/alloc.h"
+// Connection State Response:
+//   Octet 0: Channel
+//   Octet 1: Status
 
-// Tunnel Response:
-//   Octet 0: Structure length
-//   Octet 1: Channel
-//   Octet 2: Sequence number
-//   Octet 3: Status
-
-void knx_generate_tunnel_response(uint8_t* buffer, const knx_tunnel_response* res) {
-	*buffer++ = 4;
+void knx_generate_connection_state_response(uint8_t* buffer, const knx_connection_state_response* res) {
 	*buffer++ = res->channel;
-	*buffer++ = res->seq_number;
 	*buffer++ = res->status;
 }
 
-bool knx_parse_tunnel_response(const uint8_t* message, size_t length, knx_tunnel_response* res) {
-	if (length < KNX_TUNNEL_RESPONSE_SIZE || message[0] != KNX_TUNNEL_RESPONSE_SIZE)
+bool knx_parse_connection_state_response(const uint8_t* message, size_t length,
+                                         knx_connection_state_response* res) {
+	if (length < KNX_CONNECTION_STATE_RESPONSE_SIZE)
 		return false;
 
-	res->channel = message[1];
-	res->seq_number = message[2];
-	res->status = message[3];
+	res->channel = message[0];
+	res->status = message[1];
 
 	return true;
 }
-

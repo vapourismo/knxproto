@@ -19,36 +19,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_PROTO_ROUTINGIND_H
-#define KNXCLIENT_PROTO_ROUTINGIND_H
+#ifndef KNXCLIENT_PROTO_KNXNETIP_DCRES_H
+#define KNXCLIENT_PROTO_KNXNETIP_DCRES_H
 
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
 
 /**
- * Routing Indication
+ * Disconnect Response
  */
 typedef struct {
-	uint16_t size;
-	const void* data;
-} knx_routing_indication;
+	uint8_t channel;
+	uint8_t status;
+} knx_disconnect_response;
 
 /**
- * Generate the message for a routing indication.
+ * Generate the message for a disconnect response.
  */
-void knx_generate_routing_indication(uint8_t* buffer, const knx_routing_indication* ind);
+void knx_generate_disconnect_response(uint8_t* buffer, const knx_disconnect_response* res);
 
 /**
- * Parse a message (excluding header) which contains a routing indication.
+ * Parse a message (excluding header) which contains a disconnect response.
  */
-bool knx_parse_routing_indication(const uint8_t* message, size_t length, knx_routing_indication* ind);
+bool knx_parse_disconnect_response(const uint8_t* message, size_t length, knx_disconnect_response* res);
 
 /**
- * Routing indication size
+ * Disconnect response size
  */
-inline size_t knx_routing_indication_size(const knx_routing_indication* ind) {
-	return ind->size;
-}
+#define KNX_DISCONNECT_RESPONSE_SIZE 2
 
 #endif

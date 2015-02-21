@@ -23,7 +23,7 @@
 #define KNXCLIENT_UTIL_DGRAMSOCK
 
 #include "address.h"
-#include "../proto/knxnetip.h"
+#include "../proto/knxnetip/knxnetip.h"
 
 #include <stdbool.h>
 #include <unistd.h>

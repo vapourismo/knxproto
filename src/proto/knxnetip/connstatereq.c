@@ -19,34 +19,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_PROTO_CONNSTATERES_H
-#define KNXCLIENT_PROTO_CONNSTATERES_H
+#include "connstatereq.h"
+#include "header.h"
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
+#include "../../util/alloc.h"
 
-/**
- * Connection State Response
- */
-typedef struct {
-	uint8_t channel;
-	uint8_t status;
-} knx_connection_state_response;
+// Connection State Request
+//   Octet 0:   Channel
+//   Octet 1:   Status
+//   Octet 2-9: Host info
 
-/**
- * Generate the message for a connection response.
- */
-void knx_generate_connection_state_response(uint8_t* buffer, const knx_connection_state_response* res);
+void knx_generate_connection_state_request(uint8_t* buffer, const knx_connection_state_request* req) {
+	*buffer++ = req->channel;
+	*buffer++ = req->status;
 
-/**
- * Parse a message (excluding header) which contains a connection response.
- */
-bool knx_parse_connection_state_response(const uint8_t* message, size_t length, knx_connection_state_response* res);
+	knx_generate_host_info(buffer, &req->host);
+}
 
-/**
- * Connection state response size
- */
-#define KNX_CONNECTION_STATE_RESPONSE_SIZE 2
+bool knx_parse_connection_state_request(const uint8_t* message, size_t length,
+                                        knx_connection_state_request* req) {
+	if (length < KNX_CONNECTION_STATE_REQUEST_SIZE)
+		return false;
 
-#endif
+	req->channel = message[0];
+	req->status = message[1];
+
+	return knx_parse_host_info(message + 2, &req->host);
+}

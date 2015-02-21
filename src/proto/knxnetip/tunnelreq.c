@@ -19,38 +19,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_PROTO_TUNNELREQ_H
-#define KNXCLIENT_PROTO_TUNNELREQ_H
+#include "tunnelreq.h"
+#include "header.h"
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
+#include "../../util/alloc.h"
 
-/**
- * Tunnel Request
- */
-typedef struct {
-	uint8_t channel;
-	uint8_t seq_number;
-	uint16_t size;
-	const void* data;
-} knx_tunnel_request;
+#include <string.h>
 
-/**
- * Generate the message for a tunnel request.
- */
-void knx_generate_tunnel_request(uint8_t* buffer, const knx_tunnel_request* req);
+// Tunnel Request:
+//   Octet 0:   Structure length
+//   Octet 1:   Channel
+//   Octet 2:   Sequence number
+//   Octet 3:   Reserved
+//   Octet 4-n: Payload
 
-/**
- * Parse a message (excluding header) which contains a tunnel request.
- */
-bool knx_parse_tunnel_request(const uint8_t* message, size_t length, knx_tunnel_request* req);
+void knx_generate_tunnel_request(uint8_t* buffer, const knx_tunnel_request* req) {
+	*buffer++ = 4;
+	*buffer++ = req->channel;
+	*buffer++ = req->seq_number;
+	*buffer++ = 0;
 
-/**
- * Tunnel request size
- */
-inline size_t knx_tunnel_request_size(const knx_tunnel_request* req) {
-	return 4 + req->size;
+	memcpy(buffer, req->data, req->size);
 }
 
-#endif
+bool knx_parse_tunnel_request(const uint8_t* message, size_t length, knx_tunnel_request* req) {
+	if (length < 4 || message[0] != 4)
+		return false;
+
+	req->channel = message[1];
+	req->seq_number = message[2];
+	req->size = length - 4;
+	req->data = message + 4;
+
+	return true;
+}

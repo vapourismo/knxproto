@@ -22,7 +22,7 @@
 #ifndef KNXCLIENT_NET_TUNNELCLIENT_H
 #define KNXCLIENT_NET_TUNNELCLIENT_H
 
-#include "../proto/knxnetip.h"
+#include "../proto/knxnetip/knxnetip.h"
 #include "../util/address.h"
 
 #include <pthread.h>

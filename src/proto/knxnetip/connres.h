@@ -19,48 +19,40 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_PROTO_HOSTINFO_H
-#define KNXCLIENT_PROTO_HOSTINFO_H
+#ifndef KNXCLIENT_PROTO_KNXNETIP_CONNRES_H
+#define KNXCLIENT_PROTO_KNXNETIP_CONNRES_H
 
-#include <netinet/in.h>
-#include <stdbool.h>
+#include "hostinfo.h"
+
 #include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
 
 /**
- * KNXnet/IP Protocol
- */
-typedef enum {
-	KNX_PROTO_UDP = 1,
-	KNX_PROTO_TCP = 2
-} knx_proto;
-
-/**
- * Host Information
+ * Connection Response
  */
 typedef struct {
-	knx_proto protocol;
-	in_addr_t address;
-	in_port_t port;
-} knx_host_info;
+	uint8_t channel;
+	uint8_t status;
+	knx_host_info host;
+	uint8_t extended[3];
+} knx_connection_response;
 
 /**
- *
+ * Generate the message for a connection response.
  */
-#define KNX_HOST_INFO_NAT(prot) {prot, 0, 0}
+void knx_generate_connection_response(uint8_t* buffer, const knx_connection_response* res);
 
 /**
- * Append host information.
+ * Parse a message (excluding header) which contains a connection response.
  */
-void knx_generate_host_info(uint8_t* buffer, const knx_host_info* host);
+bool knx_parse_connection_response(const uint8_t* message, size_t length, knx_connection_response* res);
 
 /**
- * Retrieve host information.
+ * Connection response size
  */
-bool knx_parse_host_info(const uint8_t* message, knx_host_info* host);
-
-/**
- * Size of a host info segment
- */
-#define KNX_HOST_INFO_SIZE 8
+inline size_t knx_connection_response_size(const knx_connection_response* res) {
+	return (res->status == 0 ? KNX_HOST_INFO_SIZE + 6 : 2);
+}
 
 #endif

@@ -19,37 +19,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_PROTO_CONNSTATEREQ_H
-#define KNXCLIENT_PROTO_CONNSTATEREQ_H
+#include "dcreq.h"
+#include "header.h"
 
-#include "hostinfo.h"
+#include "../../util/alloc.h"
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
+// Disconnect Request:
+//   Octet 0:   Channel
+//   Octet 1:   Status
+//   Octet 2-9: Host info
 
-/**
- * Connection State Request
- */
-typedef struct {
-	uint8_t channel;
-	uint8_t status;
-	knx_host_info host;
-} knx_connection_state_request;
+void knx_generate_disconnect_request(uint8_t* buffer, const knx_disconnect_request* req) {
+	*buffer++ = req->channel;
+	*buffer++ = req->status;
 
-/**
- * Generate the message for a connection state request.
- */
-void knx_generate_connection_state_request(uint8_t* buffer, const knx_connection_state_request* req);
+	knx_generate_host_info(buffer, &req->host);
+}
 
-/**
- * Parse a message (excluding header) which contains a connection state request.
- */
-bool knx_parse_connection_state_request(const uint8_t* message, size_t length, knx_connection_state_request* req);
+bool knx_parse_disconnect_request(const uint8_t* message, size_t length, knx_disconnect_request* req) {
+	if (length < KNX_DISCONNECT_REQUEST_SIZE)
+		return false;
 
-/**
- * Connection state request size
- */
-#define KNX_CONNECTION_STATE_REQUEST_SIZE (2 + KNX_HOST_INFO_SIZE)
+	req->channel = message[0];
+	req->status = message[1];
 
-#endif
+	return knx_parse_host_info(message + 2, &req->host);
+}

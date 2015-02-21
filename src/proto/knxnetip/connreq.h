@@ -19,40 +19,52 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_PROTO_CONNRES_H
-#define KNXCLIENT_PROTO_CONNRES_H
+#ifndef KNXCLIENT_PROTO_KNXNETIP_CONNREQ_H
+#define KNXCLIENT_PROTO_KNXNETIP_CONNREQ_H
 
 #include "hostinfo.h"
 
-#include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 /**
- * Connection Response
+ * KNX Connection Type
+ */
+typedef enum {
+	KNX_CONNECTION_REQUEST_TUNNEL = 4
+} knx_conn_type;
+
+/**
+ * KNX Layer
+ */
+typedef enum {
+	KNX_LAYER_TUNNEL = 2
+} knx_layer;
+
+/**
+ * Connection Request
  */
 typedef struct {
-	uint8_t channel;
-	uint8_t status;
-	knx_host_info host;
-	uint8_t extended[3];
-} knx_connection_response;
+	knx_conn_type type;
+	knx_layer layer;
+	knx_host_info control_host;
+	knx_host_info tunnel_host;
+} knx_connection_request;
 
 /**
- * Generate the message for a connection response.
+ * Generate the message for a connection request.
  */
-void knx_generate_connection_response(uint8_t* buffer, const knx_connection_response* res);
+void knx_generate_connection_request(uint8_t* buffer, const knx_connection_request* conn_req);
 
 /**
- * Parse a message (excluding header) which contains a connection response.
+ * Parse a message (excluding header) which contains a connection request.
  */
-bool knx_parse_connection_response(const uint8_t* message, size_t length, knx_connection_response* res);
+bool knx_parse_connection_request(const uint8_t* message, size_t length, knx_connection_request* req);
 
 /**
- * Connection response size
+ * Connection request size
  */
-inline size_t knx_connection_response_size(const knx_connection_response* res) {
-	return (res->status == 0 ? KNX_HOST_INFO_SIZE + 6 : 2);
-}
+#define KNX_CONNECTION_REQUEST_SIZE (4 + KNX_HOST_INFO_SIZE * 2)
 
 #endif

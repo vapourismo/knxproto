@@ -19,52 +19,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_PROTO_CONNREQ_H
-#define KNXCLIENT_PROTO_CONNREQ_H
+#ifndef KNXCLIENT_PROTO_KNXNETIP_ROUTINGIND_H
+#define KNXCLIENT_PROTO_KNXNETIP_ROUTINGIND_H
 
-#include "hostinfo.h"
-
+#include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <stdint.h>
 
 /**
- * KNX Connection Type
- */
-typedef enum {
-	KNX_CONNECTION_REQUEST_TUNNEL = 4
-} knx_conn_type;
-
-/**
- * KNX Layer
- */
-typedef enum {
-	KNX_LAYER_TUNNEL = 2
-} knx_layer;
-
-/**
- * Connection Request
+ * Routing Indication
  */
 typedef struct {
-	knx_conn_type type;
-	knx_layer layer;
-	knx_host_info control_host;
-	knx_host_info tunnel_host;
-} knx_connection_request;
+	uint16_t size;
+	const void* data;
+} knx_routing_indication;
 
 /**
- * Generate the message for a connection request.
+ * Generate the message for a routing indication.
  */
-void knx_generate_connection_request(uint8_t* buffer, const knx_connection_request* conn_req);
+void knx_generate_routing_indication(uint8_t* buffer, const knx_routing_indication* ind);
 
 /**
- * Parse a message (excluding header) which contains a connection request.
+ * Parse a message (excluding header) which contains a routing indication.
  */
-bool knx_parse_connection_request(const uint8_t* message, size_t length, knx_connection_request* req);
+bool knx_parse_routing_indication(const uint8_t* message, size_t length, knx_routing_indication* ind);
 
 /**
- * Connection request size
+ * Routing indication size
  */
-#define KNX_CONNECTION_REQUEST_SIZE (4 + KNX_HOST_INFO_SIZE * 2)
+inline size_t knx_routing_indication_size(const knx_routing_indication* ind) {
+	return ind->size;
+}
 
 #endif

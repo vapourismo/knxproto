@@ -19,30 +19,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "connstatereq.h"
-#include "header.h"
+#ifndef KNXCLIENT_PROTO_KNXNETIP_TUNNELRES_H
+#define KNXCLIENT_PROTO_KNXNETIP_TUNNELRES_H
 
-#include "../util/alloc.h"
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
-// Connection State Request
-//   Octet 0:   Channel
-//   Octet 1:   Status
-//   Octet 2-9: Host info
+/**
+ * Tunnel Response
+ */
+typedef struct {
+	uint8_t channel;
+	uint8_t seq_number;
+	uint8_t status;
+} knx_tunnel_response;
 
-void knx_generate_connection_state_request(uint8_t* buffer, const knx_connection_state_request* req) {
-	*buffer++ = req->channel;
-	*buffer++ = req->status;
+/**
+ * Generate the message for a tunnel response.
+ */
+void knx_generate_tunnel_response(uint8_t* buffer, const knx_tunnel_response* res);
 
-	knx_generate_host_info(buffer, &req->host);
-}
+/**
+ * Parse a message (excluding header) which contains a tunnel response.
+ */
+bool knx_parse_tunnel_response(const uint8_t* message, size_t length, knx_tunnel_response* res);
 
-bool knx_parse_connection_state_request(const uint8_t* message, size_t length,
-                                        knx_connection_state_request* req) {
-	if (length < KNX_CONNECTION_STATE_REQUEST_SIZE)
-		return false;
+/**
+ * Tunnel response size
+ */
+#define KNX_TUNNEL_RESPONSE_SIZE 4
 
-	req->channel = message[0];
-	req->status = message[1];
-
-	return knx_parse_host_info(message + 2, &req->host);
-}
+#endif

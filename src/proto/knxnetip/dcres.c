@@ -22,7 +22,7 @@
 #include "dcres.h"
 #include "header.h"
 
-#include "../util/alloc.h"
+#include "../../util/alloc.h"
 
 // Disconnect Response:
 //   Octet 0: Channel
