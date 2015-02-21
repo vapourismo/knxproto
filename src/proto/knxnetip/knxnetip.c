@@ -21,7 +21,52 @@
 
 #include "knxnetip.h"
 
+#include <arpa/inet.h>
 #include <string.h>
+
+// Header:
+//   Octet 0:   Header length
+//   Octet 1:   Protocol version
+//   Octet 2-3: Service number
+//   Octet 4-5: Packet length including header size
+
+bool knx_generate_header(uint8_t* buffer, knx_service srv, uint16_t length) {
+	// Since the protocol specifies the payload length
+	// to be a 16-bit unsigned integer, we have to make
+	// sure the given length + header size do not exceed
+	// the uint16_t bounds.
+	if (length > UINT16_MAX - KNX_HEADER_SIZE)
+		return false;
+
+	// This preamble will always be there,
+	// unless the underlying KNXnet/IP version changes.
+	buffer[0] = KNX_HEADER_SIZE;
+	buffer[1] = 16;
+
+	// Service description
+	buffer[2] = srv >> 8 & 0xFF;
+	buffer[3] = srv & 0xFF;
+
+	// Entire packet size
+	length += KNX_HEADER_SIZE;
+	buffer[4] = length >> 8 & 0xFF;
+	buffer[5] = length & 0xFF;
+
+	return true;
+}
+
+bool knx_unpack_header(const uint8_t* buffer, knx_service* service, uint16_t* length) {
+	if (buffer[0] != KNX_HEADER_SIZE || buffer[1] != 16)
+		return false;
+
+	if (service)
+		*service = buffer[2] << 8 | buffer[3];
+
+	if (length)
+		*length = buffer[4] << 8 | buffer[5];
+
+	return true;
+}
 
 bool knx_parse(const uint8_t* message, size_t length,
                knx_packet* packet) {

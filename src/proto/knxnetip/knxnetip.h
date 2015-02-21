@@ -22,7 +22,6 @@
 #ifndef KNXCLIENT_PROTO_KNXNETIP_KNXNETIP_H
 #define KNXCLIENT_PROTO_KNXNETIP_KNXNETIP_H
 
-#include "header.h"
 #include "connreq.h"
 #include "connres.h"
 #include "connstatereq.h"
@@ -36,6 +35,37 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
+
+/**
+ * KNXnet/IP Service Type
+ */
+typedef enum {
+	KNX_SEARCH_REQUEST               = 0x0201,
+	KNX_SEARCH_RESPONSE              = 0x0202,
+	KNX_DESCRIPTION_REQUEST          = 0x0203,
+	KNX_DESCRIPTION_RESPONSE         = 0x0204,
+	KNX_CONNECTION_REQUEST           = 0x0205,
+	KNX_CONNECTION_RESPONSE          = 0x0206,
+	KNX_CONNECTION_STATE_REQUEST     = 0x0207,
+	KNX_CONNECTION_STATE_RESPONSE    = 0x0208,
+	KNX_DISCONNECT_REQUEST           = 0x0209,
+	KNX_DISCONNECT_RESPONSE          = 0x020A,
+	KNX_DEVICE_CONFIGURATION_REQUEST = 0x0310,
+	KNX_DEVICE_CONFIGURATION_ACK     = 0x0311,
+	KNX_TUNNEL_REQUEST               = 0x0420,
+	KNX_TUNNEL_RESPONSE              = 0x0421,
+	KNX_ROUTING_INDICATION           = 0x0530
+} knx_service;
+
+/**
+ * Unpack a header
+ */
+bool knx_unpack_header(const uint8_t* buffer, knx_service* service, uint16_t* length);
+
+/**
+ * KNXnet/IP Header Size
+ */
+#define KNX_HEADER_SIZE 6
 
 /**
  * KNXnet/IP Packet
