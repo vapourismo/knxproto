@@ -58,7 +58,7 @@ bool knx_router_disconnect(const knx_router_client* client) {
 	                  IP_DROP_MEMBERSHIP, &client->mreq, sizeof(client->mreq)) == 0;
 }
 
-ssize_t knx_router_recv(knx_router_client* client, uint8_t** result_buffer, bool block) {
+ssize_t knx_router_recv(const knx_router_client* client, uint8_t** result_buffer, bool block) {
 	if (!block && !dgramsock_ready(client->sock, 0, 0))
 		return -1;
 
@@ -90,4 +90,13 @@ ssize_t knx_router_recv(knx_router_client* client, uint8_t** result_buffer, bool
 		return packet.payload.routing_ind.size;
 	} else
 		return -1;
+}
+
+bool knx_router_send(const knx_router_client* client, const uint8_t* payload, size_t length) {
+	knx_routing_indication route_ind = {
+		payload,
+		length
+	};
+
+	return dgramsock_send_knx(client->sock, KNX_ROUTING_INDICATION, &route_ind, &client->router);
 }

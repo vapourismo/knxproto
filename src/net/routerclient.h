@@ -51,6 +51,11 @@ bool knx_router_disconnect(const knx_router_client* client);
 /**
  * Retrieve an incoming message.
  */
-ssize_t knx_router_recv(knx_router_client* client, uint8_t** buffer, bool block);
+ssize_t knx_router_recv(const knx_router_client* client, uint8_t** buffer, bool block);
+
+/**
+ * Send a message.
+ */
+bool knx_router_send(const knx_router_client* client, const uint8_t* payload, size_t length);
 
 #endif
