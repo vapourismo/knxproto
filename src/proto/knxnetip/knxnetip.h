@@ -88,8 +88,7 @@ typedef struct {
 /**
  * Parse a given message into a packet.
  */
-bool knx_parse(const uint8_t* msg, size_t length,
-               knx_packet* packet);
+bool knx_parse(const uint8_t* msg, size_t length, knx_packet* packet);
 
 /**
  * Generate a message.
