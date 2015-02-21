@@ -40,8 +40,6 @@ bool knx_cemi_parse(const uint8_t* message, size_t length, knx_cemi_frame* frame
 
 	switch (frame->service) {
 		case KNX_CEMI_LDATA_IND:
-			return false;
-
 		case KNX_CEMI_LDATA_REQ:
 			return false;
 
@@ -49,7 +47,7 @@ bool knx_cemi_parse(const uint8_t* message, size_t length, knx_cemi_frame* frame
 	}
 }
 
-bool knx_cemi_generate(uint8_t* buffer, knx_cemi_service service,
+bool knx_generate_cemi(uint8_t* buffer, knx_cemi_service service,
                        uint8_t* add_info, uint8_t add_info_length, const void* payload) {
 	buffer[0] = service;
 	buffer[1] = add_info_length;
