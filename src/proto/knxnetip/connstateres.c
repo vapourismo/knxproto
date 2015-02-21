@@ -20,7 +20,6 @@
  */
 
 #include "connstateres.h"
-#include "header.h"
 
 #include "../../util/alloc.h"
 

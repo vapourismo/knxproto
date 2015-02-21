@@ -20,7 +20,6 @@
  */
 
 #include "connreq.h"
-#include "header.h"
 
 #include "../../util/alloc.h"
 
