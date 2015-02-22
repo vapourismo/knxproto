@@ -21,9 +21,9 @@
 
 #include "tunnelclient.h"
 
-#include "../util/sockutils.h"
-#include "../util/log.h"
-#include "../util/alloc.h"
+#include "util/sockutils.h"
+#include "util/log.h"
+#include "util/alloc.h"
 
 #include <sys/time.h>
 

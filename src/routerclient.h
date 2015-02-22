@@ -22,7 +22,7 @@
 #ifndef KNXCLIENT_NET_ROUTERCLIENT_H
 #define KNXCLIENT_NET_ROUTERCLIENT_H
 
-#include "../util/address.h"
+#include "util/address.h"
 
 #include <stdbool.h>
 #include <stdint.h>

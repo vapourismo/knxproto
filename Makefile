@@ -21,11 +21,11 @@ TESTDIR         = test
 HEADERFILES     = proto/knxnetip/connreq.h proto/knxnetip/connres.h proto/knxnetip/connstatereq.h proto/knxnetip/connstateres.h proto/knxnetip/dcreq.h proto/knxnetip/dcres.h proto/knxnetip/hostinfo.h proto/knxnetip/knxnetip.h proto/knxnetip/tunnelreq.h proto/knxnetip/tunnelres.h proto/knxnetip/routingind.h \
                   proto/cemi/cemi.h proto/cemi/ldata.h \
                   util/address.h util/sockutils.h \
-                  net/tunnelclient.h net/routerclient.h
+                  tunnelclient.h routerclient.h
 SOURCEFILES     = proto/knxnetip/connstateres.c proto/knxnetip/connreq.c proto/knxnetip/tunnelreq.c proto/knxnetip/connstatereq.c proto/knxnetip/connres.c proto/knxnetip/dcreq.c proto/knxnetip/hostinfo.c proto/knxnetip/knxnetip.c proto/knxnetip/tunnelres.c proto/knxnetip/dcres.c proto/knxnetip/routingind.c \
                   proto/cemi/cemi.c proto/cemi/ldata.c \
                   util/sockutils.c util/log.c \
-                  net/tunnelclient.c net/routerclient.c
+                  tunnelclient.c routerclient.c
 
 TESTFILES       = $(wildcard $(TESTDIR)/*.c)
 HEADEROBJS      = $(HEADERFILES:%=$(SOURCEDIR)/%)

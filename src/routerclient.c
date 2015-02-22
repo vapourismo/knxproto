@@ -21,11 +21,11 @@
 
 #include "routerclient.h"
 
-#include "../proto/knxnetip/knxnetip.h"
+#include "proto/knxnetip/knxnetip.h"
 
-#include "../util/log.h"
-#include "../util/alloc.h"
-#include "../util/sockutils.h"
+#include "util/log.h"
+#include "util/alloc.h"
+#include "util/sockutils.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>
