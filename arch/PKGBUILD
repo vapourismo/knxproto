@@ -22,7 +22,7 @@ pkgver() {
 
 build() {
 	cd "$srcdir/$pkgname"
-	make PREFIX="$pkgdir/usr"
+	make && make test
 }
 
 package() {
