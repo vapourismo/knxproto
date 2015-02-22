@@ -96,9 +96,14 @@ bool knx_ldata_parse(uint8_t* buffer, size_t length, knx_ldata* out) {
 
 			out->payload.apdu.apci = (buffer[7] & 2) << 2 | (buffer[8] >> 6 & 2);
 
-			buffer[8] &= 0x3F;
-			out->payload.apdu.data = buffer + 8;
-			out->payload.apdu.length_over_6bit = buffer[6] == 1 ? 1 : buffer[6] - 1;
+			if (buffer[6] == 1) {
+				buffer[8] &= 0x3F;
+				out->payload.apdu.data = buffer + 8;
+				out->payload.apdu.length_over_6bit = 1;
+			} else {
+				out->payload.apdu.data = buffer + 9;
+				out->payload.apdu.length_over_6bit = buffer[6] == 1 ? 1 : buffer[6] - 1;
+			}
 
 			return true;
 
