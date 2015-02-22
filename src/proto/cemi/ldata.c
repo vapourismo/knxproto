@@ -78,7 +78,7 @@ bool knx_ldata_parse(uint8_t* buffer, size_t length, knx_ldata* out) {
 	out->control2 = buffer[1];
 
 	out->source = buffer[2] << 8 | buffer[3];
-	out->source = buffer[4] << 8 | buffer[5];
+	out->destination = buffer[4] << 8 | buffer[5];
 
 	out->tpci = buffer[7] >> 6 & 3;
 	out->seq_number = 0;
