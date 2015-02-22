@@ -20,10 +20,18 @@
  */
 
 #include "ldata.h"
+#include "../../util/log.h"
 
 void knx_ldata_generate(uint8_t* buffer, const knx_ldata* req) {
-	*buffer++ = req->control1;
-	*buffer++ = req->control2;
+	*buffer++ = 1 << 7                                       // Standard Frame
+	          | (~req->control1.repeat & 1) << 5            // Repeat
+	          | (~req->control1.system_broadcast & 1) << 4  // System Broadcast
+	          | (req->control1.priority & 3) << 2           // Priority
+	          | (req->control1.request_ack & 1) << 1        // Want ACK?
+	          | (req->control1.error & 1);                  // Error
+
+	*buffer++ = (req->control2.address_type & 1) << 7       // Address Type
+	          | (req->control2.hops & 7) << 4;              // Hop Count
 
 	*buffer++ = req->source >> 8 & 0xFF;
 	*buffer++ = req->source & 0xFF;
@@ -34,15 +42,15 @@ void knx_ldata_generate(uint8_t* buffer, const knx_ldata* req) {
 	switch (req->tpci) {
 		case KNX_LDATA_TPCI_NUMBERED_CONTROL:
 			*buffer++ = 0;
-			*buffer++ = (req->tpci & 3) << 6 |
-			            (req->seq_number & 15) << 2 |
-			            (req->payload.control & 3);
+			*buffer++ = (req->tpci & 3) << 6
+			          | (req->seq_number & 15) << 2
+			          | (req->payload.control & 3);
 			break;
 
 		case KNX_LDATA_TPCI_UNNUMBERED_CONTROL:
 			*buffer++ = 0;
-			*buffer++ = (req->tpci & 3) << 6 |
-			            (req->payload.control & 3);
+			*buffer++ = (req->tpci & 3) << 6
+			          | (req->payload.control & 3);
 			break;
 
 		case KNX_LDATA_TPCI_NUMBERED_DATA:
@@ -53,14 +61,14 @@ void knx_ldata_generate(uint8_t* buffer, const knx_ldata* req) {
 			uint8_t seq_no = req->tpci == KNX_LDATA_TPCI_NUMBERED_DATA ? req->seq_number : 0;
 
 			// TPCI + first 2 bits of APCI
-			*buffer++ = (req->tpci & 3) << 6 |
-			            (seq_no & 15) << 2 |
-			            (req->payload.apdu.apci & 12) >> 2;
+			*buffer++ = (req->tpci & 3) << 6
+			          | (seq_no & 15) << 2
+			          | (req->payload.apdu.apci & 12) >> 2;
 
 			// Last 2 bits of APCI + payload
 			if (req->payload.apdu.length_over_6bit == 0) {
-				*buffer++ = (req->payload.apdu.apci & 3) << 6 |
-				            (req->payload.apdu.data ? *req->payload.apdu.data & 0x3F : 0);
+				*buffer++ = (req->payload.apdu.apci & 3) << 6
+				          | (req->payload.apdu.data ? *req->payload.apdu.data & 0x3F : 0);
 			} else {
 				*buffer++ = (req->payload.apdu.apci & 3) << 6;
 				memcpy(buffer, req->payload.apdu.data, req->payload.apdu.length_over_6bit);
@@ -71,11 +79,20 @@ void knx_ldata_generate(uint8_t* buffer, const knx_ldata* req) {
 }
 
 bool knx_ldata_parse(uint8_t* buffer, size_t length, knx_ldata* out) {
-	if (length < 8)
+	// Check for length and standard frame
+	if (length < 8 || !(buffer[0] & 128) || (buffer[1] & 15)) {
+		log_debug("Insufficient length or extended frame");
 		return false;
+	}
 
-	out->control1 = buffer[0];
-	out->control2 = buffer[1];
+	out->control1.repeat = !(buffer[0] >> 5 & 1);
+	out->control1.system_broadcast = !(buffer[0] >> 4 & 1);
+	out->control1.priority = buffer[0] >> 2 & 3;
+	out->control1.request_ack = buffer[0] >> 1 & 1;
+	out->control1.error = buffer[0] & 1;
+
+	out->control2.address_type = buffer[1] >> 7 & 1;
+	out->control2.hops = buffer[1] >> 4 & 7;
 
 	out->source = buffer[2] << 8 | buffer[3];
 	out->destination = buffer[4] << 8 | buffer[5];

@@ -28,8 +28,13 @@
 
 deftest(cemi_ldata_apdu, {
 	knx_ldata req;
-	req.control1 = 0x8C;
-	req.control2 = 0xF0;
+	req.control1.priority = KNX_LDATA_PRIO_LOW;
+	req.control1.repeat = true;
+	req.control1.system_broadcast = true;
+	req.control1.request_ack = true;
+	req.control1.error = false;
+	req.control2.address_type = KNX_LDATA_ADDR_GROUP;
+	req.control2.hops = 7;
 	req.source = 0xFFCA;
 	req.destination = 0x7FFF;
 	req.tpci = KNX_LDATA_TPCI_UNNUMBERED_DATA;
@@ -51,8 +56,13 @@ deftest(cemi_ldata_apdu, {
 	assert(frame.service == KNX_CEMI_LDATA_REQ);
 	assert(frame.add_info_length == 0);
 
-	assert(frame.payload.ldata.control1 == req.control1);
-	assert(frame.payload.ldata.control2 == req.control2);
+	assert(frame.payload.ldata.control1.priority == req.control1.priority);
+	assert(frame.payload.ldata.control1.repeat == req.control1.repeat);
+	assert(frame.payload.ldata.control1.system_broadcast == req.control1.system_broadcast);
+	assert(frame.payload.ldata.control1.request_ack == req.control1.request_ack);
+	assert(frame.payload.ldata.control1.error == req.control1.error);
+	assert(frame.payload.ldata.control2.address_type == req.control2.address_type);
+	assert(frame.payload.ldata.control2.hops == req.control2.hops);
 	assert(frame.payload.ldata.source == req.source);
 	assert(frame.payload.ldata.destination == req.destination);
 	assert(frame.payload.ldata.tpci == req.tpci);
@@ -64,8 +74,13 @@ deftest(cemi_ldata_apdu, {
 
 deftest(cemi_ldata_control, {
 	knx_ldata req;
-	req.control1 = 0x8C;
-	req.control2 = 0xF0;
+	req.control1.priority = KNX_LDATA_PRIO_LOW;
+	req.control1.repeat = true;
+	req.control1.system_broadcast = true;
+	req.control1.request_ack = true;
+	req.control1.error = false;
+	req.control2.address_type = KNX_LDATA_ADDR_GROUP;
+	req.control2.hops = 7;
 	req.source = 0xFFCA;
 	req.destination = 0x7FFF;
 	req.tpci = KNX_LDATA_TPCI_UNNUMBERED_CONTROL;
@@ -83,8 +98,13 @@ deftest(cemi_ldata_control, {
 	assert(frame.service == KNX_CEMI_LDATA_IND);
 	assert(frame.add_info_length == 0);
 
-	assert(frame.payload.ldata.control1 == req.control1);
-	assert(frame.payload.ldata.control2 == req.control2);
+	assert(frame.payload.ldata.control1.priority == req.control1.priority);
+	assert(frame.payload.ldata.control1.repeat == req.control1.repeat);
+	assert(frame.payload.ldata.control1.system_broadcast == req.control1.system_broadcast);
+	assert(frame.payload.ldata.control1.request_ack == req.control1.request_ack);
+	assert(frame.payload.ldata.control1.error == req.control1.error);
+	assert(frame.payload.ldata.control2.address_type == req.control2.address_type);
+	assert(frame.payload.ldata.control2.hops == req.control2.hops);
 	assert(frame.payload.ldata.source == req.source);
 	assert(frame.payload.ldata.destination == req.destination);
 	assert(frame.payload.ldata.tpci == req.tpci);

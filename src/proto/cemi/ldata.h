@@ -69,14 +69,41 @@ typedef enum {
 } knx_ldata_apci;
 
 /**
+ * L_Data Priority
+ */
+typedef enum {
+	KNX_LDATA_PRIO_SYSTEM = 0,
+	KNX_LDATA_PRIO_NORMAL = 1,
+	KNX_LDATA_PRIO_URGENT = 2,
+	KNX_LDATA_PRIO_LOW    = 3
+} knx_ldata_prio;
+
+/**
+ * L_Data Destination Address Type
+ */
+typedef enum {
+	KNX_LDATA_ADDR_INDIVIDUAL = 0,
+	KNX_LDATA_ADDR_GROUP      = 1,
+} knx_ldata_addr_type;
+
+/**
  * L_Data Frame
  */
 typedef struct {
-	uint8_t control1, control2;
+	struct {
+		knx_ldata_prio priority;
+		bool repeat, system_broadcast, request_ack, error;
+	} control1;
+
+	struct {
+		knx_ldata_addr_type address_type;
+		unsigned hops:4;
+	} control2;
+
 	knx_addr source, destination;
 
 	knx_ldata_tpci tpci;
-	uint8_t seq_number;
+	unsigned seq_number:4;
 
 	union {
 		knx_ldata_ctrl_code control;
