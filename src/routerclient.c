@@ -135,3 +135,8 @@ bool knx_router_send(const knx_router_client* client, const uint8_t* payload, ui
 
 	return dgramsock_send_knx(client->sock, KNX_ROUTING_INDICATION, &route_ind, &client->router);
 }
+
+bool knx_router_send_ldata(const knx_router_client* client, const knx_ldata* ldata) {
+	uint8_t buffer[knx_cemi_size(KNX_CEMI_LDATA_REQ, ldata)];
+	return knx_router_send(client, buffer, sizeof(buffer));
+}

@@ -66,4 +66,9 @@ knx_ldata* knx_router_recv_ldata(const knx_router_client* client, bool block);
  */
 bool knx_router_send(const knx_router_client* client, const uint8_t* payload, uint16_t length);
 
+/**
+ * Send a L_Data frame.
+ */
+bool knx_router_send_ldata(const knx_router_client* client, const knx_ldata* ldata);
+
 #endif
