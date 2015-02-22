@@ -46,28 +46,31 @@ bool log_setup(const char* path, log_level level);
  */
 void log_commit_raw(log_level level, const char* file, size_t line, const char* format, ...);
 
-/**
- * Log a information
- */
-#define log_info(...) log_commit_raw(LOG_INFO, __FILE__, __LINE__, __VA_ARGS__)
-
-/**
- * Log a warning
- */
-#define log_warn(...) log_commit_raw(LOG_WARN, __FILE__, __LINE__, __VA_ARGS__)
-
-/**
- * Log an error
- */
-#define log_error(...) log_commit_raw(LOG_ERROR, __FILE__, __LINE__, __VA_ARGS__)
-
 #ifdef DEBUG
 	/**
 	 * Log a debug message
 	 */
 	#define log_debug(...) log_commit_raw(LOG_DEBUG, __FILE__, __LINE__, __VA_ARGS__)
+
+	/**
+	 * Log a information
+	 */
+	#define log_info(...) log_commit_raw(LOG_INFO, __FILE__, __LINE__, __VA_ARGS__)
+
+	/**
+	 * Log a warning
+	 */
+	#define log_warn(...) log_commit_raw(LOG_WARN, __FILE__, __LINE__, __VA_ARGS__)
+
+	/**
+	 * Log an error
+	 */
+	#define log_error(...) log_commit_raw(LOG_ERROR, __FILE__, __LINE__, __VA_ARGS__)
 #else
 	#define log_debug(...)
+	#define log_info(...)
+	#define log_warn(...)
+	#define log_error(...)
 #endif
 
 #endif
