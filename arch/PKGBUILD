@@ -1,8 +1,8 @@
 # Author: vapourismo <ole@vprsm.de>
 
 pkgname='knxclient-git'
-pkgrel=1
-pkgver=r188.d2ef893
+pkgrel='2'
+pkgver='r323.b5f46fc'
 pkgdesc='A library which provides the means to communicate with several KNX-related devices or services.'
 license='GPL2'
 
