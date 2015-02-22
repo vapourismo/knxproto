@@ -34,23 +34,28 @@ void knx_cemi_unpack_header(const uint8_t* buffer, knx_cemi_service* service, ui
 
 bool knx_cemi_parse(uint8_t* message, size_t length, knx_cemi_frame* frame) {
 	if (length < KNX_CEMI_HEADER_SIZE) {
-		log_error("Insufficient message length");
+		log_error("Insufficient message length %zu", length);
 		return false;
 	}
 
 	// Unpack header and store additional info details
 	knx_cemi_unpack_header(message, &frame->service, &frame->add_info_length);
+
+	// Does the additional information exceed the frame?
+	if (KNX_CEMI_HEADER_SIZE + frame->add_info_length > length)
+		return false;
+
 	frame->add_info = message + KNX_CEMI_HEADER_SIZE;
+	message += KNX_CEMI_HEADER_SIZE + frame->add_info_length;
+	length -= KNX_CEMI_HEADER_SIZE + frame->add_info_length;
 
 	switch (frame->service) {
 		case KNX_CEMI_LDATA_IND:
 		case KNX_CEMI_LDATA_REQ:
-			return knx_ldata_parse(message + KNX_CEMI_HEADER_SIZE + frame->add_info_length,
-			                       length - KNX_CEMI_HEADER_SIZE - frame->add_info_length,
-			                       &frame->payload.ldata);
+			return knx_ldata_parse(message, length, &frame->payload.ldata);
 
 		default:
-			log_error("Unknown CEMI service");
+			log_error("Unsupported CEMI service %02X", frame->service);
 			return false;
 	}
 }
@@ -72,6 +77,8 @@ bool knx_cemi_generate(uint8_t* buffer, knx_cemi_service service,
 			knx_ldata_generate(buffer, payload);
 			return true;
 
-		default: return false;
+		default:
+			log_error("Unsupported CEMI service %02X", service);
+			return false;
 	}
 }
