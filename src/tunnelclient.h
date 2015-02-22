@@ -81,17 +81,22 @@ typedef struct {
  * Connect to a gateway. This function returns `true` if a connection has
  * been established.
  */
-bool knx_tunnel_connect(knx_tunnel_client* conn, int sock, const ip4addr* gateway);
+bool knx_tunnel_connect(knx_tunnel_client* client, int sock, const ip4addr* gateway);
 
 /**
  * Disconnect from a gateway.
  */
-void knx_tunnel_disconnect(knx_tunnel_client* conn);
+void knx_tunnel_disconnect(knx_tunnel_client* client);
 
 /**
  * Send data which should be tunnelled through the gateway.
  */
-bool knx_tunnel_send(knx_tunnel_client* conn, const void* payload, uint16_t length);
+bool knx_tunnel_send(knx_tunnel_client* client, const void* payload, uint16_t length);
+
+/**
+ * Send a L_Data frame through the gateway.
+ */
+bool knx_tunnel_send_ldata(knx_tunnel_client* client, const knx_ldata* ldata);
 
 /**
  * Returns a positiv integer on success. The resulting buffer has to be freed.

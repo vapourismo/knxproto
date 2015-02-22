@@ -359,6 +359,11 @@ bool knx_tunnel_send(knx_tunnel_client* client, const void* payload, uint16_t le
 	return r;
 }
 
+bool knx_tunnel_send_ldata(knx_tunnel_client* client, const knx_ldata* ldata) {
+	uint8_t buffer[knx_cemi_size(KNX_CEMI_LDATA_REQ, ldata)];
+	return knx_tunnel_send(client, buffer, sizeof(buffer));
+}
+
 ssize_t knx_tunnel_recv(knx_tunnel_client* client, uint8_t** buffer) {
 	if (client->state == KNX_TUNNEL_DISCONNECTED)
 		return -1;
@@ -396,9 +401,8 @@ knx_ldata* knx_tunnel_recv_ldata(knx_tunnel_client* client) {
 	if (size < 0)
 		return NULL;
 
-	if (!knx_cemi_parse(data, size, &cemi) ||
-	    (cemi.service != KNX_CEMI_LDATA_REQ && cemi.service != KNX_CEMI_LDATA_IND)) {
-
+	if (!knx_cemi_parse(data, size, &cemi) || cemi.service != KNX_CEMI_LDATA_REQ) {
+		log_error("Failed to parse as L_Data request frame");
 		free(data);
 		return NULL;
 	}
