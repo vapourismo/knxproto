@@ -20,6 +20,7 @@
  */
 
 #include "cemi.h"
+#include "../../util/log.h"
 
 #include <string.h>
 
@@ -32,9 +33,12 @@ void knx_cemi_unpack_header(const uint8_t* buffer, knx_cemi_service* service, ui
 }
 
 bool knx_cemi_parse(uint8_t* message, size_t length, knx_cemi_frame* frame) {
-	if (length < KNX_CEMI_HEADER_SIZE)
+	if (length < KNX_CEMI_HEADER_SIZE) {
+		log_error("Insufficient message length");
 		return false;
+	}
 
+	// Unpack header and store additional info details
 	knx_cemi_unpack_header(message, &frame->service, &frame->add_info_length);
 	frame->add_info = message + KNX_CEMI_HEADER_SIZE;
 
@@ -45,7 +49,9 @@ bool knx_cemi_parse(uint8_t* message, size_t length, knx_cemi_frame* frame) {
 			                       length - KNX_CEMI_HEADER_SIZE - frame->add_info_length,
 			                       &frame->payload.ldata);
 
-		default: return false;
+		default:
+			log_error("Unknown CEMI service");
+			return false;
 	}
 }
 
@@ -57,6 +63,7 @@ bool knx_cemi_generate(uint8_t* buffer, knx_cemi_service service,
 	if (add_info_length > 0)
 		memcpy(buffer + KNX_CEMI_HEADER_SIZE, add_info, add_info_length);
 
+	// Calculate buffer offset
 	buffer += KNX_CEMI_HEADER_SIZE + add_info_length;
 
 	switch (service) {
