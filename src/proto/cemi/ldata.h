@@ -27,48 +27,6 @@
 #include <stdbool.h>
 
 /**
- * Transport Protocol Control Information
- */
-typedef enum {
-	KNX_LDATA_TPCI_UNNUMBERED_DATA    = 0,
-	KNX_LDATA_TPCI_NUMBERED_DATA      = 1,
-	KNX_LDATA_TPCI_UNNUMBERED_CONTROL = 2,
-	KNX_LDATA_TPCI_NUMBERED_CONTROL   = 3
-} knx_ldata_tpci;
-
-/**
- * Control codes used when TPCI set to control mode
- */
-typedef enum {
-	KNX_LDATA_CONTROL_CONNECTED    = 0,
-	KNX_LDATA_CONTROL_DISCONNECTED = 1,
-	KNX_LDATA_CONTROL_ACK          = 2,
-	KNX_LDATA_CONTROL_ERROR        = 3
-} knx_ldata_ctrl_code;
-
-/**
- * Application Protocol Control Information
- */
-typedef enum {
-	KNX_LDATA_APCI_GROUPVALUEREAD         = 0,
-	KNX_LDATA_APCI_GROUPVALUERESPONSE     = 1,
-	KNX_LDATA_APCI_GROUPVALUEWRITE        = 2,
-	KNX_LDATA_APCI_INDIVIDUALADDRWRITE    = 3,
-	KNX_LDATA_APCI_INDIVIDUALADDRREQUEST  = 4,
-	KNX_LDATA_APCI_INDIVIDUALADDRRESPONSE = 5,
-	KNX_LDATA_APCI_ADCREAD                = 6,
-	KNX_LDATA_APCI_ADCRESPONSE            = 7,
-	KNX_LDATA_APCI_MEMORYREAD             = 8,
-	KNX_LDATA_APCI_MEMORYRESPONSE         = 9,
-	KNX_LDATA_APCI_MEMORYWRITE            = 10,
-	KNX_LDATA_APCI_USERMESSAGE            = 11,
-	KNX_LDATA_APCI_MASKVERSIONREAD        = 12,
-	KNX_LDATA_APCI_MASKVERSIONRESPONSE    = 13,
-	KNX_LDATA_APCI_RESTART                = 14,
-	KNX_LDATA_APCI_ESCAPE                 = 15
-} knx_ldata_apci;
-
-/**
  * L_Data Priority
  */
 typedef enum {
