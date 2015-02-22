@@ -65,12 +65,6 @@ gdb: $(TESTOUTPUT)
 valgrind: $(TESTOUTPUT)
 	LD_LIBRARY_PATH=$(DISTDIR) $(MEMCHECKER) $(TESTOUTPUT)
 
-install: $(OUTPUT) $(foreach h, $(HEADERFILES), $(INCLUDEDIR)/$h)
-	$(INSTALL) -m755 -D $(OUTPUT) $(LIBDIR)/$(LIBNAME)
-
-$(INCLUDEDIR)/%: $(SOURCEDIR)/%
-	$(INSTALL) -m644 -D $< $@
-
 # Targets
 -include $(SOURCEDEPS)
 -include $(TESTDEPS)
@@ -90,5 +84,15 @@ $(TESTOUTPUT): $(TESTOBJS) $(OUTPUT) Makefile
 $(TESTDIR)/%.o: $(TESTDIR)/%.c Makefile
 	@$(MKDIR) $(dir $@)
 	$(CC) -c $(TESTCFLAGS) -MMD -MF$(@:%.o=%.d) -MT$@ -o$@ $<
+
+# Install
+install: $(LIBDIR)/$(LIBNAME) $(foreach h, $(HEADERFILES), $(INCLUDEDIR)/$h)
+
+$(LIBDIR)/%: $(DISTDIR)/%
+	$(INSTALL) -m755 -D $< $@
+
+$(INCLUDEDIR)/%: $(SOURCEDIR)/%
+	$(INSTALL) -m644 -D $< $@
+
 # Phony
 .PHONY: all clean test
