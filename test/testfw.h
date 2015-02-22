@@ -133,4 +133,15 @@ inline void __testcase_fail(const char* name, const __testinfo* info) {
 	return false; \
 }
 
+/**
+ * Iterate over a set of values
+ */
+#define iterate(typ, name, ...) \
+	typ __testiterate_arr_##name[] = {__VA_ARGS__}; \
+	typ* __testiterate_arr_pos_##name = __testiterate_arr_##name; \
+	typ* __testiterate_arr_end_##name = __testiterate_arr_##name + (sizeof(__testiterate_arr_##name) / sizeof(typ)); \
+	for (typ name = *__testiterate_arr_pos_##name; \
+	     __testiterate_arr_pos_##name != __testiterate_arr_end_##name; \
+	     name = *++__testiterate_arr_pos_##name)
+
 #endif
