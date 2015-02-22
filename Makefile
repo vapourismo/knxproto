@@ -18,7 +18,7 @@ SOURCEDIR       = src
 TESTDIR         = test
 
 # Artifacts
-HEADERFILES     = proto/knxnetip/connreq.h proto/knxnetip/connres.h proto/knxnetip/connstatereq.h proto/knxnetip/connstateres.h proto/knxnetip/dcreq.h proto/knxnetip/dcres.hproto/knxnetip/hostinfo.h proto/knxnetip/knxnetip.h proto/knxnetip/tunnelreq.h proto/knxnetip/tunnelres.h proto/knxnetip/routingind.h \
+HEADERFILES     = proto/knxnetip/connreq.h proto/knxnetip/connres.h proto/knxnetip/connstatereq.h proto/knxnetip/connstateres.h proto/knxnetip/dcreq.h proto/knxnetip/dcres.h proto/knxnetip/hostinfo.h proto/knxnetip/knxnetip.h proto/knxnetip/tunnelreq.h proto/knxnetip/tunnelres.h proto/knxnetip/routingind.h \
                   proto/cemi/cemi.h proto/cemi/ldata.h \
                   util/address.h util/sockutils.h \
                   net/tunnelclient.h net/routerclient.h
