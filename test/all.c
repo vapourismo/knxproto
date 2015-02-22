@@ -1,4 +1,5 @@
 #include "testfw.h"
+#include "../src/util/log.h"
 
 externtest(knxnetip)
 externtest(cemi)
@@ -9,6 +10,7 @@ deftest(all, {
 })
 
 int main(void) {
+	log_setup(NULL, LOG_DEBUG);
 	runtest(all);
 	return 0;
 }
