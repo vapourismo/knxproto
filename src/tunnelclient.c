@@ -401,8 +401,8 @@ knx_ldata* knx_tunnel_recv_ldata(knx_tunnel_client* client) {
 	if (size < 0)
 		return NULL;
 
-	if (!knx_cemi_parse(data, size, &cemi) || cemi.service != KNX_CEMI_LDATA_REQ) {
-		log_error("Failed to parse as L_Data request frame");
+	if (!knx_cemi_parse(data, size, &cemi) || cemi.service != KNX_CEMI_LDATA_IND) {
+		log_error("Failed to parse as L_Data indication frame");
 		free(data);
 		return NULL;
 	}
