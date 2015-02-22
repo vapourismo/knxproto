@@ -43,8 +43,39 @@ inline void ip4addr_from_string(ip4addr* addr, const char* addrstr, uint16_t por
 }
 
 /**
- * KNX Address
+ * Indivdual Address (16-bit unsigned integer)
+ *
+ *   +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+ *   | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
+ *   +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+ *   | Area          | Line          | Device                        |
+ *   +---------------+---------------+-------------------------------+
+ *
+ * Group Address (15-bit unsigned integer)
+ *
+ *   +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+ *   | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
+ *   +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+ *   |   | Main group                | Group                         |
+ *   +-------------------+-----------+-------------------------------+
+ *   |   | Main group    | Sub group | Group                         |
+ *   +-------------------+-----------+-------------------------------+
+ *
+ * Both address types are assumed to be in host byte order.
+ * They are converted to network byte order during frame assembly.
  */
 typedef uint16_t knx_addr;
+
+/**
+ * Create an Individual Address.
+ */
+#define knx_individual_addr(area, line, device) \
+ 	((((area) & 15) << 12) | (((line) & 15) << 8) | ((device) & 255))
+
+/**
+ * Create a Group Address.
+ */
+#define knx_group_addr(main, sub, group) \
+	((((main) & 15) << 11) | (((sub) & 7) << 8) | ((group) & 255))
 
 #endif
