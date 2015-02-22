@@ -29,7 +29,7 @@
 #include <stddef.h>
 
 /**
- * KNX CEMI Types
+ * KNX CEMI Service Types
  */
 typedef enum {
 	KNX_CEMI_LDATA_REQ = 0x11,
@@ -40,10 +40,28 @@ typedef enum {
  * CEMI Frame
  */
 typedef struct {
+	/**
+	 * Service associated with the payload
+	 */
 	knx_cemi_service service;
+
+	/**
+	 * Additional information length
+	 */
 	uint8_t add_info_length;
+
+	/**
+	 * Additional information
+	 */
 	const uint8_t* add_info;
+
+	/**
+	 * Payload
+	 */
 	union {
+		/**
+		 * L_Data Frame
+		 */
 		knx_ldata ldata;
 	} payload;
 } knx_cemi_frame;
@@ -54,23 +72,27 @@ typedef struct {
 #define KNX_CEMI_HEADER_SIZE 2
 
 /**
- * Unpack CEMI header.
+ * Unpack a CEMI header.
+ * Note: No checks are performed whether the contained service is supported.
  */
 void knx_cemi_unpack_header(const uint8_t* buffer, knx_cemi_service* service, uint8_t* info_length);
 
 /**
  * Parse a message which contains a CEMI frame.
+ * Note: The message buffer may be modified to avoid extraneous memory allocation.
  */
 bool knx_cemi_parse(uint8_t* message, size_t length, knx_cemi_frame* frame);
 
 /**
  * Generate a CEMI frame.
+ * You may set `add_info` to NULL or `add_info_length` to 0. This indicates
+ * that there is no additional information.
  */
 bool knx_cemi_generate(uint8_t* buffer, knx_cemi_service service,
                        uint8_t* add_info, uint8_t add_info_length, const void* payload);
 
 /**
- * Same as `knx_cemi_generate` but without any additional info.
+ * Same as `knx_cemi_generate` but without any additional information.
  */
 inline bool knx_cemi_generate_(uint8_t* buffer, knx_cemi_service service, const void* payload) {
 	return knx_cemi_generate(buffer, service, NULL, 0, payload);

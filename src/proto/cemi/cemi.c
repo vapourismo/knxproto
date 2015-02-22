@@ -60,7 +60,7 @@ bool knx_cemi_generate(uint8_t* buffer, knx_cemi_service service,
 	buffer[0] = service;
 	buffer[1] = add_info_length;
 
-	if (add_info_length > 0)
+	if (add_info_length > 0 && add_info)
 		memcpy(buffer + KNX_CEMI_HEADER_SIZE, add_info, add_info_length);
 
 	// Calculate buffer offset
