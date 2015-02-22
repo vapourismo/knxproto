@@ -22,6 +22,8 @@
 #ifndef KNXCLIENT_NET_ROUTERCLIENT_H
 #define KNXCLIENT_NET_ROUTERCLIENT_H
 
+#include "proto/cemi/cemi.h"
+
 #include "util/address.h"
 
 #include <stdbool.h>
@@ -53,6 +55,11 @@ bool knx_router_disconnect(const knx_router_client* client);
  * The resulting buffer has to be freed.
  */
 ssize_t knx_router_recv(const knx_router_client* client, uint8_t** buffer, bool block);
+
+/**
+ * Retrieve incoming an L_Data indication.
+ */
+knx_ldata* knx_router_recv_ldata(const knx_router_client* client, bool block);
 
 /**
  * Send a message.

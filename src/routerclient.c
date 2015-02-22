@@ -94,6 +94,39 @@ ssize_t knx_router_recv(const knx_router_client* client, uint8_t** result_buffer
 		return -1;
 }
 
+knx_ldata* knx_router_recv_ldata(const knx_router_client* client, bool block) {
+	uint8_t* data;
+	ssize_t size = knx_router_recv(client, &data, block);
+
+	knx_cemi_frame cemi;
+
+	if (size < 0)
+		return NULL;
+
+	if (!knx_cemi_parse(data, size, &cemi) || cemi.service != KNX_CEMI_LDATA_IND) {
+		log_error("Failed to parse as L_Data indication frame");
+		free(data);
+		return NULL;
+	}
+
+	// Preserve TPDU
+	uint8_t tpdu[cemi.payload.ldata.length];
+	memcpy(tpdu, cemi.payload.ldata.tpdu, cemi.payload.ldata.length);
+
+	// Reallocate buffer space to fit the L_Data + TPDU
+	knx_ldata* ret = realloc(data, sizeof(knx_ldata) + sizeof(tpdu));
+
+	if (!ret)
+		return NULL;
+
+	// Copy L_Data and setup TPDU
+	*ret = cemi.payload.ldata;
+	ret->tpdu = (const uint8_t*) (ret + 1);
+	memcpy(ret + 1, tpdu, sizeof(tpdu));
+
+	return ret;
+}
+
 bool knx_router_send(const knx_router_client* client, const uint8_t* payload, uint16_t length) {
 	knx_routing_indication route_ind = {
 		length,
