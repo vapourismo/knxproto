@@ -68,6 +68,8 @@ ssize_t knx_router_recv(const knx_router_client* client, uint8_t** result_buffer
 		// Discard this packet
 		recvfrom(client->sock, NULL, 0, 0, NULL, NULL);
 
+		log_warn("Dequeued bogus message");
+
 		// We have to rely on the compiler to perform tail-call optimization here,
 		// otherwise this might turn out horribly.
 		// Alternatively we could use a goto ...
