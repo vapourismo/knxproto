@@ -32,7 +32,7 @@ void knx_cemi_unpack_header(const uint8_t* buffer, knx_cemi_service* service, ui
 		*info_length = buffer[1];
 }
 
-bool knx_cemi_parse(uint8_t* message, size_t length, knx_cemi_frame* frame) {
+bool knx_cemi_parse(const uint8_t* message, size_t length, knx_cemi_frame* frame) {
 	if (length < KNX_CEMI_HEADER_SIZE) {
 		log_error("Insufficient message length %zu", length);
 		return false;
