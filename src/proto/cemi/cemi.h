@@ -97,4 +97,9 @@ inline bool knx_cemi_generate_(uint8_t* buffer, knx_cemi_service service, const 
 	return knx_cemi_generate(buffer, service, NULL, 0, payload);
 }
 
+/**
+ * Calculate the space required to fit the given CEMI frame.
+ */
+size_t knx_cemi_size(knx_cemi_service service, const void* payload);
+
 #endif

@@ -82,3 +82,15 @@ bool knx_cemi_generate(uint8_t* buffer, knx_cemi_service service,
 			return false;
 	}
 }
+
+size_t knx_cemi_size(knx_cemi_service service, const void* payload) {
+	switch (service) {
+		case KNX_CEMI_LDATA_IND:
+		case KNX_CEMI_LDATA_REQ:
+			return KNX_CEMI_HEADER_SIZE + knx_ldata_size(payload);
+
+		default:
+			log_error("Unsupported CEMI service %02X", service);
+			return 0;
+	}
+}
