@@ -387,6 +387,40 @@ ssize_t knx_tunnel_recv(knx_tunnel_client* client, uint8_t** buffer) {
 	return size;
 }
 
+knx_ldata* knx_tunnel_recv_ldata(knx_tunnel_client* client) {
+	uint8_t* data;
+	ssize_t size = knx_tunnel_recv(client, &data);
+
+	knx_cemi_frame cemi;
+
+	if (size < 0)
+		return NULL;
+
+	if (!knx_cemi_parse(data, size, &cemi) ||
+	    (cemi.service != KNX_CEMI_LDATA_REQ && cemi.service != KNX_CEMI_LDATA_IND)) {
+
+		free(data);
+		return NULL;
+	}
+
+	// Preserve TPDU
+	uint8_t tpdu[cemi.payload.ldata.length];
+	memcpy(tpdu, cemi.payload.ldata.tpdu, cemi.payload.ldata.length);
+
+	// Reallocate buffer space to fit the L_Data + TPDU
+	knx_ldata* ret = realloc(data, sizeof(knx_ldata) + sizeof(tpdu));
+
+	if (!ret)
+		return NULL;
+
+	// Copy L_Data and setup TPDU
+	*ret = cemi.payload.ldata;
+	ret->tpdu = (const uint8_t*) (ret + 1);
+	memcpy(ret + 1, tpdu, sizeof(tpdu));
+
+	return ret;
+}
+
 void knx_tunnel_clear_queue(knx_tunnel_client* client) {
 	knx_tunnel_message* msg = client->msg_head;
 

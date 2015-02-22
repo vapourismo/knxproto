@@ -23,6 +23,8 @@
 #define KNXCLIENT_NET_TUNNELCLIENT_H
 
 #include "proto/knxnetip/knxnetip.h"
+#include "proto/cemi/cemi.h"
+
 #include "util/address.h"
 
 #include <pthread.h>
@@ -95,6 +97,11 @@ bool knx_tunnel_send(knx_tunnel_client* conn, const void* payload, uint16_t leng
  * Returns a positiv integer on success. The resulting buffer has to be freed.
  */
 ssize_t knx_tunnel_recv(knx_tunnel_client* client, uint8_t** buffer);
+
+/**
+ * Receive a L_Data frame. The result has to be freed.
+ */
+knx_ldata* knx_tunnel_recv_ldata(knx_tunnel_client* client);
 
 /**
  * Remove every element from the queue.
