@@ -37,7 +37,7 @@ typedef enum {
 } knx_ldata_tpci;
 
 /**
- * Special Control Codes used when TPCI is in control mode
+ * Control codes used when TPCI set to control mode
  */
 typedef enum {
 	KNX_LDATA_CONTROL_CONNECTED    = 0,
@@ -90,26 +90,98 @@ typedef enum {
  * L_Data Frame
  */
 typedef struct {
+	/**
+	 * Represents Control Field 1
+	 */
 	struct {
+		/**
+		 * Frame priority
+		 */
 		knx_ldata_prio priority;
-		bool repeat, system_broadcast, request_ack, error;
+
+		/**
+		 * Repeat in case of an error
+		 */
+		bool repeat;
+
+		/**
+		 * Perform system broadcast
+		 */
+		bool system_broadcast;
+
+		/**
+		 * Request acknowledgement (only L_Data.req)
+		 */
+		bool request_ack;
+
+		/**
+		 * Indicate an error (only L_Data.con)
+		 */
+		bool error;
 	} control1;
 
+	/**
+	 * Represents Control Field 1
+	 */
 	struct {
+		/**
+		 * Type of `desination` address
+		 */
 		knx_ldata_addr_type address_type;
+
+		/**
+		 * Routing hop count in range from 0 to 7 (7 means infinite hops)
+		 */
 		unsigned hops:4;
 	} control2;
 
-	knx_addr source, destination;
+	/**
+	 * Originating device (set to 0 if you want it to be filled in automatically)
+	 */
+	knx_addr source;
 
+	/**
+	 * Destination device or group
+	 */
+	knx_addr destination;
+
+	/**
+	 * Transport information
+	 */
 	knx_ldata_tpci tpci;
+
+	/**
+	 * Sequence number (only for numbered communication)
+	 */
 	unsigned seq_number:4;
 
+	/**
+	 * Based on the TPCI this contains either the application data or
+	 * control information
+	 */
 	union {
+		/**
+		 * Control information
+		 */
 		knx_ldata_ctrl_code control;
+
+		/**
+		 * Application data
+		 */
 		struct {
+			/**
+			 * How to interpret the data
+			 */
 			knx_ldata_apci apci;
+
+			/**
+			 * Data length in bytes; if set to 0 it means 6 bits of data exist (unless data is NULL)
+			 */
 			uint8_t length_over_6bit;
+
+			/**
+			 * Actual application data (set to NULL if there is no data)
+			 */
 			const uint8_t* data;
 		} apdu;
 	} payload;
@@ -121,12 +193,14 @@ typedef struct {
 void knx_ldata_generate(uint8_t* buffer, const knx_ldata* req);
 
 /**
- * Parse a message containing a L_Data frame
+ * Parse a message containing a L_Data frame.
+ * Note: If the frame contains less or equal to 6 bits of application data
+ * it will modify the buffer in order to avoid allocation of extraneous memory.
  */
 bool knx_ldata_parse(uint8_t* buffer, size_t length, knx_ldata* output);
 
 /**
- * Calculate the requires space for the given L_Data frame.
+ * Calculate the required space for the given L_Data frame.
  */
 size_t knx_ldata_size(const knx_ldata* req);
 
