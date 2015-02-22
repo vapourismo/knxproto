@@ -146,45 +146,14 @@ typedef struct {
 	knx_addr destination;
 
 	/**
-	 * Transport information
+	 * Transport data unit
 	 */
-	knx_ldata_tpci tpci;
+	const uint8_t* tpdu;
 
 	/**
-	 * Sequence number (only for numbered communication)
+	 * Transport data length
 	 */
-	unsigned seq_number:4;
-
-	/**
-	 * Based on the TPCI this contains either the application data or
-	 * control information
-	 */
-	union {
-		/**
-		 * Control information
-		 */
-		knx_ldata_ctrl_code control;
-
-		/**
-		 * Application data
-		 */
-		struct {
-			/**
-			 * How to interpret the data
-			 */
-			knx_ldata_apci apci;
-
-			/**
-			 * Data length in bytes; if set to 0 it means 6 bits of data exist (unless data is NULL)
-			 */
-			uint8_t length_over_6bit;
-
-			/**
-			 * Actual application data (set to NULL if there is no data)
-			 */
-			const uint8_t* data;
-		} apdu;
-	} payload;
+	size_t length;
 } knx_ldata;
 
 /**
@@ -194,10 +163,8 @@ void knx_ldata_generate(uint8_t* buffer, const knx_ldata* req);
 
 /**
  * Parse a message containing a L_Data frame.
- * Note: If the frame contains less or equal to 6 bits of application data
- * it will modify the buffer in order to avoid allocation of extraneous memory.
  */
-bool knx_ldata_parse(uint8_t* buffer, size_t length, knx_ldata* output);
+bool knx_ldata_parse(const uint8_t* buffer, size_t length, knx_ldata* output);
 
 /**
  * Calculate the required space for the given L_Data frame.
