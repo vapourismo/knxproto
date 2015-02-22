@@ -22,10 +22,11 @@
 #ifndef KNXCLIENT_UTIL_ALLOC_H
 #define KNXCLIENT_UTIL_ALLOC_H
 
-#include "log.h"
 #include <malloc.h>
 
 #ifdef DEBUG
+
+#include "log.h"
 
 inline void* __debug_malloc(const char* file, size_t line, size_t n) {
 	void* a = malloc(n);
