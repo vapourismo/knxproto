@@ -29,8 +29,9 @@
 
 // Temporary configuration
 #define KNX_TUNNEL_CONNECTION_TIMEOUT 5       // 5 Seconds
-#define KNX_TUNNEL_QUEUE_SIZE_CAP 1073741824  // 1 MiB queue cap
+#define KNX_TUNNEL_ACK_TIMEOUT 5              // 5 Seconds
 #define KNX_TUNNEL_READ_TIMEOUT 100000        // 100ms
+#define KNX_TUNNEL_QUEUE_SIZE_CAP 1073741824  // 1 MiB queue cap
 
 inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 	if (!dgramsock_ready(client->sock, 0, KNX_TUNNEL_READ_TIMEOUT))
@@ -209,6 +210,30 @@ bool knx_tunnel_timed_wait_state(knx_tunnel_client* conn, long sec, long nsec) {
 	return r;
 }
 
+bool knx_tunnel_timed_wait_ack(knx_tunnel_client* conn, uint8_t number, long sec, long nsec) {
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+
+	struct timespec ts = {
+		.tv_sec = tv.tv_sec + sec,
+		.tv_nsec = tv.tv_usec * 1000 + nsec
+	};
+
+	while (ts.tv_nsec >= 1000000000) {
+		ts.tv_sec++;
+		ts.tv_nsec -= 1000000000;
+	}
+
+	pthread_mutex_lock(&conn->mutex);
+	while (conn->state == KNX_TUNNEL_CONNECTED && conn->ack_seq_number != number &&
+	       pthread_cond_timedwait(&conn->cond, &conn->mutex, &ts) == 0);
+
+	bool r = conn->ack_seq_number != number;
+	pthread_mutex_unlock(&conn->mutex);
+
+	return r;
+}
+
 void* knx_tunnel_worker_thread(void* data) {
 	knx_tunnel_client* client = data;
 
@@ -339,6 +364,7 @@ bool knx_tunnel_send(knx_tunnel_client* client, const void* payload, uint16_t le
 
 	pthread_mutex_lock(&client->send_mutex);
 
+	// Send tunnel request
 	knx_tunnel_request req = {client->channel, client->seq_number++, length, payload};
 
 	if (!dgramsock_send_knx(client->sock, KNX_TUNNEL_REQUEST, &req, &client->gateway)) {
@@ -347,15 +373,9 @@ bool knx_tunnel_send(knx_tunnel_client* client, const void* payload, uint16_t le
 		return false;
 	}
 
-	pthread_mutex_lock(&client->mutex);
-	while (client->state == KNX_TUNNEL_CONNECTED && client->ack_seq_number != req.seq_number)
-		pthread_cond_wait(&client->cond, &client->mutex);
-
-	bool r = client->ack_seq_number == req.seq_number;
-
-	pthread_mutex_unlock(&client->mutex);
+	// Wait for tunnel response
+	bool r = knx_tunnel_timed_wait_ack(client, req.seq_number, KNX_TUNNEL_ACK_TIMEOUT, 0);
 	pthread_mutex_unlock(&client->send_mutex);
-
 	return r;
 }
 
