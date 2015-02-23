@@ -361,6 +361,7 @@ bool knx_tunnel_send(knx_tunnel_client* client, const void* payload, uint16_t le
 
 bool knx_tunnel_send_ldata(knx_tunnel_client* client, const knx_ldata* ldata) {
 	uint8_t buffer[knx_cemi_size(KNX_CEMI_LDATA_REQ, ldata)];
+	knx_cemi_generate_(buffer, KNX_CEMI_LDATA_REQ, ldata);
 	return knx_tunnel_send(client, buffer, sizeof(buffer));
 }
 
