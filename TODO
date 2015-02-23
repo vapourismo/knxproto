@@ -1,14 +1,14 @@
 tunnelclient:
-	- Disconnect if heartbeat did not return
-	- Retrieve gateway description/information
+  ☐ Disconnect if heartbeat did not return
+  ☐ Retrieve gateway description/information
 
 routerclient:
-	- Router discovery
-	- Retrieve router description/information
+  ☐ Router discovery
+  ☐ Retrieve router description/information
 
 proto/knxnetip:
-	- Let `knx_generate` return the sub generator results
+  ☐ Let 'knx_generate' return the sub generator results
 
 util/log:
-	- Add stacktrace when in DEBUG mode
-	- Consider: Use function name instead of file:line as location identifier
+  ☐ Add stacktrace when in DEBUG mode
+  ☐ Consider: Use function name instead of file:line as location identifier
