@@ -2,7 +2,7 @@
  * A library which provides the means to communicate with several
  * KNX-related devices or services.
  *
- * Copyright (C) 2014, Ole Krüger <ole@vprsm.de>
+ * Copyright (C) 2014-2015, Ole Krüger <ole@vprsm.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
