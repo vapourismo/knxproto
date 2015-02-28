@@ -57,7 +57,7 @@ bool knx_router_disconnect(const knx_router_client* client);
 ssize_t knx_router_recv(const knx_router_client* client, uint8_t** buffer, bool block);
 
 /**
- * Retrieve incoming an L_Data indication.
+ * Retrieve incoming an L_Data indication. You have to free the returned pointer manually.
  */
 knx_ldata* knx_router_recv_ldata(const knx_router_client* client, bool block);
 

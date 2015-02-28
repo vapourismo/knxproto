@@ -104,7 +104,7 @@ bool knx_tunnel_send_ldata(knx_tunnel_client* client, const knx_ldata* ldata);
 ssize_t knx_tunnel_recv(knx_tunnel_client* client, uint8_t** buffer);
 
 /**
- * Receive a L_Data frame. The result has to be freed.
+ * Receive a L_Data frame. The result has to be freed manually.
  */
 knx_ldata* knx_tunnel_recv_ldata(knx_tunnel_client* client);
 
