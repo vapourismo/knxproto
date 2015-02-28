@@ -117,7 +117,7 @@ typedef struct {
 /**
  * Generate an L_Data frame.
  */
-void knx_ldata_generate(uint8_t* buffer, const knx_ldata* req);
+bool knx_ldata_generate(uint8_t* buffer, const knx_ldata* req);
 
 /**
  * Parse a message containing a L_Data frame.

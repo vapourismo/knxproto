@@ -22,7 +22,10 @@
 #include "ldata.h"
 #include "../../util/log.h"
 
-void knx_ldata_generate(uint8_t* buffer, const knx_ldata* req) {
+bool knx_ldata_generate(uint8_t* buffer, const knx_ldata* req) {
+	if (req->length == 0 || req->length > UINT8_MAX + 1)
+		return false;
+
 	*buffer++ = (req->length <= 16) << 7                    // Standard Frame
 	          | (~req->control1.repeat & 1) << 5            // Repeat
 	          | (~req->control1.system_broadcast & 1) << 4  // System Broadcast
@@ -41,6 +44,8 @@ void knx_ldata_generate(uint8_t* buffer, const knx_ldata* req) {
 
 	*buffer++ = req->length - 1;
 	memcpy(buffer, req->tpdu, req->length);
+
+	return true;
 }
 
 bool knx_ldata_parse(const uint8_t* buffer, size_t length, knx_ldata* out) {

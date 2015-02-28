@@ -74,8 +74,7 @@ bool knx_cemi_generate(uint8_t* buffer, knx_cemi_service service,
 	switch (service) {
 		case KNX_CEMI_LDATA_IND:
 		case KNX_CEMI_LDATA_REQ:
-			knx_ldata_generate(buffer, payload);
-			return true;
+			return knx_ldata_generate(buffer, payload);
 
 		default:
 			log_error("Unsupported CEMI service %02X", service);
