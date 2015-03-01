@@ -33,6 +33,8 @@ typedef enum {
 	KNX_DPT_B1,
 	KNX_DPT_B2,
 	KNX_DPT_B1U3,
+	KNX_DPT_A8,
+	KNX_DPT_U8,
 } knx_datapoint_type;
 
 /**
@@ -54,6 +56,16 @@ typedef struct {
 	bool control;
 	uint8_t step;
 } knx_b1u3;
+
+/**
+ * A8 Datapoint
+ */
+typedef char knx_a8;
+
+/**
+ * U8 Datapoint
+ */
+typedef uint8_t knx_u8;
 
 /**
  * Get an instance of a datapoint from the APDU.
