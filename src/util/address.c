@@ -25,10 +25,12 @@
 #include <netdb.h>
 
 char* ip4addr_to_string(const ip4addr* addr) {
-	char* string = newa(char, INET_ADDRSTRLEN);
+	char* string = newa(char, INET_ADDRSTRLEN + 7);
 
-	if (string) {
-		inet_ntop(AF_INET, &addr->sin_addr.s_addr, string, INET_ADDRSTRLEN);
+	if (string && inet_ntop(AF_INET, &addr->sin_addr.s_addr, string, INET_ADDRSTRLEN)) {
+		size_t length = strlen(string);
+		size_t rest_length = INET_ADDRSTRLEN + 7 - length;
+		snprintf(string + length, rest_length, ":%i", ntohs(addr->sin_port));
 	}
 
 	return string;
