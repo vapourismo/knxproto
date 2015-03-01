@@ -36,7 +36,7 @@ typedef struct sockaddr_in ip4addr;
 /**
  * Generate an IPv4 address from a string and a given port.
  */
-inline void ip4addr_from_string(ip4addr* addr, const char* addrstr, uint16_t port) {
+inline void ip4addr_from_string(ip4addr* addr, const char* addrstr, in_port_t port) {
 	memset(addr, 0, sizeof(ip4addr));
 	addr->sin_family = AF_INET;
 	addr->sin_port = htons(port);
@@ -52,7 +52,7 @@ char* ip4addr_to_string(const ip4addr* addr);
 /**
  * Resolve an IPv4 address.
  */
-bool ip4addr_resolve(ip4addr* addr, const char* hostname, uint16_t port);
+bool ip4addr_resolve(ip4addr* addr, const char* hostname, in_port_t port);
 
 /**
  * Indivdual Address (16-bit unsigned integer)

@@ -36,7 +36,7 @@ char* ip4addr_to_string(const ip4addr* addr) {
 	return string;
 }
 
-bool ip4addr_resolve(ip4addr* addr, const char* hostname, uint16_t port) {
+bool ip4addr_resolve(ip4addr* addr, const char* hostname, in_port_t port) {
 	struct addrinfo hints = {
 		.ai_flags = 0,
 		.ai_family = AF_INET,
