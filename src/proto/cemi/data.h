@@ -19,33 +19,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "tpdu.h"
+#ifndef KNXCLIENT_PROTO_CEMI_DATA_H
+#define KNXCLIENT_PROTO_CEMI_DATA_H
 
-bool knx_tpdu_info_parse(const uint8_t* tpdu, size_t length, knx_tpdu_info* info) {
-	if (length == 0)
-		return false;
+#include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
 
-	info->tpci = tpdu[0] >> 6 & 3;
-	info->seq_number = tpdu[0] >> 2 & 15;
+/**
+ * Datapoint Types
+ */
+typedef enum {
+	KNX_DPT_B1 = 1000,
+} knx_datapoint_type;
 
-	if (info->tpci == KNX_TPCI_UNNUMBERED_CONTROL || info->tpci == KNX_TPCI_NUMBERED_CONTROL) {
-		info->payload.control = tpdu[0] & 3;
-	} else if (length < 2) {
-		return false;
-	} else {
-		info->payload.apci = (tpdu[0] << 2 & 12)
-		                   | (tpdu[1] >> 6 & 3);
-	}
+/**
+ * B1 Datapoint
+ */
+typedef bool knx_b1;
 
-	return true;
-}
+/**
+ * B2 Datapoint
+ */
+typedef struct {
+	bool c, v;
+} knx_b2;
 
-bool knx_tpdu_interpret(const uint8_t* tpdu, size_t length, knx_datapoint_type type, void* value) {
-	knx_tpdu_info info;
+/**
+ * Get an instance of a datapoint from the APDU.
+ */
+bool knx_datapoint_from_apdu(const uint8_t* apdu, size_t length, knx_datapoint_type type, void* result);
 
-	if (length < 2 || !knx_tpdu_info_parse(tpdu, length, &info) ||
-	    info.tpci == KNX_TPCI_NUMBERED_CONTROL || info.tpci == KNX_TPCI_UNNUMBERED_CONTROL)
-			return false;
-
-	return knx_datapoint_from_apdu(tpdu + 1, length - 1, type, value);
-}
+#endif
