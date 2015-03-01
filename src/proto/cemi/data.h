@@ -40,6 +40,7 @@ typedef enum {
 	KNX_DPT_8,
 	KNX_DPT_9,
 	KNX_DPT_10,
+	KNX_DPT_11,
 } knx_datapoint_type;
 
 /**
@@ -113,6 +114,13 @@ typedef struct {
 	knx_dayofweek day;
 	uint8_t hour, minute, second;
 } knx_timeofday;
+
+/**
+ * DPT 11.xxx
+ */
+typedef struct {
+	uint8_t day, month, year;
+} knx_date;
 
 /**
  * Get an instance of a datapoint from the APDU.

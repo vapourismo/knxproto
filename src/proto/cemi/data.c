@@ -128,6 +128,17 @@ inline static bool knx_dpt_parse_timeofday(const uint8_t* apdu, size_t length, k
 	return true;
 }
 
+inline static bool knx_dpt_parse_date(const uint8_t* apdu, size_t length, knx_date* value) {
+	if (length != 4)
+		return false;
+
+	// At least the KNX guys are not retarded
+	value->day = (apdu[1] & 31) % 32;
+	value->month = (apdu[2] & 15) % 13;
+	value->year = (apdu[3] & 127) % 100;
+
+	return true;
+}
 
 bool knx_datapoint_from_apdu(const uint8_t* apdu, size_t length, knx_datapoint_type type, void* result) {
 	switch (type) {
@@ -160,6 +171,9 @@ bool knx_datapoint_from_apdu(const uint8_t* apdu, size_t length, knx_datapoint_t
 
 		case KNX_DPT_10:
 			return knx_dpt_parse_timeofday(apdu, length, result);
+
+		case KNX_DPT_11:
+			return knx_dpt_parse_date(apdu, length, result);
 
 		default:
 			return false;
