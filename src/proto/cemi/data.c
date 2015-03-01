@@ -22,6 +22,7 @@
 #include "data.h"
 
 #include <math.h>
+#include <string.h>
 
 inline static bool knx_dpt_parse_bool(const uint8_t* apdu, size_t length, knx_bool* value) {
 	if (length != 1)
@@ -158,6 +159,16 @@ inline static bool knx_dpt_parse_signed32(const uint8_t* apdu, size_t length, kn
 	return true;
 }
 
+inline static bool knx_dpt_parse_float32(const uint8_t* apdu, size_t length, knx_float32* value) {
+	if (length != sizeof(knx_float32) + 1)
+		return false;
+
+	// YOLO
+	memcpy(value, apdu + 1, sizeof(knx_float32));
+
+	return true;
+}
+
 bool knx_datapoint_from_apdu(const uint8_t* apdu, size_t length, knx_datapoint_type type, void* result) {
 	switch (type) {
 		case KNX_DPT_1:
@@ -198,6 +209,9 @@ bool knx_datapoint_from_apdu(const uint8_t* apdu, size_t length, knx_datapoint_t
 
 		case KNX_DPT_13:
 			return knx_dpt_parse_signed32(apdu, length, result);
+
+		case KNX_DPT_14:
+			return knx_dpt_parse_float32(apdu, length, result);
 
 		default:
 			return false;

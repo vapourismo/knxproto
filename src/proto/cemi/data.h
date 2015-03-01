@@ -43,6 +43,7 @@ typedef enum {
 	KNX_DPT_11,
 	KNX_DPT_12,
 	KNX_DPT_13,
+	KNX_DPT_14,
 } knx_datapoint_type;
 
 /**
@@ -133,6 +134,11 @@ typedef uint32_t knx_unsigned32;
  * DPT 13.xxx
  */
 typedef int32_t knx_signed32;
+
+/**
+ * DPT 14.xxx
+ */
+typedef float knx_float32;
 
 /**
  * Get an instance of a datapoint from the APDU.
