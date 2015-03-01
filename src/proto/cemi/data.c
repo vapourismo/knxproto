@@ -21,6 +21,34 @@
 
 #include "data.h"
 
+inline static bool knx_dpt_parse_b1(const uint8_t* apdu, size_t length, knx_b1* value) {
+	if (length != 1)
+		return false;
+
+	*value = *apdu & 1;
+
+	return true;
+}
+
+inline static bool knx_dpt_parse_b2(const uint8_t* apdu, size_t length, knx_b2* value) {
+	if (length != 1)
+		return false;
+
+	value->c = *apdu >> 1 & 1;
+	value->v = *apdu & 1;
+
+	return true;
+}
+
 bool knx_datapoint_from_apdu(const uint8_t* apdu, size_t length, knx_datapoint_type type, void* result) {
-	return false;
+	switch (type) {
+		case KNX_DPT_B1:
+			return knx_dpt_parse_b1(apdu, length, result);
+
+		case KNX_DPT_B2:
+			return knx_dpt_parse_b2(apdu, length, result);
+
+		default:
+			return false;
+	}
 }

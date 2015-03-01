@@ -31,6 +31,7 @@
  */
 typedef enum {
 	KNX_DPT_B1 = 1000,
+	KNX_DPT_B2 = 2000,
 } knx_datapoint_type;
 
 /**
