@@ -21,21 +21,25 @@
 
 #include "tpdu.h"
 
-bool knx_tpdu_info_parse(const uint8_t* buffer, size_t length, knx_tpdu_info* info) {
+bool knx_tpdu_info_parse(const uint8_t* tpdu, size_t length, knx_tpdu_info* info) {
 	if (length == 0)
 		return false;
 
-	info->tpci = buffer[0] >> 6 & 3;
-	info->seq_number = buffer[0] >> 2 & 15;
+	info->tpci = tpdu[0] >> 6 & 3;
+	info->seq_number = tpdu[0] >> 2 & 15;
 
 	if (info->tpci == KNX_TPCI_UNNUMBERED_CONTROL || info->tpci == KNX_TPCI_NUMBERED_CONTROL) {
-		info->payload.control = buffer[0] & 3;
+		info->payload.control = tpdu[0] & 3;
 	} else if (length < 2) {
 		return false;
 	} else {
-		info->payload.apci = (buffer[0] << 2 & 12)
-		                   | (buffer[1] >> 6 & 3);
+		info->payload.apci = (tpdu[0] << 2 & 12)
+		                   | (tpdu[1] >> 6 & 3);
 	}
 
 	return true;
+}
+
+bool knx_tpdu_interpret(const uint8_t* tpdu, size_t length, knx_datapoint_type type, void* value) {
+	return false;
 }

@@ -22,6 +22,8 @@
 #ifndef KNXCLIENT_PROTO_CEMI_TPDU_H
 #define KNXCLIENT_PROTO_CEMI_TPDU_H
 
+#include "data.h"
+
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
@@ -84,6 +86,11 @@ typedef struct {
 /**
  * Unpack the TPDU fields.
  */
-bool knx_tpdu_info_parse(const uint8_t* buffer, size_t length, knx_tpdu_info* info);
+bool knx_tpdu_info_parse(const uint8_t* tpdu, size_t length, knx_tpdu_info* info);
+
+/**
+ * Interpret the TPDU payload to generate a C type.
+ */
+bool knx_tpdu_interpret(const uint8_t* tpdu, size_t length, knx_datapoint_type type, void* value);
 
 #endif
