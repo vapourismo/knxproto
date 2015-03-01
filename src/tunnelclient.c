@@ -207,6 +207,44 @@ void knx_tunnel_init_disconnect(knx_tunnel_client* client) {
 	pthread_mutex_unlock(&client->mutex);
 }
 
+void* knx_tunnel_worker_thread(void* data) {
+	knx_tunnel_client* client = data;
+
+	// Process incoming while in connecting state
+	while (client->state == KNX_TUNNEL_CONNECTING)
+		knx_tunnel_process_incoming(client);
+
+	while (client->state == KNX_TUNNEL_CONNECTED) {
+		time_t current_time = time(NULL);
+		double diff_time = difftime(current_time, client->last_heartbeat);
+
+		// Check if last heartbeat has not been acknowledged
+		if (client->last_heartbeat_ack < client->last_heartbeat && diff_time >= KNX_TUNNEL_ACK_TIMEOUT) {
+			log_error("Gateway ignored heartbeat");
+			knx_tunnel_init_disconnect(client);
+		}
+
+		// Check if we need to send a heartbeat
+		else if (diff_time >= KNX_TUNNEL_HEARTBEAT_TIMEOUT) {
+			knx_connection_state_request req = {client->channel, 0, client->host_info};
+
+			if (dgramsock_send_knx(client->sock, KNX_CONNECTION_STATE_REQUEST, &req, &client->gateway))
+				client->last_heartbeat = current_time;
+		}
+
+		knx_tunnel_process_incoming(client);
+	}
+
+	// Change state
+	pthread_mutex_lock(&client->mutex);
+
+	client->state = KNX_TUNNEL_DISCONNECTED;
+	pthread_cond_broadcast(&client->cond);
+
+	pthread_mutex_unlock(&client->mutex);
+	pthread_exit(NULL);
+}
+
 bool knx_tunnel_timed_wait_state(knx_tunnel_client* conn, long sec, long nsec) {
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
@@ -263,44 +301,6 @@ bool knx_tunnel_timed_wait_ack(knx_tunnel_client* conn, uint8_t number, long sec
 	pthread_mutex_unlock(&conn->mutex);
 
 	return r;
-}
-
-void* knx_tunnel_worker_thread(void* data) {
-	knx_tunnel_client* client = data;
-
-	// Process incoming while in connecting state
-	while (client->state == KNX_TUNNEL_CONNECTING)
-		knx_tunnel_process_incoming(client);
-
-	while (client->state == KNX_TUNNEL_CONNECTED) {
-		time_t current_time = time(NULL);
-		double diff_time = difftime(current_time, client->last_heartbeat);
-
-		// Check if last heartbeat has not been acknowledged
-		if (client->last_heartbeat_ack < client->last_heartbeat && diff_time >= KNX_TUNNEL_ACK_TIMEOUT) {
-			log_error("Gateway ignored heartbeat");
-			knx_tunnel_init_disconnect(client);
-		}
-
-		// Check if we need to send a heartbeat
-		else if (diff_time >= KNX_TUNNEL_HEARTBEAT_TIMEOUT) {
-			knx_connection_state_request req = {client->channel, 0, client->host_info};
-
-			if (dgramsock_send_knx(client->sock, KNX_CONNECTION_STATE_REQUEST, &req, &client->gateway))
-				client->last_heartbeat = current_time;
-		}
-
-		knx_tunnel_process_incoming(client);
-	}
-
-	// Change state
-	pthread_mutex_lock(&client->mutex);
-
-	client->state = KNX_TUNNEL_DISCONNECTED;
-	pthread_cond_broadcast(&client->cond);
-
-	pthread_mutex_unlock(&client->mutex);
-	pthread_exit(NULL);
 }
 
 bool knx_tunnel_init_thread_coms(knx_tunnel_client* client) {
