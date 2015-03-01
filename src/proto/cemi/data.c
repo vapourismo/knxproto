@@ -23,7 +23,7 @@
 
 #include <math.h>
 
-inline static bool knx_dpt_parse_b1(const uint8_t* apdu, size_t length, knx_b1* value) {
+inline static bool knx_dpt_parse_bool(const uint8_t* apdu, size_t length, knx_bool* value) {
 	if (length != 1)
 		return false;
 
@@ -32,7 +32,7 @@ inline static bool knx_dpt_parse_b1(const uint8_t* apdu, size_t length, knx_b1* 
 	return true;
 }
 
-inline static bool knx_dpt_parse_b2(const uint8_t* apdu, size_t length, knx_b2* value) {
+inline static bool knx_dpt_parse_cvalue(const uint8_t* apdu, size_t length, knx_cvalue* value) {
 	if (length != 1)
 		return false;
 
@@ -42,7 +42,7 @@ inline static bool knx_dpt_parse_b2(const uint8_t* apdu, size_t length, knx_b2* 
 	return true;
 }
 
-inline static bool knx_dpt_parse_b1u3(const uint8_t* apdu, size_t length, knx_b1u3* value) {
+inline static bool knx_dpt_parse_cstep(const uint8_t* apdu, size_t length, knx_cstep* value) {
 	if (length != 1)
 		return false;
 
@@ -52,7 +52,7 @@ inline static bool knx_dpt_parse_b1u3(const uint8_t* apdu, size_t length, knx_b1
 	return true;
 }
 
-inline static bool knx_dpt_parse_a8(const uint8_t* apdu, size_t length, knx_a8* value) {
+inline static bool knx_dpt_parse_char(const uint8_t* apdu, size_t length, knx_char* value) {
 	if (length != 2)
 		return false;
 
@@ -61,7 +61,7 @@ inline static bool knx_dpt_parse_a8(const uint8_t* apdu, size_t length, knx_a8* 
 	return true;
 }
 
-inline static bool knx_dpt_parse_u8(const uint8_t* apdu, size_t length, knx_u8* value) {
+inline static bool knx_dpt_parse_unsigned8(const uint8_t* apdu, size_t length, knx_unsigned8* value) {
 	if (length != 2)
 		return false;
 
@@ -70,7 +70,7 @@ inline static bool knx_dpt_parse_u8(const uint8_t* apdu, size_t length, knx_u8* 
 	return true;
 }
 
-inline static bool knx_dpt_parse_v8(const uint8_t* apdu, size_t length, knx_v8* value) {
+inline static bool knx_dpt_parse_signed8(const uint8_t* apdu, size_t length, knx_signed8* value) {
 	if (length != 2)
 		return false;
 
@@ -79,7 +79,7 @@ inline static bool knx_dpt_parse_v8(const uint8_t* apdu, size_t length, knx_v8* 
 	return true;
 }
 
-inline static bool knx_dpt_parse_u16(const uint8_t* apdu, size_t length, knx_u16* value) {
+inline static bool knx_dpt_parse_unsigned16(const uint8_t* apdu, size_t length, knx_unsigned16* value) {
 	if (length != 3)
 		return false;
 
@@ -88,7 +88,7 @@ inline static bool knx_dpt_parse_u16(const uint8_t* apdu, size_t length, knx_u16
 	return true;
 }
 
-inline static bool knx_dpt_parse_v16(const uint8_t* apdu, size_t length, knx_v16* value) {
+inline static bool knx_dpt_parse_signed16(const uint8_t* apdu, size_t length, knx_signed16* value) {
 	if (length != 3)
 		return false;
 
@@ -97,7 +97,7 @@ inline static bool knx_dpt_parse_v16(const uint8_t* apdu, size_t length, knx_v16
 	return true;
 }
 
-inline static bool knx_dpt_parse_f16(const uint8_t* apdu, size_t length, knx_f16* value) {
+inline static bool knx_dpt_parse_float16(const uint8_t* apdu, size_t length, knx_float16* value) {
 	if (length != 3)
 		return false;
 
@@ -116,35 +116,50 @@ inline static bool knx_dpt_parse_f16(const uint8_t* apdu, size_t length, knx_f16
 	return true;
 }
 
+inline static bool knx_dpt_parse_timeofday(const uint8_t* apdu, size_t length, knx_timeofday* value) {
+	if (length != 4)
+		return false;
+
+	value->day = apdu[1] >> 5 & 7;
+	value->hour = (apdu[1] & 31) % 24;
+	value->minute = (apdu[2] & 63) % 60;
+	value->second = (apdu[3] & 63) % 60;
+
+	return true;
+}
+
 
 bool knx_datapoint_from_apdu(const uint8_t* apdu, size_t length, knx_datapoint_type type, void* result) {
 	switch (type) {
-		case KNX_DPT_B1:
-			return knx_dpt_parse_b1(apdu, length, result);
+		case KNX_DPT_1:
+			return knx_dpt_parse_bool(apdu, length, result);
 
-		case KNX_DPT_B2:
-			return knx_dpt_parse_b2(apdu, length, result);
+		case KNX_DPT_2:
+			return knx_dpt_parse_cvalue(apdu, length, result);
 
-		case KNX_DPT_B1U3:
-			return knx_dpt_parse_b1u3(apdu, length, result);
+		case KNX_DPT_3:
+			return knx_dpt_parse_cstep(apdu, length, result);
 
-		case KNX_DPT_A8:
-			return knx_dpt_parse_a8(apdu, length, result);
+		case KNX_DPT_4:
+			return knx_dpt_parse_char(apdu, length, result);
 
-		case KNX_DPT_U8:
-			return knx_dpt_parse_u8(apdu, length, result);
+		case KNX_DPT_5:
+			return knx_dpt_parse_unsigned8(apdu, length, result);
 
-		case KNX_DPT_V8:
-			return knx_dpt_parse_v8(apdu, length, result);
+		case KNX_DPT_6:
+			return knx_dpt_parse_signed8(apdu, length, result);
 
-		case KNX_DPT_U16:
-			return knx_dpt_parse_u16(apdu, length, result);
+		case KNX_DPT_7:
+			return knx_dpt_parse_unsigned16(apdu, length, result);
 
-		case KNX_DPT_V16:
-			return knx_dpt_parse_v16(apdu, length, result);
+		case KNX_DPT_8:
+			return knx_dpt_parse_signed16(apdu, length, result);
 
-		case KNX_DPT_F16:
-			return knx_dpt_parse_f16(apdu, length, result);
+		case KNX_DPT_9:
+			return knx_dpt_parse_float16(apdu, length, result);
+
+		case KNX_DPT_10:
+			return knx_dpt_parse_timeofday(apdu, length, result);
 
 		default:
 			return false;

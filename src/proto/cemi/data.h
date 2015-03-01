@@ -30,66 +30,89 @@
  * Datapoint Types
  */
 typedef enum {
-	KNX_DPT_B1,
-	KNX_DPT_B2,
-	KNX_DPT_B1U3,
-	KNX_DPT_A8,
-	KNX_DPT_U8,
-	KNX_DPT_V8,
-	KNX_DPT_U16,
-	KNX_DPT_V16,
-	KNX_DPT_F16,
+	KNX_DPT_1,
+	KNX_DPT_2,
+	KNX_DPT_3,
+	KNX_DPT_4,
+	KNX_DPT_5,
+	KNX_DPT_6,
+	KNX_DPT_7,
+	KNX_DPT_8,
+	KNX_DPT_9,
+	KNX_DPT_10,
 } knx_datapoint_type;
 
 /**
- * B1 Datapoint (DPT 1.xxx)
+ * DPT 1.xxx
  */
-typedef bool knx_b1;
+typedef bool knx_bool;
 
 /**
- * B2 Datapoint (DPT 2.xxx)
+ * DPT 2.xxx
  */
 typedef struct {
 	bool control, value;
-} knx_b2;
+} knx_cvalue;
 
 /**
- * B2 Datapoint (DPT 3.xxx)
+ * DPT 3.xxx
  */
 typedef struct {
 	bool control;
 	uint8_t step;
-} knx_b1u3;
+} knx_cstep;
 
 /**
- * A8 Datapoint (DPT 4.xxx)
+ * DPT 4.xxx
  */
-typedef char knx_a8;
+typedef char knx_char;
 
 /**
- * U8 Datapoint (DPT 5.xxx)
+ * DPT 5.xxx
  */
-typedef uint8_t knx_u8;
+typedef uint8_t knx_unsigned8;
 
 /**
- * V8 Datapoint (DPT 6.xxx)
+ * DPT 6.xxx
  */
-typedef int8_t knx_v8;
+typedef int8_t knx_signed8;
 
 /**
- * U16 Datapoint (DPT 7.xxx)
+ * DPT 7.xxx
  */
-typedef uint16_t knx_u16;
+typedef uint16_t knx_unsigned16;
 
 /**
- * V16 Datapoint (DPT 8.xxx)
+ * DPT 8.xxx
  */
-typedef int16_t knx_v16;
+typedef int16_t knx_signed16;
 
 /**
- * F16 Datapoint (DPT 9.xxx)
+ * DPT 9.xxx
  */
-typedef float knx_f16;
+typedef float knx_float16;
+
+/**
+ * Day of the week
+ */
+typedef enum {
+	KNX_NODAY     = 0,
+	KNX_MONDAY    = 1,
+	KNX_TUESDAY   = 2,
+	KNX_WEDNESDAY = 3,
+	KNX_THURSDAY  = 4,
+	KNX_FRIDAY    = 5,
+	KNX_SATURDAY  = 6,
+	KNX_SUNDAY    = 7
+} knx_dayofweek;
+
+/**
+ * DPT 10.xxx
+ */
+typedef struct {
+	knx_dayofweek day;
+	uint8_t hour, minute, second;
+} knx_timeofday;
 
 /**
  * Get an instance of a datapoint from the APDU.
