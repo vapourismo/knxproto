@@ -82,7 +82,7 @@ typedef struct {
  * Connect to a gateway. This function returns `true` if a connection has
  * been established.
  */
-bool knx_tunnel_connect(knx_tunnel_client* client, int sock, const ip4addr* gateway);
+bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port_t port);
 
 /**
  * Disconnect from a gateway. This procedure also acts as a deconstructor.

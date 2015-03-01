@@ -327,12 +327,17 @@ bool knx_tunnel_init_thread_coms(knx_tunnel_client* client) {
 	return false;
 }
 
-bool knx_tunnel_connect(knx_tunnel_client* client, int sock, const ip4addr* gateway) {
-	if (sock < 0 || !gateway)
+bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port_t port) {
+	if (!ip4addr_resolve(&client->gateway, hostname, port)) {
+		log_error("Failed to resolve hostname '%s'", hostname);
 		return false;
+	}
 
-	client->sock = sock;
-	client->gateway = *gateway;
+	if ((client->sock = dgramsock_create(NULL, false)) < 0) {
+		log_error("Failed to create socket");
+		return false;
+	}
+
 	client->state = KNX_TUNNEL_CONNECTING;
 	client->seq_number = 0;
 	client->ack_seq_number = UINT8_MAX;
@@ -348,8 +353,9 @@ bool knx_tunnel_connect(knx_tunnel_client* client, int sock, const ip4addr* gate
 	};
 
 	// Initiate connection
-	if (!dgramsock_send_knx(sock, KNX_CONNECTION_REQUEST, &req, gateway)) {
+	if (!dgramsock_send_knx(client->sock, KNX_CONNECTION_REQUEST, &req, &client->gateway)) {
 		log_error("Failed to send connection request");
+		close(client->sock);
 		return false;
 	}
 
@@ -358,6 +364,7 @@ bool knx_tunnel_connect(knx_tunnel_client* client, int sock, const ip4addr* gate
 		log_error("Failed to initialise thread components");
 
 		client->state = KNX_TUNNEL_DISCONNECTED;
+		close(client->sock);
 		return false;
 	}
 
@@ -379,6 +386,9 @@ void knx_tunnel_disconnect(knx_tunnel_client* client) {
 	pthread_mutex_destroy(&client->mutex);
 	pthread_mutex_destroy(&client->send_mutex);
 	pthread_cond_destroy(&client->cond);
+
+	// Close socket
+	close(client->sock);
 }
 
 bool knx_tunnel_send(knx_tunnel_client* client, const void* payload, uint16_t length) {
