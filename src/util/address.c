@@ -20,8 +20,19 @@
  */
 
 #include "address.h"
+#include "alloc.h"
 
 #include <netdb.h>
+
+char* ip4addr_to_string(const ip4addr* addr) {
+	char* string = newa(char, INET_ADDRSTRLEN);
+
+	if (string) {
+		inet_ntop(AF_INET, &addr->sin_addr.s_addr, string, INET_ADDRSTRLEN);
+	}
+
+	return string;
+}
 
 bool ip4addr_resolve(ip4addr* addr, const char* hostname, uint16_t port) {
 	struct addrinfo hints = {

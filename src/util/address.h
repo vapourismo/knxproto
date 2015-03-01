@@ -44,6 +44,12 @@ inline void ip4addr_from_string(ip4addr* addr, const char* addrstr, uint16_t por
 }
 
 /**
+ * Get the string representation of an IPv4 address.
+ * The returned string has to be freed.
+ */
+char* ip4addr_to_string(const ip4addr* addr);
+
+/**
  * Resolve an IPv4 address.
  */
 bool ip4addr_resolve(ip4addr* addr, const char* hostname, uint16_t port);
