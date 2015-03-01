@@ -184,7 +184,9 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 				break;
 
 			// Everything else should be ignored
-			default: break;
+			default:
+				log_warn("Unsupported service 0x%04X", pkg_in.service);
+				break;
 		}
 	}
 }
