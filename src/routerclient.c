@@ -30,11 +30,15 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-bool knx_router_connect(knx_router_client* client, int sock, const ip4addr* router) {
-	if (sock < 0)
-		return false;
+bool knx_router_connect(knx_router_client* client, const ip4addr* router) {
+	ip4addr local = *router;
+	local.sin_addr.s_addr = INADDR_ANY;
 
-	client->sock = sock;
+	if ((client->sock = dgramsock_create(&local, true)) < 0) {
+		log_error("Failed to create socket");
+		return false;
+	}
+
 	client->router = *router;
 
 	// Join multicast group

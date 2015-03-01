@@ -43,7 +43,7 @@ typedef struct {
 /**
  * Join the router's multicast group.
  */
-bool knx_router_connect(knx_router_client* client, int sock, const ip4addr* router);
+bool knx_router_connect(knx_router_client* client, const ip4addr* router);
 
 /**
  * Leave the router's multicast group.
