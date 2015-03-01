@@ -68,6 +68,15 @@ inline static bool knx_dpt_parse_u8(const uint8_t* apdu, size_t length, knx_u8* 
 	return true;
 }
 
+inline static bool knx_dpt_parse_v8(const uint8_t* apdu, size_t length, knx_v8* value) {
+	if (length != 2)
+		return false;
+
+	*value = apdu[1];
+
+	return true;
+}
+
 bool knx_datapoint_from_apdu(const uint8_t* apdu, size_t length, knx_datapoint_type type, void* result) {
 	switch (type) {
 		case KNX_DPT_B1:
@@ -84,6 +93,9 @@ bool knx_datapoint_from_apdu(const uint8_t* apdu, size_t length, knx_datapoint_t
 
 		case KNX_DPT_U8:
 			return knx_dpt_parse_u8(apdu, length, result);
+
+		case KNX_DPT_V8:
+			return knx_dpt_parse_v8(apdu, length, result);
 
 		default:
 			return false;

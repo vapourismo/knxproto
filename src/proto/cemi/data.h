@@ -35,6 +35,7 @@ typedef enum {
 	KNX_DPT_B1U3,
 	KNX_DPT_A8,
 	KNX_DPT_U8,
+	KNX_DPT_V8,
 } knx_datapoint_type;
 
 /**
@@ -66,6 +67,11 @@ typedef char knx_a8;
  * U8 Datapoint
  */
 typedef uint8_t knx_u8;
+
+/**
+ * V8 Datapoint
+ */
+typedef int8_t knx_v8;
 
 /**
  * Get an instance of a datapoint from the APDU.
