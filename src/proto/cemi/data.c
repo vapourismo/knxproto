@@ -21,6 +21,8 @@
 
 #include "data.h"
 
+#include <math.h>
+
 inline static bool knx_dpt_parse_b1(const uint8_t* apdu, size_t length, knx_b1* value) {
 	if (length != 1)
 		return false;
@@ -95,6 +97,26 @@ inline static bool knx_dpt_parse_v16(const uint8_t* apdu, size_t length, knx_v16
 	return true;
 }
 
+inline static bool knx_dpt_parse_f16(const uint8_t* apdu, size_t length, knx_f16* value) {
+	if (length != 3)
+		return false;
+
+	// Mantissa
+	int16_t m = (apdu[1] & 7) << 8 | apdu[2];
+
+	// Signed?
+	if (apdu[1] & 128)
+		m -= 2048;
+
+	// Exponent
+	uint16_t e = apdu[1] >> 3 & 15;
+
+	*value = 0.01 * ((float) m) * pow(2, (float) e);
+
+	return true;
+}
+
+
 bool knx_datapoint_from_apdu(const uint8_t* apdu, size_t length, knx_datapoint_type type, void* result) {
 	switch (type) {
 		case KNX_DPT_B1:
@@ -120,6 +142,9 @@ bool knx_datapoint_from_apdu(const uint8_t* apdu, size_t length, knx_datapoint_t
 
 		case KNX_DPT_V16:
 			return knx_dpt_parse_v16(apdu, length, result);
+
+		case KNX_DPT_F16:
+			return knx_dpt_parse_f16(apdu, length, result);
 
 		default:
 			return false;

@@ -44,7 +44,7 @@ BASECFLAGS      = -std=c99 -O2 -pthread \
                   -fmessage-length=0 -Wall -Wextra -pedantic \
                   -DDEBUG -D_POSIX_SOURCE -D_GNU_SOURCE -g
 CFLAGS          += $(BASECFLAGS) -fPIC
-LDFLAGS         += -flto -pthread -shared
+LDFLAGS         += -flto -pthread -lm -shared
 TESTCFLAGS      += $(BASECFLAGS)
 TESTLDFLAGS     += -L$(DISTDIR) -l:$(LIBNAME)
 
