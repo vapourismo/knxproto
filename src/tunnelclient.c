@@ -29,6 +29,7 @@
 
 // Temporary configuration
 #define KNX_TUNNEL_CONNECTION_TIMEOUT 5       // 5 Seconds
+#define KNX_TUNNEL_HEARTBEAT_TIMEOUT 30        // 5 Seconds
 #define KNX_TUNNEL_ACK_TIMEOUT 5              // 5 Seconds
 #define KNX_TUNNEL_READ_TIMEOUT 100000        // 100ms
 #define KNX_TUNNEL_QUEUE_SIZE_CAP 1073741824  // 1 MiB queue cap
@@ -95,6 +96,8 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 					client->state = KNX_TUNNEL_DISCONNECTED;
 					pthread_cond_broadcast(&client->cond);
 					pthread_mutex_unlock(&client->mutex);
+				} else {
+					client->last_heartbeat_ack = time(NULL);
 				}
 
 				break;
@@ -186,6 +189,24 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 	}
 }
 
+void knx_tunnel_init_disconnect(knx_tunnel_client* client) {
+	knx_disconnect_request dc_req = {
+		client->channel,
+		0,
+		client->host_info
+	};
+
+	// Send disconnect request
+	if (!dgramsock_send_knx(client->sock, KNX_DISCONNECT_REQUEST, &dc_req, &client->gateway))
+		log_error("Failed to send disconnect request");
+
+	// Set new state
+	pthread_mutex_lock(&client->mutex);
+	client->state = KNX_TUNNEL_DISCONNECTED;
+	pthread_cond_broadcast(&client->cond);
+	pthread_mutex_unlock(&client->mutex);
+}
+
 bool knx_tunnel_timed_wait_state(knx_tunnel_client* conn, long sec, long nsec) {
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
@@ -252,14 +273,20 @@ void* knx_tunnel_worker_thread(void* data) {
 		knx_tunnel_process_incoming(client);
 
 	while (client->state == KNX_TUNNEL_CONNECTED) {
-		// TODO: Check if the heartbeat request needs to be resent
+		time_t current_time = time(NULL);
+		double diff_time = difftime(current_time, client->last_heartbeat);
+
+		// Check if last heartbeat has not been acknowledged
+		if (client->last_heartbeat_ack < client->last_heartbeat && diff_time >= KNX_TUNNEL_ACK_TIMEOUT) {
+			knx_tunnel_init_disconnect(client);
+		}
 
 		// Check if we need to send a heartbeat
-		if (client->state == KNX_TUNNEL_CONNECTED && difftime(time(NULL), client->last_heartbeat) >= 30) {
+		else if (diff_time >= KNX_TUNNEL_HEARTBEAT_TIMEOUT) {
 			knx_connection_state_request req = {client->channel, 0, client->host_info};
 
 			if (dgramsock_send_knx(client->sock, KNX_CONNECTION_STATE_REQUEST, &req, &client->gateway))
-				client->last_heartbeat = time(NULL);
+				client->last_heartbeat = current_time;
 		}
 
 		knx_tunnel_process_incoming(client);
@@ -343,23 +370,8 @@ bool knx_tunnel_connect(knx_tunnel_client* client, int sock, const ip4addr* gate
 }
 
 void knx_tunnel_disconnect(knx_tunnel_client* client) {
-	if (client->state != KNX_TUNNEL_DISCONNECTED) {
-		knx_disconnect_request dc_req = {
-			client->channel,
-			0,
-			client->host_info
-		};
-
-		// Send disconnect request
-		if (!dgramsock_send_knx(client->sock, KNX_DISCONNECT_REQUEST, &dc_req, &client->gateway))
-			log_error("Failed to send disconnect request");
-
-		// Set new state
-		pthread_mutex_lock(&client->mutex);
-		client->state = KNX_TUNNEL_DISCONNECTED;
-		pthread_cond_broadcast(&client->cond);
-		pthread_mutex_unlock(&client->mutex);
-	}
+	if (client->state != KNX_TUNNEL_DISCONNECTED)
+		knx_tunnel_init_disconnect(client);
 
 	// Join thread and cleanup resources
 	pthread_join(client->worker, NULL);

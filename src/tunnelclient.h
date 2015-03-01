@@ -75,6 +75,7 @@ typedef struct {
 	uint8_t channel;
 	knx_host_info host_info;
 	time_t last_heartbeat;
+	time_t last_heartbeat_ack;
 } knx_tunnel_client;
 
 /**
