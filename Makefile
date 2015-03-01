@@ -24,7 +24,7 @@ HEADERFILES     = proto/knxnetip/connreq.h proto/knxnetip/connres.h proto/knxnet
                   tunnelclient.h routerclient.h
 SOURCEFILES     = proto/knxnetip/connstateres.c proto/knxnetip/connreq.c proto/knxnetip/tunnelreq.c proto/knxnetip/connstatereq.c proto/knxnetip/connres.c proto/knxnetip/dcreq.c proto/knxnetip/hostinfo.c proto/knxnetip/knxnetip.c proto/knxnetip/tunnelres.c proto/knxnetip/dcres.c proto/knxnetip/routingind.c \
                   proto/cemi/cemi.c proto/cemi/ldata.c \
-                  util/sockutils.c util/log.c \
+                  util/address.c util/sockutils.c util/log.c \
                   tunnelclient.c routerclient.c
 
 TESTFILES       = $(wildcard $(TESTDIR)/*.c)

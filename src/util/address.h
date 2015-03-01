@@ -26,6 +26,7 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 /**
  * IPv4 Address
@@ -41,6 +42,11 @@ inline void ip4addr_from_string(ip4addr* addr, const char* addrstr, uint16_t por
 	addr->sin_port = htons(port);
 	inet_pton(AF_INET, addrstr, &addr->sin_addr);
 }
+
+/**
+ * Resolve an IPv4 address.
+ */
+bool ip4addr_resolve(ip4addr* addr, const char* hostname, uint16_t port);
 
 /**
  * Indivdual Address (16-bit unsigned integer)
