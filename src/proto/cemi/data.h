@@ -39,19 +39,19 @@ typedef enum {
 } knx_datapoint_type;
 
 /**
- * B1 Datapoint
+ * B1 Datapoint (DPT 1.xxx)
  */
 typedef bool knx_b1;
 
 /**
- * B2 Datapoint
+ * B2 Datapoint (DPT 2.xxx)
  */
 typedef struct {
 	bool control, value;
 } knx_b2;
 
 /**
- * B2 Datapoint
+ * B2 Datapoint (DPT 3.xxx)
  */
 typedef struct {
 	bool control;
@@ -59,17 +59,17 @@ typedef struct {
 } knx_b1u3;
 
 /**
- * A8 Datapoint
+ * A8 Datapoint (DPT 4.xxx)
  */
 typedef char knx_a8;
 
 /**
- * U8 Datapoint
+ * U8 Datapoint (DPT 5.xxx)
  */
 typedef uint8_t knx_u8;
 
 /**
- * V8 Datapoint
+ * V8 Datapoint (DPT 6.xxx)
  */
 typedef int8_t knx_v8;
 
