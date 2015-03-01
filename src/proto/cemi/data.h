@@ -41,6 +41,8 @@ typedef enum {
 	KNX_DPT_9,
 	KNX_DPT_10,
 	KNX_DPT_11,
+	KNX_DPT_12,
+	KNX_DPT_13,
 } knx_datapoint_type;
 
 /**
@@ -121,6 +123,16 @@ typedef struct {
 typedef struct {
 	uint8_t day, month, year;
 } knx_date;
+
+/**
+ * DPT 12.xxx
+ */
+typedef uint32_t knx_unsigned32;
+
+/**
+ * DPT 13.xxx
+ */
+typedef int32_t knx_signed32;
 
 /**
  * Get an instance of a datapoint from the APDU.

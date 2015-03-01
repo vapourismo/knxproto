@@ -140,6 +140,24 @@ inline static bool knx_dpt_parse_date(const uint8_t* apdu, size_t length, knx_da
 	return true;
 }
 
+inline static bool knx_dpt_parse_unsigned32(const uint8_t* apdu, size_t length, knx_unsigned32* value) {
+	if (length != 5)
+		return false;
+
+	*value = apdu[1] << 24 | apdu[2] << 16 | apdu[3] << 8 | apdu[4];
+
+	return true;
+}
+
+inline static bool knx_dpt_parse_signed32(const uint8_t* apdu, size_t length, knx_signed32* value) {
+	if (length != 5)
+		return false;
+
+	*value = apdu[1] << 24 | apdu[2] << 16 | apdu[3] << 8 | apdu[4];
+
+	return true;
+}
+
 bool knx_datapoint_from_apdu(const uint8_t* apdu, size_t length, knx_datapoint_type type, void* result) {
 	switch (type) {
 		case KNX_DPT_1:
@@ -174,6 +192,12 @@ bool knx_datapoint_from_apdu(const uint8_t* apdu, size_t length, knx_datapoint_t
 
 		case KNX_DPT_11:
 			return knx_dpt_parse_date(apdu, length, result);
+
+		case KNX_DPT_12:
+			return knx_dpt_parse_unsigned32(apdu, length, result);
+
+		case KNX_DPT_13:
+			return knx_dpt_parse_signed32(apdu, length, result);
 
 		default:
 			return false;
