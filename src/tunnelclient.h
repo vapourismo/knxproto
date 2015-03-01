@@ -85,7 +85,8 @@ typedef struct {
 bool knx_tunnel_connect(knx_tunnel_client* client, int sock, const ip4addr* gateway);
 
 /**
- * Disconnect from a gateway.
+ * Disconnect from a gateway. This procedure also acts as a deconstructor.
+ * It will not clear the queue for incoming packets.
  */
 void knx_tunnel_disconnect(knx_tunnel_client* client);
 
