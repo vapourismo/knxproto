@@ -278,6 +278,7 @@ void* knx_tunnel_worker_thread(void* data) {
 
 		// Check if last heartbeat has not been acknowledged
 		if (client->last_heartbeat_ack < client->last_heartbeat && diff_time >= KNX_TUNNEL_ACK_TIMEOUT) {
+			log_error("Gateway ignored heartbeat");
 			knx_tunnel_init_disconnect(client);
 		}
 
@@ -335,7 +336,7 @@ bool knx_tunnel_connect(knx_tunnel_client* client, int sock, const ip4addr* gate
 	client->state = KNX_TUNNEL_CONNECTING;
 	client->seq_number = 0;
 	client->ack_seq_number = UINT8_MAX;
-	client->last_heartbeat = time(NULL);
+	client->last_heartbeat = client->last_heartbeat_ack = time(NULL);
 	client->msg_queue_size = 0;
 	client->msg_head = client->msg_tail = NULL;
 
