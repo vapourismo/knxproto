@@ -34,8 +34,18 @@ inline static bool knx_dpt_parse_b2(const uint8_t* apdu, size_t length, knx_b2* 
 	if (length != 1)
 		return false;
 
-	value->c = *apdu >> 1 & 1;
-	value->v = *apdu & 1;
+	value->control = *apdu >> 1 & 1;
+	value->value = *apdu & 1;
+
+	return true;
+}
+
+inline static bool knx_dpt_parse_b1u3(const uint8_t* apdu, size_t length, knx_b1u3* value) {
+	if (length != 1)
+		return false;
+
+	value->control = *apdu >> 3 & 1;
+	value->step = *apdu & 7;
 
 	return true;
 }
@@ -47,6 +57,9 @@ bool knx_datapoint_from_apdu(const uint8_t* apdu, size_t length, knx_datapoint_t
 
 		case KNX_DPT_B2:
 			return knx_dpt_parse_b2(apdu, length, result);
+
+		case KNX_DPT_B1U3:
+			return knx_dpt_parse_b1u3(apdu, length, result);
 
 		default:
 			return false;
