@@ -71,4 +71,9 @@ bool knx_router_send(const knx_router_client* client, const uint8_t* payload, ui
  */
 bool knx_router_send_ldata(const knx_router_client* client, const knx_ldata* ldata);
 
+/**
+ * Sent a L_Data frame using the given destination group address and TPDU.
+ */
+bool knx_router_send_tpdu(const knx_router_client* client, knx_addr dest, const uint8_t* tpdu, size_t length);
+
 #endif

@@ -141,6 +141,20 @@ bool knx_router_send(const knx_router_client* client, const uint8_t* payload, ui
 }
 
 bool knx_router_send_ldata(const knx_router_client* client, const knx_ldata* ldata) {
-	uint8_t buffer[knx_cemi_size(KNX_CEMI_LDATA_REQ, ldata)];
+	uint8_t buffer[knx_cemi_size(KNX_CEMI_LDATA_IND, ldata)];
+	knx_cemi_generate_(buffer, KNX_CEMI_LDATA_IND, ldata);
 	return knx_router_send(client, buffer, sizeof(buffer));
+}
+
+bool knx_router_send_tpdu(const knx_router_client* client, knx_addr dest, const uint8_t* tpdu, size_t length) {
+	knx_ldata ldata = {
+		.control1 = {KNX_LDATA_PRIO_LOW, true, true, true, false},
+		.control2 = {KNX_LDATA_ADDR_GROUP, 7},
+		.source = 0,
+		.destination = dest,
+		.tpdu = tpdu,
+		.length = length
+	};
+
+	return knx_router_send_ldata(client, &ldata);
 }
