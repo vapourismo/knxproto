@@ -29,7 +29,7 @@
 
 // Temporary configuration
 #define KNX_TUNNEL_CONNECTION_TIMEOUT 5       // 5 Seconds
-#define KNX_TUNNEL_HEARTBEAT_TIMEOUT 30        // 5 Seconds
+#define KNX_TUNNEL_HEARTBEAT_TIMEOUT 30       // 5 Seconds
 #define KNX_TUNNEL_ACK_TIMEOUT 5              // 5 Seconds
 #define KNX_TUNNEL_READ_TIMEOUT 100000        // 100ms
 #define KNX_TUNNEL_QUEUE_SIZE_CAP 1073741824  // 1 MiB queue cap
