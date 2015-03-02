@@ -101,6 +101,11 @@ bool knx_tunnel_send(knx_tunnel_client* client, const void* payload, uint16_t le
 bool knx_tunnel_send_ldata(knx_tunnel_client* client, const knx_ldata* ldata);
 
 /**
+ * Sent a L_Data frame using the given destination group address and TPDU.
+ */
+bool knx_tunnel_send_tpdu(knx_tunnel_client* client, knx_addr dest, const uint8_t* tpdu, size_t length);
+
+/**
  * Returns a positiv integer on success. The resulting buffer has to be freed.
  */
 ssize_t knx_tunnel_recv(knx_tunnel_client* client, uint8_t** buffer);

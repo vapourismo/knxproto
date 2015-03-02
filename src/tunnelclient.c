@@ -422,6 +422,19 @@ bool knx_tunnel_send_ldata(knx_tunnel_client* client, const knx_ldata* ldata) {
 	return knx_tunnel_send(client, buffer, sizeof(buffer));
 }
 
+bool knx_tunnel_send_tpdu(knx_tunnel_client* client, knx_addr dest, const uint8_t* tpdu, size_t length) {
+	knx_ldata ldata = {
+		.control1 = {KNX_LDATA_PRIO_LOW, true, true, true, false},
+		.control2 = {KNX_LDATA_ADDR_GROUP, 7},
+		.source = 0,
+		.destination = dest,
+		.tpdu = tpdu,
+		.length = length
+	};
+
+	return knx_tunnel_send_ldata(client, &ldata);
+}
+
 ssize_t knx_tunnel_recv(knx_tunnel_client* client, uint8_t** buffer) {
 	if (client->state == KNX_TUNNEL_DISCONNECTED)
 		return -1;
@@ -459,7 +472,8 @@ knx_ldata* knx_tunnel_recv_ldata(knx_tunnel_client* client) {
 	if (size < 0)
 		return NULL;
 
-	if (!knx_cemi_parse(data, size, &cemi) || cemi.service != KNX_CEMI_LDATA_IND) {
+	if (!knx_cemi_parse(data, size, &cemi) || (cemi.service != KNX_CEMI_LDATA_IND &&
+	                                           cemi.service != KNX_CEMI_LDATA_CON)) {
 		log_error("Failed to parse as L_Data indication frame");
 		free(data);
 		return NULL;
