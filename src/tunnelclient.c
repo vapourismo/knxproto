@@ -88,7 +88,7 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 				    client->state != KNX_TUNNEL_CONNECTED)
 					break;
 
-				log_debug("Heartbeat (status = %i)", pkg_in.payload.conn_state_res.status);
+				log_info("Heartbeat (status = %i)", pkg_in.payload.conn_state_res.status);
 
 				// Anything other than 0 means the bad news
 				if (pkg_in.payload.conn_state_res.status != 0) {
