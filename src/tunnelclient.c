@@ -261,7 +261,7 @@ void* knx_tunnel_worker_thread(void* data) {
 	pthread_exit(NULL);
 }
 
-bool knx_tunnel_timed_wait_state(knx_tunnel_client* conn, long sec, long nsec) {
+inline static void mk_timespec(struct timespec* ts, long sec, long nsec) {
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
 
@@ -270,15 +270,18 @@ bool knx_tunnel_timed_wait_state(knx_tunnel_client* conn, long sec, long nsec) {
 		nsec -= 1000000000;
 	}
 
-	struct timespec ts = {
-		.tv_sec = tv.tv_sec + sec,
-		.tv_nsec = tv.tv_usec * 1000 + nsec
-	};
+	ts->tv_sec = tv.tv_sec + sec;
+	ts->tv_nsec = tv.tv_usec * 1000 + nsec;
 
-	while (ts.tv_nsec >= 1000000000) {
-		ts.tv_sec++;
-		ts.tv_nsec -= 1000000000;
+	while (ts->tv_nsec >= 1000000000) {
+		ts->tv_sec++;
+		ts->tv_nsec -= 1000000000;
 	}
+}
+
+bool knx_tunnel_timed_wait_state(knx_tunnel_client* conn, long sec, long nsec) {
+	struct timespec ts;
+	mk_timespec(&ts, sec, nsec);
 
 	pthread_mutex_lock(&conn->mutex);
 	while (conn->state == KNX_TUNNEL_CONNECTING &&
@@ -291,23 +294,8 @@ bool knx_tunnel_timed_wait_state(knx_tunnel_client* conn, long sec, long nsec) {
 }
 
 bool knx_tunnel_timed_wait_ack(knx_tunnel_client* conn, uint8_t number, long sec, long nsec) {
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-
-	while (nsec >= 1000000000) {
-		sec++;
-		nsec -= 1000000000;
-	}
-
-	struct timespec ts = {
-		.tv_sec = tv.tv_sec + sec,
-		.tv_nsec = tv.tv_usec * 1000 + nsec
-	};
-
-	while (ts.tv_nsec >= 1000000000) {
-		ts.tv_sec++;
-		ts.tv_nsec -= 1000000000;
-	}
+	struct timespec ts;
+	mk_timespec(&ts, sec, nsec);
 
 	pthread_mutex_lock(&conn->mutex);
 	while (conn->state == KNX_TUNNEL_CONNECTED && conn->ack_seq_number != number &&
