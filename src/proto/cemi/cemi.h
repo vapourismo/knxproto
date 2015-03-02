@@ -33,7 +33,8 @@
  */
 typedef enum {
 	KNX_CEMI_LDATA_REQ = 0x11,
-	KNX_CEMI_LDATA_IND = 0x29
+	KNX_CEMI_LDATA_IND = 0x29,
+	KNX_CEMI_LDATA_CON = 0x2E
 } knx_cemi_service;
 
 /**
