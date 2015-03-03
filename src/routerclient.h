@@ -51,13 +51,14 @@ bool knx_router_connect(knx_router_client* client, const ip4addr* router);
 bool knx_router_disconnect(const knx_router_client* client);
 
 /**
- * Retrieve an incoming message. Returns a positive integer on success.
- * The resulting buffer has to be freed.
+ * Retrieve an incoming message. The resulting buffer has to be free.
+ * In case of success, it will return the buffer size, otherwise a negative integer;
  */
 ssize_t knx_router_recv(const knx_router_client* client, uint8_t** buffer, bool block);
 
 /**
  * Retrieve incoming an L_Data indication. You have to free the returned pointer manually.
+ * Returning a NULL pointer indicates a failure.
  */
 knx_ldata* knx_router_recv_ldata(const knx_router_client* client, bool block);
 
