@@ -37,7 +37,8 @@ TESTDEPS        = $(TESTFILES:%.c=%.d)
 
 SOMAJOR         = 0
 SOMINOR         = 0
-SONAME          = lib$(BASENAME).so.$(SOMAJOR)
+SOBASE          = lib$(BASENAME).so
+SONAME          = $(SOBASE).$(SOMAJOR)
 SOREAL          = $(SONAME).$(SOMINOR)
 
 SOOUTPUT        = $(DISTDIR)/$(SOREAL)
@@ -93,9 +94,9 @@ $(TESTDIR)/%.o: $(TESTDIR)/%.c Makefile
 	$(CC) -c $(TESTCFLAGS) -MMD -MF$(@:%.o=%.d) -MT$@ -o$@ $<
 
 # Install
-install: $(LIBDIR)/$(SONAME) $(LIBDIR)/$(SOREAL) $(foreach h, $(HEADERFILES), $(INCLUDEDIR)/$h)
+install: $(LIBDIR)/$(SOBASE) $(LIBDIR)/$(SONAME) $(LIBDIR)/$(SOREAL) $(foreach h, $(HEADERFILES), $(INCLUDEDIR)/$h)
 
-$(LIBDIR)/$(SONAME): $(LIBDIR)/$(SOREAL)
+$(LIBDIR)/$(SONAME) $(LIBDIR)/$(SOBASE): $(LIBDIR)/$(SOREAL)
 	$(LINK) $(SOREAL) $@
 
 $(LIBDIR)/%: $(DISTDIR)/%
