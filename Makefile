@@ -1,6 +1,7 @@
 # Utilities
 RM              = rm -rf
 MKDIR           = mkdir -p
+LINK            = ln -sf
 EXEC            = exec
 INSTALL         = install
 DEBUGGER        = gdb -ex run
@@ -34,8 +35,12 @@ TESTOBJS        = $(TESTFILES:%.c=%.o)
 SOURCEDEPS      = $(SOURCEFILES:%.c=$(DISTDIR)/%.d)
 TESTDEPS        = $(TESTFILES:%.c=%.d)
 
-LIBNAME         = lib$(BASENAME).so.0
-OUTPUT          = $(DISTDIR)/$(LIBNAME)
+SOMAJOR         = 0
+SOMINOR         = 0
+SONAME          = lib$(BASENAME).so.$(SOMAJOR)
+SOREAL          = $(SONAME).$(SOMINOR)
+
+SOOUTPUT        = $(DISTDIR)/$(SOREAL)
 TESTOUTPUT      = $(DISTDIR)/$(BASENAME)-test
 
 # Compiler
@@ -44,17 +49,17 @@ BASECFLAGS      = -std=c99 -O2 -pthread \
                   -fmessage-length=0 -Wall -Wextra -pedantic \
                   -DDEBUG -D_POSIX_SOURCE -D_GNU_SOURCE -g
 CFLAGS          += $(BASECFLAGS) -fPIC
-LDFLAGS         += -flto -pthread -lm -shared
+LDFLAGS         += -flto -pthread -lm -shared -Wl,-soname,$(SONAME)
 TESTCFLAGS      += $(BASECFLAGS)
-TESTLDFLAGS     += -L$(DISTDIR) -l:$(LIBNAME)
+TESTLDFLAGS     += -flto -pthread -lm
 
 # Default Targets
-all: $(OUTPUT)
+all: $(SOOUTPUT)
 
 clean:
 	$(RM) $(SOURCEDEPS) $(SOURCEOBJS)
 	$(RM) $(TESTDEPS) $(TESTOBJS)
-	$(RM) $(OUTPUT) $(DISTDIR)
+	$(RM) $(SOOUTPUT) $(DISTDIR)
 
 test: $(TESTOUTPUT)
 	LD_LIBRARY_PATH=$(DISTDIR) $(TESTOUTPUT)
@@ -69,7 +74,8 @@ valgrind: $(TESTOUTPUT)
 -include $(SOURCEDEPS)
 -include $(TESTDEPS)
 
-$(OUTPUT): $(SOURCEOBJS) Makefile
+# Shared Object
+$(SOOUTPUT): $(SOURCEOBJS) Makefile
 	@$(MKDIR) $(dir $@)
 	$(CC) $(LDFLAGS) -o$@ $(SOURCEOBJS)
 
@@ -77,16 +83,20 @@ $(DISTDIR)/%.o: $(SOURCEDIR)/%.c Makefile
 	@$(MKDIR) $(dir $@)
 	$(CC) -c $(CFLAGS) -MMD -MF$(@:%.o=%.d) -MT$@ -o$@ $<
 
-$(TESTOUTPUT): $(TESTOBJS) $(OUTPUT) Makefile
+# Test
+$(TESTOUTPUT): $(TESTOBJS) $(SOURCEOBJS) Makefile
 	@$(MKDIR) $(dir $@)
-	$(CC) $(TESTLDFLAGS) -o$@ $(TESTOBJS)
+	$(CC) $(TESTLDFLAGS) -o$@ $(TESTOBJS) $(SOURCEOBJS)
 
 $(TESTDIR)/%.o: $(TESTDIR)/%.c Makefile
 	@$(MKDIR) $(dir $@)
 	$(CC) -c $(TESTCFLAGS) -MMD -MF$(@:%.o=%.d) -MT$@ -o$@ $<
 
 # Install
-install: $(LIBDIR)/$(LIBNAME) $(foreach h, $(HEADERFILES), $(INCLUDEDIR)/$h)
+install: $(LIBDIR)/$(SONAME) $(LIBDIR)/$(SOREAL) $(foreach h, $(HEADERFILES), $(INCLUDEDIR)/$h)
+
+$(LIBDIR)/$(SONAME): $(LIBDIR)/$(SOREAL)
+	$(LINK) $(SOREAL) $@
 
 $(LIBDIR)/%: $(DISTDIR)/%
 	$(INSTALL) -m755 -D $< $@
@@ -95,4 +105,4 @@ $(INCLUDEDIR)/%: $(SOURCEDIR)/%
 	$(INSTALL) -m644 -D $< $@
 
 # Phony
-.PHONY: all clean test
+.PHONY: all clean test install
