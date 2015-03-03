@@ -58,8 +58,10 @@ bool knx_router_connect(knx_router_client* client, const ip4addr* router) {
 }
 
 bool knx_router_disconnect(const knx_router_client* client) {
-	return setsockopt(client->sock, IPPROTO_IP,
-	                  IP_DROP_MEMBERSHIP, &client->mreq, sizeof(client->mreq)) == 0;
+	bool r = setsockopt(client->sock, IPPROTO_IP,
+	                    IP_DROP_MEMBERSHIP, &client->mreq, sizeof(client->mreq)) == 0;
+	close(client->sock);
+	return r;
 }
 
 ssize_t knx_router_recv(const knx_router_client* client, uint8_t** result_buffer, bool block) {
