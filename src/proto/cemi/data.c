@@ -105,46 +105,46 @@ inline static bool knx_dpt_parse_date(const uint8_t* apdu, size_t length, knx_da
 
 bool knx_datapoint_from_apdu(const uint8_t* apdu, size_t length, knx_datapoint_type type, void* result) {
 	switch (type) {
-		case KNX_DPT_1:
+		case KNX_DPT_BOOL:
 			return knx_dpt_parse_bool(apdu, length, result);
 
-		case KNX_DPT_2:
+		case KNX_DPT_CVALUE:
 			return knx_dpt_parse_cvalue(apdu, length, result);
 
-		case KNX_DPT_3:
+		case KNX_DPT_CSTEP:
 			return knx_dpt_parse_cstep(apdu, length, result);
 
-		case KNX_DPT_4:
+		case KNX_DPT_CHAR:
 			knx_dpt_parse_as_is(knx_char);
 
-		case KNX_DPT_5:
+		case KNX_DPT_UNSIGNED8:
 			knx_dpt_parse_as_is(knx_unsigned8);
 
-		case KNX_DPT_6:
+		case KNX_DPT_SIGNED8:
 			knx_dpt_parse_as_is(knx_signed8);
 
-		case KNX_DPT_7:
+		case KNX_DPT_UNSIGNED16:
 			knx_dpt_parse_as_is(knx_unsigned16);
 
-		case KNX_DPT_8:
+		case KNX_DPT_SIGNED16:
 			knx_dpt_parse_as_is(knx_signed16);
 
-		case KNX_DPT_9:
+		case KNX_DPT_FLOAT16:
 			return knx_dpt_parse_float16(apdu, length, result);
 
-		case KNX_DPT_10:
+		case KNX_DPT_TIMEOFDAY:
 			return knx_dpt_parse_timeofday(apdu, length, result);
 
-		case KNX_DPT_11:
+		case KNX_DPT_DATE:
 			return knx_dpt_parse_date(apdu, length, result);
 
-		case KNX_DPT_12:
+		case KNX_DPT_UNSIGNED32:
 			knx_dpt_parse_as_is(knx_unsigned32);
 
-		case KNX_DPT_13:
+		case KNX_DPT_SIGNED32:
 			knx_dpt_parse_as_is(knx_signed32);
 
-		case KNX_DPT_14:
+		case KNX_DPT_FLOAT32:
 			knx_dpt_parse_as_is(knx_float32);
 
 		default:
