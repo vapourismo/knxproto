@@ -48,7 +48,7 @@ void knx_connection_request_generate(uint8_t* buffer, const knx_connection_reque
 	*buffer++ = 0;
 }
 
-bool knx_parse_connection_request(const uint8_t* message, size_t length, knx_connection_request* req) {
+bool knx_connection_request_parse(const uint8_t* message, size_t length, knx_connection_request* req) {
 	if (length < KNX_CONNECTION_REQUEST_SIZE || message[16] != 4)
 		return false;
 
@@ -74,6 +74,6 @@ bool knx_parse_connection_request(const uint8_t* message, size_t length, knx_con
 	}
 
 	return
-		knx_parse_host_info(message, &req->control_host) &&
-		knx_parse_host_info(message + 8, &req->tunnel_host);
+		knx_host_info_parse(message, &req->control_host) &&
+		knx_host_info_parse(message + 8, &req->tunnel_host);
 }

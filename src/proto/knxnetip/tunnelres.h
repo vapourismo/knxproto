@@ -43,7 +43,7 @@ void knx_tunnel_response_generate(uint8_t* buffer, const knx_tunnel_response* re
 /**
  * Parse a message (excluding header) which contains a tunnel response.
  */
-bool knx_parse_tunnel_response(const uint8_t* message, size_t length, knx_tunnel_response* res);
+bool knx_tunnel_response_parse(const uint8_t* message, size_t length, knx_tunnel_response* res);
 
 /**
  * Tunnel response size

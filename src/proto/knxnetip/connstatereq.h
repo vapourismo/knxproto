@@ -45,7 +45,7 @@ void knx_connection_state_request_generate(uint8_t* buffer, const knx_connection
 /**
  * Parse a message (excluding header) which contains a connection state request.
  */
-bool knx_parse_connection_state_request(const uint8_t* message, size_t length, knx_connection_state_request* req);
+bool knx_connection_state_request_parse(const uint8_t* message, size_t length, knx_connection_state_request* req);
 
 /**
  * Connection state request size

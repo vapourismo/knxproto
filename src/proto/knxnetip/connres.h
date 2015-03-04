@@ -46,7 +46,7 @@ void knx_connection_response_generate(uint8_t* buffer, const knx_connection_resp
 /**
  * Parse a message (excluding header) which contains a connection response.
  */
-bool knx_parse_connection_response(const uint8_t* message, size_t length, knx_connection_response* res);
+bool knx_connection_response_parse(const uint8_t* message, size_t length, knx_connection_response* res);
 
 /**
  * Connection response size

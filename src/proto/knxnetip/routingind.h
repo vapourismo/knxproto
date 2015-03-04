@@ -42,7 +42,7 @@ void knx_routing_indication_generate(uint8_t* buffer, const knx_routing_indicati
 /**
  * Parse a message (excluding header) which contains a routing indication.
  */
-bool knx_parse_routing_indication(const uint8_t* message, size_t length, knx_routing_indication* ind);
+bool knx_routing_indication_parse(const uint8_t* message, size_t length, knx_routing_indication* ind);
 
 /**
  * Routing indication size

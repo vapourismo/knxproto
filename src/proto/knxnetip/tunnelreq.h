@@ -44,7 +44,7 @@ void knx_tunnel_request_generate(uint8_t* buffer, const knx_tunnel_request* req)
 /**
  * Parse a message (excluding header) which contains a tunnel request.
  */
-bool knx_parse_tunnel_request(const uint8_t* message, size_t length, knx_tunnel_request* req);
+bool knx_tunnel_request_parse(const uint8_t* message, size_t length, knx_tunnel_request* req);
 
 /**
  * Tunnel request size

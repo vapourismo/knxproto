@@ -36,7 +36,7 @@ void knx_tunnel_response_generate(uint8_t* buffer, const knx_tunnel_response* re
 	*buffer++ = res->status;
 }
 
-bool knx_parse_tunnel_response(const uint8_t* message, size_t length, knx_tunnel_response* res) {
+bool knx_tunnel_response_parse(const uint8_t* message, size_t length, knx_tunnel_response* res) {
 	if (length < KNX_TUNNEL_RESPONSE_SIZE || message[0] != KNX_TUNNEL_RESPONSE_SIZE)
 		return false;
 

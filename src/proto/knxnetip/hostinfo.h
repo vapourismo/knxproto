@@ -56,7 +56,7 @@ void knx_host_info_generate(uint8_t* buffer, const knx_host_info* host);
 /**
  * Retrieve host information.
  */
-bool knx_parse_host_info(const uint8_t* message, knx_host_info* host);
+bool knx_host_info_parse(const uint8_t* message, knx_host_info* host);
 
 /**
  * Size of a host info segment

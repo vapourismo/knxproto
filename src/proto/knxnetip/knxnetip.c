@@ -83,39 +83,39 @@ bool knx_parse(const uint8_t* message, size_t length,
 	packet->service = (message[2] << 8) | message[3];
 	switch (packet->service) {
 		case KNX_CONNECTION_REQUEST:
-			return knx_parse_connection_request(payload_ptr, payload_length,
+			return knx_connection_request_parse(payload_ptr, payload_length,
 			                                    &packet->payload.conn_req);
 
 		case KNX_CONNECTION_RESPONSE:
-			return knx_parse_connection_response(payload_ptr, payload_length,
+			return knx_connection_response_parse(payload_ptr, payload_length,
 			                                     &packet->payload.conn_res);
 
 		case KNX_CONNECTION_STATE_REQUEST:
-			return knx_parse_connection_state_request(payload_ptr, payload_length,
+			return knx_connection_state_request_parse(payload_ptr, payload_length,
 			                                          &packet->payload.conn_state_req);
 
 		case KNX_CONNECTION_STATE_RESPONSE:
-			return knx_parse_connection_state_response(payload_ptr, payload_length,
+			return knx_connection_state_response_parse(payload_ptr, payload_length,
 			                                           &packet->payload.conn_state_res);
 
 		case KNX_DISCONNECT_REQUEST:
-			return knx_parse_disconnect_request(payload_ptr, payload_length,
+			return knx_disconnect_request_parse(payload_ptr, payload_length,
 			                                    &packet->payload.dc_req);
 
 		case KNX_DISCONNECT_RESPONSE:
-			return knx_parse_disconnect_response(payload_ptr, payload_length,
+			return knx_disconnect_response_parse(payload_ptr, payload_length,
 			                                     &packet->payload.dc_res);
 
 		case KNX_TUNNEL_REQUEST:
-			return knx_parse_tunnel_request(payload_ptr, payload_length,
+			return knx_tunnel_request_parse(payload_ptr, payload_length,
 			                                &packet->payload.tunnel_req);
 
 		case KNX_TUNNEL_RESPONSE:
-			return knx_parse_tunnel_response(payload_ptr, payload_length,
+			return knx_tunnel_response_parse(payload_ptr, payload_length,
 			                                 &packet->payload.tunnel_res);
 
 		case KNX_ROUTING_INDICATION:
-			return knx_parse_routing_indication(payload_ptr, payload_length,
+			return knx_routing_indication_parse(payload_ptr, payload_length,
 			                                    &packet->payload.routing_ind);
 
 		default:

@@ -35,12 +35,12 @@ void knx_disconnect_request_generate(uint8_t* buffer, const knx_disconnect_reque
 	knx_host_info_generate(buffer, &req->host);
 }
 
-bool knx_parse_disconnect_request(const uint8_t* message, size_t length, knx_disconnect_request* req) {
+bool knx_disconnect_request_parse(const uint8_t* message, size_t length, knx_disconnect_request* req) {
 	if (length < KNX_DISCONNECT_REQUEST_SIZE)
 		return false;
 
 	req->channel = message[0];
 	req->status = message[1];
 
-	return knx_parse_host_info(message + 2, &req->host);
+	return knx_host_info_parse(message + 2, &req->host);
 }

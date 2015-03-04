@@ -48,7 +48,7 @@ void knx_connection_response_generate(uint8_t* buffer, const knx_connection_resp
 	}
 }
 
-bool knx_parse_connection_response(const uint8_t* message, size_t length,
+bool knx_connection_response_parse(const uint8_t* message, size_t length,
                                    knx_connection_response* res) {
 	if (length < 2)
 		return false;
@@ -57,7 +57,7 @@ bool knx_parse_connection_response(const uint8_t* message, size_t length,
 	res->status = message[1];
 
 	if (length >= KNX_HOST_INFO_SIZE + 6) {
-		if (!knx_parse_host_info(message + 2, &res->host))
+		if (!knx_host_info_parse(message + 2, &res->host))
 			return false;
 
 		memcpy(res->extended, message + 11, 3);

@@ -41,7 +41,7 @@ void knx_tunnel_request_generate(uint8_t* buffer, const knx_tunnel_request* req)
 	memcpy(buffer, req->data, req->size);
 }
 
-bool knx_parse_tunnel_request(const uint8_t* message, size_t length, knx_tunnel_request* req) {
+bool knx_tunnel_request_parse(const uint8_t* message, size_t length, knx_tunnel_request* req) {
 	if (length < 4 || message[0] != 4)
 		return false;
 

@@ -32,7 +32,7 @@ void knx_connection_state_response_generate(uint8_t* buffer, const knx_connectio
 	*buffer++ = res->status;
 }
 
-bool knx_parse_connection_state_response(const uint8_t* message, size_t length,
+bool knx_connection_state_response_parse(const uint8_t* message, size_t length,
                                          knx_connection_state_response* res) {
 	if (length < KNX_CONNECTION_STATE_RESPONSE_SIZE)
 		return false;

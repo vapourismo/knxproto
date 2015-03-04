@@ -60,7 +60,7 @@ void knx_connection_request_generate(uint8_t* buffer, const knx_connection_reque
 /**
  * Parse a message (excluding header) which contains a connection request.
  */
-bool knx_parse_connection_request(const uint8_t* message, size_t length, knx_connection_request* req);
+bool knx_connection_request_parse(const uint8_t* message, size_t length, knx_connection_request* req);
 
 /**
  * Connection request size

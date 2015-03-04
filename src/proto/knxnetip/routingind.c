@@ -30,7 +30,7 @@ void knx_routing_indication_generate(uint8_t* buffer, const knx_routing_indicati
 	memcpy(buffer, ind->data, ind->size);
 }
 
-bool knx_parse_routing_indication(const uint8_t* message, size_t length, knx_routing_indication* ind) {
+bool knx_routing_indication_parse(const uint8_t* message, size_t length, knx_routing_indication* ind) {
 	ind->size = length;
 	ind->data = message;
 

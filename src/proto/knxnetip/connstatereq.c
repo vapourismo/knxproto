@@ -35,7 +35,7 @@ void knx_connection_state_request_generate(uint8_t* buffer, const knx_connection
 	knx_host_info_generate(buffer, &req->host);
 }
 
-bool knx_parse_connection_state_request(const uint8_t* message, size_t length,
+bool knx_connection_state_request_parse(const uint8_t* message, size_t length,
                                         knx_connection_state_request* req) {
 	if (length < KNX_CONNECTION_STATE_REQUEST_SIZE)
 		return false;
@@ -43,5 +43,5 @@ bool knx_parse_connection_state_request(const uint8_t* message, size_t length,
 	req->channel = message[0];
 	req->status = message[1];
 
-	return knx_parse_host_info(message + 2, &req->host);
+	return knx_host_info_parse(message + 2, &req->host);
 }

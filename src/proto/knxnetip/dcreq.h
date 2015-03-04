@@ -45,7 +45,7 @@ void knx_disconnect_request_generate(uint8_t* buffer, const knx_disconnect_reque
 /**
  * Parse a message (excluding header) which contains a disconnect request.
  */
-bool knx_parse_disconnect_request(const uint8_t* message, size_t length, knx_disconnect_request* req);
+bool knx_disconnect_request_parse(const uint8_t* message, size_t length, knx_disconnect_request* req);
 
 /**
  * Disconnect request size
