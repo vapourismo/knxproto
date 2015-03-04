@@ -381,6 +381,20 @@ bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port
 	return r;
 }
 
+static void knx_tunnel_clear_queue(knx_tunnel_client* client) {
+	knx_tunnel_message* msg = client->msg_head;
+
+	while (msg) {
+		knx_tunnel_message* free_me = msg;
+		msg = msg->next;
+
+		free(free_me->message);
+		free(free_me);
+	}
+
+	client->msg_head = client->msg_tail = NULL;
+}
+
 void knx_tunnel_disconnect(knx_tunnel_client* client) {
 	if (client->state != KNX_TUNNEL_DISCONNECTED)
 		knx_tunnel_init_disconnect(client);
@@ -393,6 +407,9 @@ void knx_tunnel_disconnect(knx_tunnel_client* client) {
 
 	// Close socket
 	close(client->sock);
+
+	// Clear incoming queue
+	knx_tunnel_clear_queue(client);
 }
 
 bool knx_tunnel_send(knx_tunnel_client* client, const void* payload, uint16_t length) {
@@ -495,18 +512,4 @@ knx_ldata* knx_tunnel_recv_ldata(knx_tunnel_client* client) {
 	memcpy(ret + 1, tpdu, sizeof(tpdu));
 
 	return ret;
-}
-
-void knx_tunnel_clear_queue(knx_tunnel_client* client) {
-	knx_tunnel_message* msg = client->msg_head;
-
-	while (msg) {
-		knx_tunnel_message* free_me = msg;
-		msg = msg->next;
-
-		free(free_me->message);
-		free(free_me);
-	}
-
-	client->msg_head = client->msg_tail = NULL;
 }

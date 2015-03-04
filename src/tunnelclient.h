@@ -121,10 +121,4 @@ ssize_t knx_tunnel_recv(knx_tunnel_client* client, uint8_t** buffer);
  */
 knx_ldata* knx_tunnel_recv_ldata(knx_tunnel_client* client);
 
-/**
- * Remove every element from the queue.
- * You must not call this before the tunnel connection has ended.
- */
-void knx_tunnel_clear_queue(knx_tunnel_client* client);
-
 #endif
