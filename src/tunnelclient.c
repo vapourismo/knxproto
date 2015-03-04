@@ -34,6 +34,8 @@
 #define KNX_TUNNEL_READ_TIMEOUT 100000        // 100ms
 #define KNX_TUNNEL_QUEUE_SIZE_CAP 1073741824  // 1 MiB queue cap
 
+// This routine might not be the optimal for inlining,
+// but it is used in one place only, so what the hell.
 inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 	if (!dgramsock_ready(client->sock, 0, KNX_TUNNEL_READ_TIMEOUT))
 		return;
@@ -307,7 +309,7 @@ bool knx_tunnel_timed_wait_ack(knx_tunnel_client* conn, uint8_t number, long sec
 	return r;
 }
 
-bool knx_tunnel_init_thread_coms(knx_tunnel_client* client) {
+static bool knx_tunnel_init_thread_coms(knx_tunnel_client* client) {
 	if (pthread_mutex_init(&client->mutex, NULL) != 0)
 		return false;
 
