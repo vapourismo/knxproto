@@ -118,6 +118,10 @@ bool knx_parse(const uint8_t* message, size_t length,
 			return knx_routing_indication_parse(payload_ptr, payload_length,
 			                                    &packet->payload.routing_ind);
 
+		case KNX_DESCRIPTION_REQUEST:
+			return knx_description_request_parse(payload_ptr, payload_length,
+			                                     &packet->payload.description_req);
+
 		default:
 			return false;
 	}
@@ -162,6 +166,10 @@ bool knx_generate(uint8_t* buffer, knx_service service, const void* payload) {
 
 		case KNX_ROUTING_INDICATION:
 			knx_routing_indication_generate(buffer + KNX_HEADER_SIZE, payload);
+			return true;
+
+		case KNX_DESCRIPTION_REQUEST:
+			knx_description_request_generate(buffer + KNX_HEADER_SIZE, payload);
 			return true;
 
 		default:

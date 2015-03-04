@@ -28,6 +28,7 @@
 #include "connstateres.h"
 #include "dcreq.h"
 #include "dcres.h"
+#include "descreq.h"
 #include "tunnelreq.h"
 #include "tunnelres.h"
 #include "routingind.h"
@@ -82,6 +83,7 @@ typedef struct {
 		knx_tunnel_request tunnel_req;
 		knx_tunnel_response tunnel_res;
 		knx_routing_indication routing_ind;
+		knx_description_request description_req;
 	} payload;
 } knx_packet;
 
