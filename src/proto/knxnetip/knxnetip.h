@@ -103,4 +103,11 @@ bool knx_generate(uint8_t* buffer, knx_service service, const void* payload);
  */
 size_t knx_payload_size(knx_service service, const void* payload);
 
+/**
+ * Size of an entire KNXnet/IP frame.
+ */
+inline size_t knx_size(knx_service service, const void* payload) {
+	return knx_payload_size(service, payload) + KNX_HEADER_SIZE;
+}
+
 #endif
