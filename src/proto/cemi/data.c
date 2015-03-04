@@ -96,11 +96,10 @@ inline static bool knx_dpt_parse_date(const uint8_t* apdu, size_t length, knx_da
 	return true;
 }
 
-#define knx_dpt_parse_as_is(type) {               \
-	if ((length) < sizeof(type) + 1)              \
-		return false;                             \
-	memcpy((result), (apdu) + 1, sizeof(type));   \
-	return true;                                  \
+#define knx_dpt_parse_as_is(type) {           \
+	if (length < sizeof(type) + 1)            \
+		return false;                         \
+	memcpy(result, apdu + 1, sizeof(type));   \
 }
 
 bool knx_datapoint_from_apdu(const uint8_t* apdu, size_t length, knx_datapoint_type type, void* result) {
@@ -116,18 +115,23 @@ bool knx_datapoint_from_apdu(const uint8_t* apdu, size_t length, knx_datapoint_t
 
 		case KNX_DPT_CHAR:
 			knx_dpt_parse_as_is(knx_char);
+			return true;
 
 		case KNX_DPT_UNSIGNED8:
 			knx_dpt_parse_as_is(knx_unsigned8);
+			return true;
 
 		case KNX_DPT_SIGNED8:
 			knx_dpt_parse_as_is(knx_signed8);
+			return true;
 
 		case KNX_DPT_UNSIGNED16:
 			knx_dpt_parse_as_is(knx_unsigned16);
+			return true;
 
 		case KNX_DPT_SIGNED16:
 			knx_dpt_parse_as_is(knx_signed16);
+			return true;
 
 		case KNX_DPT_FLOAT16:
 			return knx_dpt_parse_float16(apdu, length, result);
@@ -140,14 +144,114 @@ bool knx_datapoint_from_apdu(const uint8_t* apdu, size_t length, knx_datapoint_t
 
 		case KNX_DPT_UNSIGNED32:
 			knx_dpt_parse_as_is(knx_unsigned32);
+			return true;
 
 		case KNX_DPT_SIGNED32:
 			knx_dpt_parse_as_is(knx_signed32);
+			return true;
 
 		case KNX_DPT_FLOAT32:
 			knx_dpt_parse_as_is(knx_float32);
+			return true;
 
 		default:
 			return false;
+	}
+}
+
+inline static void knx_dpt_generate_bool(uint8_t* apdu, const bool* value) {
+	apdu[0] &= ~63;
+	apdu[0] |= *value & 1;
+}
+
+inline static void knx_dpt_generate_cvalue(uint8_t* apdu, const knx_cvalue* value) {
+	apdu[0] &= ~63;
+	apdu[0] |= (value->control & 1) << 1 | (value->value & 1);
+}
+
+inline static void knx_dpt_generate_cstep(uint8_t* apdu, const knx_cstep* value) {
+	apdu[0] &= ~63;
+	apdu[0] |= (value->control & 1) << 3 | (value->step & 7);
+}
+
+inline static void knx_dpt_generate_timeofday(uint8_t* apdu, const knx_timeofday* value) {
+	apdu[0] &= ~63;
+	apdu[1] = (value->day & 7) >> 5 | (value->hour % 24);
+	apdu[2] = value->minute % 60;
+	apdu[3] = value->second % 60;
+}
+
+inline static void knx_dpt_generate_date(uint8_t* apdu, const knx_date* value) {
+	apdu[0] &= ~63;
+	apdu[1] = value->day % 32;
+	apdu[2] = value->month % 13;
+	apdu[3] = value->year % 100;
+}
+
+#define knx_dpt_generate_as_is(type) {      \
+	apdu[0] &= ~63;                         \
+	memcpy(apdu + 1, source, sizeof(type)); \
+}
+
+void knx_datapoint_to_apdu(uint8_t* apdu, knx_datapoint_type type, const void* source) {
+	switch (type) {
+		case KNX_DPT_BOOL:
+			knx_dpt_generate_bool(apdu, source);
+			break;
+
+		case KNX_DPT_CVALUE:
+			knx_dpt_generate_cvalue(apdu, source);
+			break;
+
+		case KNX_DPT_CSTEP:
+			knx_dpt_generate_cstep(apdu, source);
+			break;
+
+		case KNX_DPT_CHAR:
+			knx_dpt_generate_as_is(knx_char);
+			break;
+
+		case KNX_DPT_UNSIGNED8:
+			knx_dpt_generate_as_is(knx_unsigned8);
+			break;
+
+		case KNX_DPT_SIGNED8:
+			knx_dpt_generate_as_is(knx_signed8);
+			break;
+
+		case KNX_DPT_UNSIGNED16:
+			knx_dpt_generate_as_is(knx_unsigned16);
+			break;
+
+		case KNX_DPT_SIGNED16:
+			knx_dpt_generate_as_is(knx_signed16);
+			break;
+
+		case KNX_DPT_FLOAT16:
+			// knx_dpt_generate_float16(apdu, source);
+			break;
+
+		case KNX_DPT_TIMEOFDAY:
+			knx_dpt_generate_timeofday(apdu, source);
+			break;
+
+		case KNX_DPT_DATE:
+			knx_dpt_generate_date(apdu, source);
+			break;
+
+		case KNX_DPT_UNSIGNED32:
+			knx_dpt_generate_as_is(knx_unsigned32);
+			break;
+
+		case KNX_DPT_SIGNED32:
+			knx_dpt_generate_as_is(knx_signed32);
+			break;
+
+		case KNX_DPT_FLOAT32:
+			knx_dpt_generate_as_is(knx_float32);
+			break;
+
+		default:
+			break;
 	}
 }

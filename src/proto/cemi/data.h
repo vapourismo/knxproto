@@ -141,8 +141,84 @@ typedef int32_t knx_signed32;
 typedef float knx_float32;
 
 /**
- * Get an instance of a datapoint from the APDU.
+ * Interpret APDU in the given way to produce an instance of a C type.
  */
 bool knx_datapoint_from_apdu(const uint8_t* apdu, size_t length, knx_datapoint_type type, void* result);
+
+/**
+ * Generate the APDU representation of the given type. This function leaves
+ * the first 2 bits (least significant bits of the APCI) untouched.
+ */
+void knx_datapoint_to_apdu(uint8_t* apdu, knx_datapoint_type type, const void* result);
+
+/**
+ * APDU size for `bool`
+ */
+#define KNX_DPT_BOOL_SIZE       1
+
+/**
+ * APDU size for `cvalue`
+ */
+#define KNX_DPT_CVALUE_SIZE     1
+
+/**
+ * APDU size for `cstep`
+ */
+#define KNX_DPT_CSTEP_SIZE      1
+
+/**
+ * APDU size for `char`
+ */
+#define KNX_DPT_CHAR_SIZE       2
+
+/**
+ * APDU size for `unsigned8`
+ */
+#define KNX_DPT_UNSIGNED8_SIZE  2
+
+/**
+ * APDU size for `signed8`
+ */
+#define KNX_DPT_SIGNED8_SIZE    2
+
+/**
+ * APDU size for `unsigned16`
+ */
+#define KNX_DPT_UNSIGNED16_SIZE 3
+
+/**
+ * APDU size for `signed16`
+ */
+#define KNX_DPT_SIGNED16_SIZE   3
+
+/**
+ * APDU size for `float16`
+ */
+#define KNX_DPT_FLOAT16_SIZE    3
+
+/**
+ * APDU size for `timeofday`
+ */
+#define KNX_DPT_TIMEOFDAY_SIZE  4
+
+/**
+ * APDU size for `date`
+ */
+#define KNX_DPT_DATE_SIZE       4
+
+/**
+ * APDU size for `unsigned32`
+ */
+#define KNX_DPT_UNSIGNED32_SIZE 5
+
+/**
+ * APDU size for `signed32`
+ */
+#define KNX_DPT_SIGNED32_SIZE   5
+
+/**
+ * APDU size for `float32`
+ */
+#define KNX_DPT_FLOAT32_SIZE    5
 
 #endif
