@@ -259,6 +259,7 @@ void* knx_tunnel_worker_thread(void* data) {
 
 	// Stop heartbeat thread
 	pthread_cancel(heartbeat_thread);
+	pthread_join(heartbeat_thread, NULL);
 
 	pthread_exit(NULL);
 }
