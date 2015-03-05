@@ -67,7 +67,7 @@ inline static bool knx_dpt_parse_float16(const uint8_t* apdu, size_t length, knx
 	// Exponent
 	uint16_t e = apdu[1] >> 3 & 15;
 
-	*value = 0.01 * ((float) m) * pow(2, (float) e);
+	*value = 0.01 * ((float) m) * exp2f(e);
 
 	return true;
 }
@@ -188,6 +188,37 @@ inline static void knx_dpt_generate_date(uint8_t* apdu, const knx_date* value) {
 	apdu[3] = value->year % 100;
 }
 
+inline static void knx_dpt_generate_float16(uint8_t* apdu, const knx_float16* value) {
+	apdu[0] &= ~63;
+
+	float target = *value * 100;
+
+	if (target > 67076096.0f)
+		target = 67076096.0f;
+	else if (target < -67108864.0f)
+		target = -67108864.0f;
+
+	uint8_t e = 0;
+
+	// This isn't particularly efficient, but
+	// has yielded the best results so far.
+	while (target < -2048 || target > 2047) {
+		target /= 2;
+		e++;
+	}
+
+	int16_t m = target;
+
+	if (m < 0)
+		m = ~(~m + 1);
+
+	apdu[1] = (m < 0) << 7
+	        | (e & 15) << 3
+	        | (m >> 8 & 7);
+	apdu[2] = m & 255;
+}
+
+
 #define knx_dpt_generate_as_is(type) {      \
 	apdu[0] &= ~63;                         \
 	memcpy(apdu + 1, source, sizeof(type)); \
@@ -228,7 +259,7 @@ void knx_datapoint_to_apdu(uint8_t* apdu, knx_datapoint_type type, const void* s
 			break;
 
 		case KNX_DPT_FLOAT16:
-			// knx_dpt_generate_float16(apdu, source);
+			knx_dpt_generate_float16(apdu, source);
 			break;
 
 		case KNX_DPT_TIMEOFDAY:
