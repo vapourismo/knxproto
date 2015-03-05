@@ -434,8 +434,6 @@ bool knx_tunnel_send(knx_tunnel_client* client, const void* payload, uint16_t le
 	bool r = knx_tunnel_timed_wait_ack(client, req.seq_number, KNX_TUNNEL_ACK_TIMEOUT, 0);
 	pthread_mutex_unlock(&client->send_mutex);
 
-	log_debug("ack result = %i", r);
-
 	return r;
 }
 
