@@ -242,6 +242,24 @@ deftest(knx_routing_indication, {
 	assert(memcmp(packet_out.payload.routing_ind.data, packet_in.data, packet_in.size) == 0);
 })
 
+deftest(knx_description_request, {
+	knx_description_request packet_in = {
+		{KNX_PROTO_UDP, htonl(INADDR_LOOPBACK), 12345}
+	};
+
+	// Generate
+	uint8_t buffer[KNX_HEADER_SIZE + KNX_DESCRIPTION_REQUEST_SIZE];
+	assert(knx_generate(buffer, KNX_DESCRIPTION_REQUEST, &packet_in));
+
+	// Parse
+	knx_packet packet_out;
+	assert(knx_parse(buffer, sizeof(buffer), &packet_out));
+
+	// Check
+	assert(packet_out.service == KNX_DESCRIPTION_REQUEST);
+	assert(host_info_equal(&packet_out.payload.description_req.control_host, &packet_in.control_host));
+})
+
 deftest(knxnetip, {
 	runsubtest(knx_connection_request);
 	runsubtest(knx_connection_response);
@@ -252,4 +270,5 @@ deftest(knxnetip, {
 	runsubtest(knx_tunnel_request);
 	runsubtest(knx_tunnel_response);
 	runsubtest(knx_routing_indication);
+	runsubtest(knx_description_request);
 })

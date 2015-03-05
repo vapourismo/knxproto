@@ -206,6 +206,9 @@ size_t knx_payload_size(knx_service service, const void* payload) {
 		case KNX_ROUTING_INDICATION:
 			return knx_routing_indication_size(payload);
 
+		case KNX_DESCRIPTION_REQUEST:
+			return KNX_DESCRIPTION_REQUEST_SIZE;
+
 		default:
 			return 0;
 	}
