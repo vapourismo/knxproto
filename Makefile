@@ -96,6 +96,9 @@ $(TESTDIR)/%.o: $(TESTDIR)/%.c Makefile
 # Install
 install: $(LIBDIR)/$(SOBASE) $(LIBDIR)/$(SONAME) $(LIBDIR)/$(SOREAL) $(foreach h, $(HEADERFILES), $(INCLUDEDIR)/$h)
 
+uninstall:
+	$(RM) $(LIBDIR)/$(SOBASE) $(LIBDIR)/$(SONAME) $(LIBDIR)/$(SOREAL) $(foreach h, $(HEADERFILES), $(INCLUDEDIR)/$h)
+
 $(LIBDIR)/$(SONAME) $(LIBDIR)/$(SOBASE): $(LIBDIR)/$(SOREAL)
 	$(LINK) $(SOREAL) $@
 
