@@ -19,45 +19,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "hostinfo.h"
+#include "dcres.h"
 
-#include "../../util/alloc.h"
+#include "../util/alloc.h"
 
-#include <string.h>
+// Disconnect Response:
+//   Octet 0: Channel
+//   Octet 1: Status
 
-// Host Information
-//   Octet 0:   Structure length
-//   Octet 1:   Protocol (e.g. UDP)
-//   Octet 2-5: IPv4 address
-//   Octet 6-7: Port number
-
-void knx_host_info_generate(uint8_t* buffer, const knx_host_info* host) {
-	buffer[0] = KNX_HOST_INFO_SIZE;
-	buffer[1] = host->protocol;
-
-	memcpy(buffer + 2, &host->address, 4);
-	memcpy(buffer + 6, &host->port, 2);
+void knx_disconnect_response_generate(uint8_t* buffer, const knx_disconnect_response* res) {
+	*buffer++ = res->channel;
+	*buffer++ = res->status;
 }
 
-bool knx_host_info_parse(const uint8_t* message, knx_host_info* host) {
-	if (message[0] != KNX_HOST_INFO_SIZE)
+bool knx_disconnect_response_parse(const uint8_t* message, size_t length, knx_disconnect_response* res) {
+	if (length < KNX_DISCONNECT_RESPONSE_SIZE)
 		return false;
 
-	switch (message[1]) {
-		case KNX_PROTO_UDP:
-			host->protocol = KNX_PROTO_UDP;
-			break;
-
-		case KNX_PROTO_TCP:
-			host->protocol = KNX_PROTO_TCP;
-			break;
-
-		default:
-			return false;
-	}
-
-	memcpy(&host->address, message + 2, 4);
-	memcpy(&host->port, message + 6, 2);
+	res->channel = message[0];
+	res->status = message[1];
 
 	return true;
 }

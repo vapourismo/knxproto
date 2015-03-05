@@ -22,7 +22,7 @@
 #ifndef KNXCLIENT_PROTO_KNXNETIP_DESCRES_H
 #define KNXCLIENT_PROTO_KNXNETIP_DESCRES_H
 
-#include "../../util/address.h"
+#include "../util/address.h"
 
 #include <stdint.h>
 #include <stddef.h>

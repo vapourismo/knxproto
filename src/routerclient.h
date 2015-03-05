@@ -22,7 +22,7 @@
 #ifndef KNXCLIENT_NET_ROUTERCLIENT_H
 #define KNXCLIENT_NET_ROUTERCLIENT_H
 
-#include "proto/cemi/cemi.h"
+#include "proto/cemi.h"
 
 #include "util/address.h"
 

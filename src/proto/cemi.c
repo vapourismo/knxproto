@@ -20,7 +20,7 @@
  */
 
 #include "cemi.h"
-#include "../../util/log.h"
+#include "../util/log.h"
 
 #include <string.h>
 

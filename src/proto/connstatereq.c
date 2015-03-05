@@ -19,24 +19,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "dcreq.h"
+#include "connstatereq.h"
 
-#include "../../util/alloc.h"
+#include "../util/alloc.h"
 
-// Disconnect Request:
+// Connection State Request
 //   Octet 0:   Channel
 //   Octet 1:   Status
 //   Octet 2-9: Host info
 
-void knx_disconnect_request_generate(uint8_t* buffer, const knx_disconnect_request* req) {
+void knx_connection_state_request_generate(uint8_t* buffer, const knx_connection_state_request* req) {
 	*buffer++ = req->channel;
 	*buffer++ = req->status;
 
 	knx_host_info_generate(buffer, &req->host);
 }
 
-bool knx_disconnect_request_parse(const uint8_t* message, size_t length, knx_disconnect_request* req) {
-	if (length < KNX_DISCONNECT_REQUEST_SIZE)
+bool knx_connection_state_request_parse(const uint8_t* message, size_t length,
+                                        knx_connection_state_request* req) {
+	if (length < KNX_CONNECTION_STATE_REQUEST_SIZE)
 		return false;
 
 	req->channel = message[0];

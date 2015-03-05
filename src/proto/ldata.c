@@ -20,7 +20,7 @@
  */
 
 #include "ldata.h"
-#include "../../util/log.h"
+#include "../util/log.h"
 
 bool knx_ldata_generate(uint8_t* buffer, const knx_ldata* req) {
 	if (req->length == 0 || req->length > UINT8_MAX + 1)

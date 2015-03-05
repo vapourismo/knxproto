@@ -22,7 +22,7 @@
 #ifndef KNXCLIENT_PROTO_CEMI_LDATA_H
 #define KNXCLIENT_PROTO_CEMI_LDATA_H
 
-#include "../../util/address.h"
+#include "../util/address.h"
 
 #include <stdbool.h>
 

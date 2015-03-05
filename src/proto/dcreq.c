@@ -19,36 +19,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "tunnelreq.h"
+#include "dcreq.h"
 
-#include "../../util/alloc.h"
+#include "../util/alloc.h"
 
-#include <string.h>
+// Disconnect Request:
+//   Octet 0:   Channel
+//   Octet 1:   Status
+//   Octet 2-9: Host info
 
-// Tunnel Request:
-//   Octet 0:   Structure length
-//   Octet 1:   Channel
-//   Octet 2:   Sequence number
-//   Octet 3:   Reserved
-//   Octet 4-n: Payload
-
-void knx_tunnel_request_generate(uint8_t* buffer, const knx_tunnel_request* req) {
-	*buffer++ = 4;
+void knx_disconnect_request_generate(uint8_t* buffer, const knx_disconnect_request* req) {
 	*buffer++ = req->channel;
-	*buffer++ = req->seq_number;
-	*buffer++ = 0;
+	*buffer++ = req->status;
 
-	memcpy(buffer, req->data, req->size);
+	knx_host_info_generate(buffer, &req->host);
 }
 
-bool knx_tunnel_request_parse(const uint8_t* message, size_t length, knx_tunnel_request* req) {
-	if (length < 4 || message[0] != 4)
+bool knx_disconnect_request_parse(const uint8_t* message, size_t length, knx_disconnect_request* req) {
+	if (length < KNX_DISCONNECT_REQUEST_SIZE)
 		return false;
 
-	req->channel = message[1];
-	req->seq_number = message[2];
-	req->size = length - 4;
-	req->data = message + 4;
+	req->channel = message[0];
+	req->status = message[1];
 
-	return true;
+	return knx_host_info_parse(message + 2, &req->host);
 }

@@ -21,7 +21,7 @@
 
 #include "routerclient.h"
 
-#include "proto/knxnetip/knxnetip.h"
+#include "proto/knxnetip.h"
 
 #include "util/log.h"
 #include "util/alloc.h"

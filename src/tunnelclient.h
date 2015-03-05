@@ -22,8 +22,8 @@
 #ifndef KNXCLIENT_NET_TUNNELCLIENT_H
 #define KNXCLIENT_NET_TUNNELCLIENT_H
 
-#include "proto/knxnetip/knxnetip.h"
-#include "proto/cemi/cemi.h"
+#include "proto/knxnetip.h"
+#include "proto/cemi.h"
 
 #include "util/address.h"
 

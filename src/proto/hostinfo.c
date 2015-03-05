@@ -19,31 +19,45 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "tunnelres.h"
+#include "hostinfo.h"
 
-#include "../../util/alloc.h"
+#include "../util/alloc.h"
 
-// Tunnel Response:
-//   Octet 0: Structure length
-//   Octet 1: Channel
-//   Octet 2: Sequence number
-//   Octet 3: Status
+#include <string.h>
 
-void knx_tunnel_response_generate(uint8_t* buffer, const knx_tunnel_response* res) {
-	*buffer++ = 4;
-	*buffer++ = res->channel;
-	*buffer++ = res->seq_number;
-	*buffer++ = res->status;
+// Host Information
+//   Octet 0:   Structure length
+//   Octet 1:   Protocol (e.g. UDP)
+//   Octet 2-5: IPv4 address
+//   Octet 6-7: Port number
+
+void knx_host_info_generate(uint8_t* buffer, const knx_host_info* host) {
+	buffer[0] = KNX_HOST_INFO_SIZE;
+	buffer[1] = host->protocol;
+
+	memcpy(buffer + 2, &host->address, 4);
+	memcpy(buffer + 6, &host->port, 2);
 }
 
-bool knx_tunnel_response_parse(const uint8_t* message, size_t length, knx_tunnel_response* res) {
-	if (length < KNX_TUNNEL_RESPONSE_SIZE || message[0] != KNX_TUNNEL_RESPONSE_SIZE)
+bool knx_host_info_parse(const uint8_t* message, knx_host_info* host) {
+	if (message[0] != KNX_HOST_INFO_SIZE)
 		return false;
 
-	res->channel = message[1];
-	res->seq_number = message[2];
-	res->status = message[3];
+	switch (message[1]) {
+		case KNX_PROTO_UDP:
+			host->protocol = KNX_PROTO_UDP;
+			break;
+
+		case KNX_PROTO_TCP:
+			host->protocol = KNX_PROTO_TCP;
+			break;
+
+		default:
+			return false;
+	}
+
+	memcpy(&host->address, message + 2, 4);
+	memcpy(&host->port, message + 6, 2);
 
 	return true;
 }
-

@@ -21,7 +21,7 @@
 
 #include "testfw.h"
 
-#include "../src/proto/cemi/cemi.h"
+#include "../src/proto/cemi.h"
 
 #include <stdbool.h>
 #include <string.h>

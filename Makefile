@@ -19,12 +19,12 @@ SOURCEDIR       = src
 TESTDIR         = test
 
 # Artifacts
-HEADERFILES     = proto/knxnetip/connreq.h proto/knxnetip/connres.h proto/knxnetip/connstatereq.h proto/knxnetip/connstateres.h proto/knxnetip/dcreq.h proto/knxnetip/dcres.h proto/knxnetip/hostinfo.h proto/knxnetip/knxnetip.h proto/knxnetip/tunnelreq.h proto/knxnetip/tunnelres.h proto/knxnetip/routingind.h proto/knxnetip/descreq.h \
-                  proto/cemi/cemi.h proto/cemi/ldata.h proto/cemi/tpdu.h proto/cemi/data.h \
+HEADERFILES     = proto/connreq.h proto/connres.h proto/connstatereq.h proto/connstateres.h proto/dcreq.h proto/dcres.h proto/hostinfo.h proto/knxnetip.h proto/tunnelreq.h proto/tunnelres.h proto/routingind.h proto/descreq.h \
+                  proto/cemi.h proto/ldata.h proto/tpdu.h proto/data.h \
                   util/address.h util/sockutils.h \
                   tunnelclient.h routerclient.h
-SOURCEFILES     = proto/knxnetip/connstateres.c proto/knxnetip/connreq.c proto/knxnetip/tunnelreq.c proto/knxnetip/connstatereq.c proto/knxnetip/connres.c proto/knxnetip/dcreq.c proto/knxnetip/hostinfo.c proto/knxnetip/knxnetip.c proto/knxnetip/tunnelres.c proto/knxnetip/dcres.c proto/knxnetip/routingind.c proto/knxnetip/descreq.c \
-                  proto/cemi/cemi.c proto/cemi/ldata.c proto/cemi/tpdu.c proto/cemi/data.c \
+SOURCEFILES     = proto/connstateres.c proto/connreq.c proto/tunnelreq.c proto/connstatereq.c proto/connres.c proto/dcreq.c proto/hostinfo.c proto/knxnetip.c proto/tunnelres.c proto/dcres.c proto/routingind.c proto/descreq.c \
+                  proto/cemi.c proto/ldata.c proto/tpdu.c proto/data.c \
                   util/address.c util/sockutils.c util/log.c \
                   tunnelclient.c routerclient.c
 
