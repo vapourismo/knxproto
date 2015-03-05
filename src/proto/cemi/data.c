@@ -24,7 +24,7 @@
 #include <math.h>
 #include <string.h>
 
-inline static bool knx_dpt_parse_bool(const uint8_t* apdu, size_t length, knx_bool* value) {
+inline static bool knx_dpt_bool_parse(const uint8_t* apdu, size_t length, knx_bool* value) {
 	if (length != 1)
 		return false;
 
@@ -33,7 +33,7 @@ inline static bool knx_dpt_parse_bool(const uint8_t* apdu, size_t length, knx_bo
 	return true;
 }
 
-inline static bool knx_dpt_parse_cvalue(const uint8_t* apdu, size_t length, knx_cvalue* value) {
+inline static bool knx_dpt_cvalue_parse(const uint8_t* apdu, size_t length, knx_cvalue* value) {
 	if (length != 1)
 		return false;
 
@@ -43,7 +43,7 @@ inline static bool knx_dpt_parse_cvalue(const uint8_t* apdu, size_t length, knx_
 	return true;
 }
 
-inline static bool knx_dpt_parse_cstep(const uint8_t* apdu, size_t length, knx_cstep* value) {
+inline static bool knx_dpt_cstep_parse(const uint8_t* apdu, size_t length, knx_cstep* value) {
 	if (length != 1)
 		return false;
 
@@ -53,7 +53,7 @@ inline static bool knx_dpt_parse_cstep(const uint8_t* apdu, size_t length, knx_c
 	return true;
 }
 
-inline static bool knx_dpt_parse_float16(const uint8_t* apdu, size_t length, knx_float16* value) {
+inline static bool knx_dpt_float16_parse(const uint8_t* apdu, size_t length, knx_float16* value) {
 	if (length != 3)
 		return false;
 
@@ -72,7 +72,7 @@ inline static bool knx_dpt_parse_float16(const uint8_t* apdu, size_t length, knx
 	return true;
 }
 
-inline static bool knx_dpt_parse_timeofday(const uint8_t* apdu, size_t length, knx_timeofday* value) {
+inline static bool knx_dpt_timeofday_parse(const uint8_t* apdu, size_t length, knx_timeofday* value) {
 	if (length != 4)
 		return false;
 
@@ -84,7 +84,7 @@ inline static bool knx_dpt_parse_timeofday(const uint8_t* apdu, size_t length, k
 	return true;
 }
 
-inline static bool knx_dpt_parse_date(const uint8_t* apdu, size_t length, knx_date* value) {
+inline static bool knx_dpt_date_parse(const uint8_t* apdu, size_t length, knx_date* value) {
 	if (length != 4)
 		return false;
 
@@ -96,7 +96,7 @@ inline static bool knx_dpt_parse_date(const uint8_t* apdu, size_t length, knx_da
 	return true;
 }
 
-#define knx_dpt_parse_as_is(type) {           \
+#define knx_dpt_as_is_parse(type) {           \
 	if (length < sizeof(type) + 1)            \
 		return false;                         \
 	memcpy(result, apdu + 1, sizeof(type));   \
@@ -105,53 +105,53 @@ inline static bool knx_dpt_parse_date(const uint8_t* apdu, size_t length, knx_da
 bool knx_dpt_from_apdu(const uint8_t* apdu, size_t length, knx_dpt type, void* result) {
 	switch (type) {
 		case KNX_DPT_BOOL:
-			return knx_dpt_parse_bool(apdu, length, result);
+			return knx_dpt_bool_parse(apdu, length, result);
 
 		case KNX_DPT_CVALUE:
-			return knx_dpt_parse_cvalue(apdu, length, result);
+			return knx_dpt_cvalue_parse(apdu, length, result);
 
 		case KNX_DPT_CSTEP:
-			return knx_dpt_parse_cstep(apdu, length, result);
+			return knx_dpt_cstep_parse(apdu, length, result);
 
 		case KNX_DPT_CHAR:
-			knx_dpt_parse_as_is(knx_char);
+			knx_dpt_as_is_parse(knx_char);
 			return true;
 
 		case KNX_DPT_UNSIGNED8:
-			knx_dpt_parse_as_is(knx_unsigned8);
+			knx_dpt_as_is_parse(knx_unsigned8);
 			return true;
 
 		case KNX_DPT_SIGNED8:
-			knx_dpt_parse_as_is(knx_signed8);
+			knx_dpt_as_is_parse(knx_signed8);
 			return true;
 
 		case KNX_DPT_UNSIGNED16:
-			knx_dpt_parse_as_is(knx_unsigned16);
+			knx_dpt_as_is_parse(knx_unsigned16);
 			return true;
 
 		case KNX_DPT_SIGNED16:
-			knx_dpt_parse_as_is(knx_signed16);
+			knx_dpt_as_is_parse(knx_signed16);
 			return true;
 
 		case KNX_DPT_FLOAT16:
-			return knx_dpt_parse_float16(apdu, length, result);
+			return knx_dpt_float16_parse(apdu, length, result);
 
 		case KNX_DPT_TIMEOFDAY:
-			return knx_dpt_parse_timeofday(apdu, length, result);
+			return knx_dpt_timeofday_parse(apdu, length, result);
 
 		case KNX_DPT_DATE:
-			return knx_dpt_parse_date(apdu, length, result);
+			return knx_dpt_date_parse(apdu, length, result);
 
 		case KNX_DPT_UNSIGNED32:
-			knx_dpt_parse_as_is(knx_unsigned32);
+			knx_dpt_as_is_parse(knx_unsigned32);
 			return true;
 
 		case KNX_DPT_SIGNED32:
-			knx_dpt_parse_as_is(knx_signed32);
+			knx_dpt_as_is_parse(knx_signed32);
 			return true;
 
 		case KNX_DPT_FLOAT32:
-			knx_dpt_parse_as_is(knx_float32);
+			knx_dpt_as_is_parse(knx_float32);
 			return true;
 
 		default:
