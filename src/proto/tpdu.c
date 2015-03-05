@@ -49,3 +49,9 @@ bool knx_tpdu_interpret(const uint8_t* tpdu, size_t length, knx_dpt type, void* 
 
 	return knx_dpt_from_apdu(tpdu + 1, length - 1, type, value);
 }
+
+void knx_tpdu_generate(uint8_t* tpdu, knx_apci apci, knx_dpt type, const void* value) {
+	tpdu[0] = apci >> 2 & 3;
+	tpdu[1] = (apci & 3) << 6;
+	knx_dpt_to_apdu(tpdu + 1, type, value);
+}

@@ -149,7 +149,7 @@ bool knx_dpt_from_apdu(const uint8_t* apdu, size_t length, knx_dpt type, void* r
  * Generate the APDU representation of the given type. This function leaves
  * the first 2 bits (least significant bits of the APCI) untouched.
  */
-void knx_dpt_to_apdu(uint8_t* apdu, knx_dpt type, const void* result);
+void knx_dpt_to_apdu(uint8_t* apdu, knx_dpt type, const void* value);
 
 /**
  * APDU size for `bool`
