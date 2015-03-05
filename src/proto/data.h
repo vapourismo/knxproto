@@ -221,4 +221,56 @@ void knx_dpt_to_apdu(uint8_t* apdu, knx_dpt type, const void* value);
  */
 #define KNX_DPT_FLOAT32_SIZE    5
 
+/**
+ * APDU size for a Datapoint Type
+ */
+inline static size_t knx_dpt_size(knx_dpt type) {
+	switch (type) {
+		case KNX_DPT_BOOL:
+			return KNX_DPT_BOOL_SIZE;
+
+		case KNX_DPT_CVALUE:
+			return KNX_DPT_CVALUE_SIZE;
+
+		case KNX_DPT_CSTEP:
+			return KNX_DPT_CSTEP_SIZE;
+
+		case KNX_DPT_CHAR:
+			return KNX_DPT_CHAR_SIZE;
+
+		case KNX_DPT_UNSIGNED8:
+			return KNX_DPT_UNSIGNED8_SIZE;
+
+		case KNX_DPT_SIGNED8:
+			return KNX_DPT_SIGNED8_SIZE;
+
+		case KNX_DPT_UNSIGNED16:
+			return KNX_DPT_UNSIGNED16_SIZE;
+
+		case KNX_DPT_SIGNED16:
+			return KNX_DPT_SIGNED16_SIZE;
+
+		case KNX_DPT_FLOAT16:
+			return KNX_DPT_FLOAT16_SIZE;
+
+		case KNX_DPT_TIMEOFDAY:
+			return KNX_DPT_TIMEOFDAY_SIZE;
+
+		case KNX_DPT_DATE:
+			return KNX_DPT_DATE_SIZE;
+
+		case KNX_DPT_UNSIGNED32:
+			return KNX_DPT_UNSIGNED32_SIZE;
+
+		case KNX_DPT_SIGNED32:
+			return KNX_DPT_SIGNED32_SIZE;
+
+		case KNX_DPT_FLOAT32:
+			return KNX_DPT_FLOAT32_SIZE;
+
+		default:
+			return 0;
+	}
+}
+
 #endif
