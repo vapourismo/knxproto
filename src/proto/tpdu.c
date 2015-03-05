@@ -20,6 +20,7 @@
  */
 
 #include "tpdu.h"
+#include "../util/alloc.h"
 
 bool knx_tpdu_info_parse(const uint8_t* tpdu, size_t length, knx_tpdu_info* info) {
 	if (length == 0)
@@ -40,20 +41,6 @@ bool knx_tpdu_info_parse(const uint8_t* tpdu, size_t length, knx_tpdu_info* info
 	return true;
 }
 
-bool knx_tpdu_has_data(const uint8_t* tpdu, size_t length, knx_apci* apci) {
-	knx_tpdu_info info;
-	if (!knx_tpdu_info_parse(tpdu, length, &info))
-		return false;
-
-	if (info.tpci != KNX_TPCI_UNNUMBERED_DATA && info.tpci != KNX_TPCI_NUMBERED_DATA)
-		return false;
-
-	if (apci)
-		*apci = info.payload.apci;
-
-	return true;
-}
-
 bool knx_tpdu_interpret(const uint8_t* tpdu, size_t length, knx_dpt type, void* value) {
 	knx_tpdu_info info;
 
@@ -68,4 +55,14 @@ void knx_tpdu_generate(uint8_t* tpdu, knx_apci apci, knx_dpt type, const void* v
 	tpdu[0] = apci >> 2 & 3;
 	tpdu[1] = (apci & 3) << 6;
 	knx_dpt_to_apdu(tpdu + 1, type, value);
+}
+
+uint8_t* knx_tpdu_generate_(size_t* length, knx_apci apci, knx_dpt type, const void* value) {
+	uint8_t* tpdu = newa(uint8_t, *length = 1 + knx_dpt_size(type));
+
+	if (tpdu) {
+		knx_tpdu_generate(tpdu, apci, type, value);
+	}
+
+	return tpdu;
 }
