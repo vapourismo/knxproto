@@ -40,6 +40,20 @@ bool knx_tpdu_info_parse(const uint8_t* tpdu, size_t length, knx_tpdu_info* info
 	return true;
 }
 
+bool knx_tpdu_has_data(const uint8_t* tpdu, size_t length, knx_apci* apci) {
+	knx_tpdu_info info;
+	if (!knx_tpdu_info_parse(tpdu, length, &info))
+		return false;
+
+	if (info.tpci != KNX_TPCI_UNNUMBERED_DATA && info.tpci != KNX_TPCI_NUMBERED_DATA)
+		return false;
+
+	if (apci)
+		*apci = info.payload.apci;
+
+	return true;
+}
+
 bool knx_tpdu_interpret(const uint8_t* tpdu, size_t length, knx_dpt type, void* value) {
 	knx_tpdu_info info;
 

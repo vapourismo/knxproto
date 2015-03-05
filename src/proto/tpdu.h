@@ -89,6 +89,12 @@ typedef struct {
 bool knx_tpdu_info_parse(const uint8_t* tpdu, size_t length, knx_tpdu_info* info);
 
 /**
+ * Check whether the TPDU contains application data.
+ * If it has and `apci` is not NULL, then it will store the APCI in `apci`.
+ */
+bool knx_tpdu_has_data(const uint8_t* tpdu, size_t length, knx_apci* apci);
+
+/**
  * Interpret the TPDU payload to generate a C type.
  */
 bool knx_tpdu_interpret(const uint8_t* tpdu, size_t length, knx_dpt type, void* value);
