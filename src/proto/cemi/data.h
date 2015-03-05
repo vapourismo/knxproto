@@ -44,7 +44,7 @@ typedef enum {
 	KNX_DPT_UNSIGNED32,
 	KNX_DPT_SIGNED32,
 	KNX_DPT_FLOAT32,
-} knx_datapoint_type;
+} knx_dpt;
 
 /**
  * DPT 1.xxx
@@ -143,13 +143,13 @@ typedef float knx_float32;
 /**
  * Interpret APDU in the given way to produce an instance of a C type.
  */
-bool knx_datapoint_from_apdu(const uint8_t* apdu, size_t length, knx_datapoint_type type, void* result);
+bool knx_dpt_from_apdu(const uint8_t* apdu, size_t length, knx_dpt type, void* result);
 
 /**
  * Generate the APDU representation of the given type. This function leaves
  * the first 2 bits (least significant bits of the APCI) untouched.
  */
-void knx_datapoint_to_apdu(uint8_t* apdu, knx_datapoint_type type, const void* result);
+void knx_dpt_to_apdu(uint8_t* apdu, knx_dpt type, const void* result);
 
 /**
  * APDU size for `bool`

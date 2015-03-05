@@ -40,12 +40,12 @@ bool knx_tpdu_info_parse(const uint8_t* tpdu, size_t length, knx_tpdu_info* info
 	return true;
 }
 
-bool knx_tpdu_interpret(const uint8_t* tpdu, size_t length, knx_datapoint_type type, void* value) {
+bool knx_tpdu_interpret(const uint8_t* tpdu, size_t length, knx_dpt type, void* value) {
 	knx_tpdu_info info;
 
 	if (length < 2 || !knx_tpdu_info_parse(tpdu, length, &info) ||
 	    info.tpci == KNX_TPCI_NUMBERED_CONTROL || info.tpci == KNX_TPCI_UNNUMBERED_CONTROL)
 			return false;
 
-	return knx_datapoint_from_apdu(tpdu + 1, length - 1, type, value);
+	return knx_dpt_from_apdu(tpdu + 1, length - 1, type, value);
 }

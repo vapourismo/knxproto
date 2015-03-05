@@ -91,6 +91,6 @@ bool knx_tpdu_info_parse(const uint8_t* tpdu, size_t length, knx_tpdu_info* info
 /**
  * Interpret the TPDU payload to generate a C type.
  */
-bool knx_tpdu_interpret(const uint8_t* tpdu, size_t length, knx_datapoint_type type, void* value);
+bool knx_tpdu_interpret(const uint8_t* tpdu, size_t length, knx_dpt type, void* value);
 
 #endif

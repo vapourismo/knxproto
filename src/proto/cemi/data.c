@@ -102,7 +102,7 @@ inline static bool knx_dpt_parse_date(const uint8_t* apdu, size_t length, knx_da
 	memcpy(result, apdu + 1, sizeof(type));   \
 }
 
-bool knx_datapoint_from_apdu(const uint8_t* apdu, size_t length, knx_datapoint_type type, void* result) {
+bool knx_dpt_from_apdu(const uint8_t* apdu, size_t length, knx_dpt type, void* result) {
 	switch (type) {
 		case KNX_DPT_BOOL:
 			return knx_dpt_parse_bool(apdu, length, result);
@@ -224,7 +224,7 @@ inline static void knx_dpt_generate_float16(uint8_t* apdu, const knx_float16* va
 	memcpy(apdu + 1, source, sizeof(type)); \
 }
 
-void knx_datapoint_to_apdu(uint8_t* apdu, knx_datapoint_type type, const void* source) {
+void knx_dpt_to_apdu(uint8_t* apdu, knx_dpt type, const void* source) {
 	switch (type) {
 		case KNX_DPT_BOOL:
 			knx_dpt_generate_bool(apdu, source);
