@@ -97,4 +97,5 @@ bool knx_tpdu_interpret(const uint8_t* tpdu, size_t length, knx_dpt type, void* 
  * Generate the TPDU containing the given datapoint type.
  */
 void knx_tpdu_generate(uint8_t* tpdu, knx_apci apci, knx_dpt type, const void* value);
+
 #endif
