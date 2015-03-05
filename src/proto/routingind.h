@@ -47,7 +47,7 @@ bool knx_routing_indication_parse(const uint8_t* message, size_t length, knx_rou
 /**
  * Routing indication size
  */
-inline size_t knx_routing_indication_size(const knx_routing_indication* ind) {
+inline static size_t knx_routing_indication_size(const knx_routing_indication* ind) {
 	return ind->size;
 }
 

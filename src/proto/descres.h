@@ -57,7 +57,7 @@ bool knx_description_response_parse(const uint8_t* message, size_t length, knx_d
 /**
  * Description response size
  */
-inline size_t knx_description_response_size(const knx_description_response* res) {
+inline static size_t knx_description_response_size(const knx_description_response* res) {
 	return 0;
 }
 

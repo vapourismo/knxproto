@@ -94,7 +94,7 @@ bool knx_cemi_generate(uint8_t* buffer, knx_cemi_service service,
 /**
  * Same as `knx_cemi_generate` but without any additional information.
  */
-inline bool knx_cemi_generate_(uint8_t* buffer, knx_cemi_service service, const void* payload) {
+inline static bool knx_cemi_generate_(uint8_t* buffer, knx_cemi_service service, const void* payload) {
 	return knx_cemi_generate(buffer, service, NULL, 0, payload);
 }
 

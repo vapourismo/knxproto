@@ -49,7 +49,7 @@ bool knx_tunnel_request_parse(const uint8_t* message, size_t length, knx_tunnel_
 /**
  * Tunnel request size
  */
-inline size_t knx_tunnel_request_size(const knx_tunnel_request* req) {
+inline static size_t knx_tunnel_request_size(const knx_tunnel_request* req) {
 	return 4 + req->size;
 }
 

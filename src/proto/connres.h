@@ -51,7 +51,7 @@ bool knx_connection_response_parse(const uint8_t* message, size_t length, knx_co
 /**
  * Connection response size
  */
-inline size_t knx_connection_response_size(const knx_connection_response* res) {
+inline static size_t knx_connection_response_size(const knx_connection_response* res) {
 	return (res->status == 0 ? KNX_HOST_INFO_SIZE + 6 : 2);
 }
 

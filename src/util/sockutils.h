@@ -48,7 +48,7 @@ ssize_t dgramsock_recv(int sock, void* buffer, size_t buffer_size,
 /**
  * Send a datagram.
  */
-inline bool dgramsock_send(int sock, const void* buffer, size_t buffer_size,
+inline static bool dgramsock_send(int sock, const void* buffer, size_t buffer_size,
                            const ip4addr* target) {
 	ssize_t r = sendto(sock, buffer, buffer_size, 0,
 	                   (const struct sockaddr*) target, sizeof(ip4addr));
@@ -67,7 +67,7 @@ bool dgramsock_send_knx(int sock, knx_service srv, const void* payload, const ip
 /**
  * Receive a KNXnet/IP packet.
  */
-inline bool dgramsock_recv_knx(int sock, uint8_t* buffer, size_t size,
+inline static bool dgramsock_recv_knx(int sock, uint8_t* buffer, size_t size,
                                knx_packet* packet, const ip4addr* endpoints,
                                size_t num_endpoints) {
 	ssize_t rv = dgramsock_recv(sock, buffer, size, endpoints, num_endpoints);

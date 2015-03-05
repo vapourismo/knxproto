@@ -28,13 +28,13 @@
 
 #include "log.h"
 
-inline void* __debug_malloc(const char* file, size_t line, size_t n) {
+inline static void* __debug_malloc(const char* file, size_t line, size_t n) {
 	void* a = malloc(n);
 	if (!a) log_commit_raw(LOG_ERROR, file, line, "Failed to allocate %zu bytes", n);
 	return a;
 }
 
-inline void* __debug_realloc(const char* file, size_t line, void* p, size_t n) {
+inline static void* __debug_realloc(const char* file, size_t line, void* p, size_t n) {
 	void* a = realloc(p, n);
 	if (!a) log_commit_raw(LOG_ERROR, file, line, "Failed to reallocate %zu bytes", n);
 	return a;

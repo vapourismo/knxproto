@@ -44,11 +44,11 @@ typedef struct {
 
 #define __testcase_failed(r) { __vtestinfo->reason = (r); __vtestinfo->filename = __FILE__; __vtestinfo->fileline = __LINE__; }
 
-inline void __testcase_pass(const char* name) {
+inline static void __testcase_pass(const char* name) {
 	printf("\033[0;32mPASS\033[0m %s\n", name);
 }
 
-inline void __testcase_fail(const char* name, const __testinfo* info) {
+inline static void __testcase_fail(const char* name, const __testinfo* info) {
 	printf("\033[0;31mFAIL\033[0m %s [%s:%i]\n", name, info->filename, info->fileline);
 
 	switch (info->reason) {
