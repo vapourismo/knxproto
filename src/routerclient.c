@@ -126,7 +126,7 @@ bool knx_router_write_group(knx_router_client* client, knx_addr dest,
 	knx_dpt_to_apdu(buffer, type, value);
 
 	knx_ldata frame = {
-		.control1 = {KNX_LDATA_PRIO_LOW, true, true, false, false},
+		.control1 = {KNX_LDATA_PRIO_LOW, true, true, true, false},
 		.control2 = {KNX_LDATA_ADDR_GROUP, 7},
 		.source = 0,
 		.destination = dest,
