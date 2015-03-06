@@ -22,6 +22,8 @@
 #include "tpdu.h"
 #include "../util/alloc.h"
 
+#include <string.h>
+
 bool knx_tpdu_parse(const uint8_t* tpdu, size_t length, knx_tpdu* info) {
 	if (length == 0)
 		return false;
@@ -41,32 +43,50 @@ bool knx_tpdu_parse(const uint8_t* tpdu, size_t length, knx_tpdu* info) {
 	return true;
 }
 
-inline static bool knx_tpdu_is_data(const knx_tpdu* info) {
-	return
-		info->tpci == KNX_TPCI_UNNUMBERED_DATA ||
-		info->tpci == KNX_TPCI_NUMBERED_DATA;
-}
+void knx_tpdu_generate(uint8_t* tpdu, const knx_tpdu* info) {
+	tpdu[0] = (info->tpci & 3) << 6 | (info->seq_number & 15) << 2;
 
-bool knx_tpdu_interpret(const uint8_t* tpdu, size_t length, knx_dpt type, void* value) {
-	knx_tpdu info;
-	if (!knx_tpdu_parse(tpdu, length, &info) || !knx_tpdu_is_data(&info))
-		return false;
+	switch (info->tpci) {
+		case KNX_TPCI_UNNUMBERED_DATA:
+		case KNX_TPCI_NUMBERED_DATA:
+			memcpy(tpdu + 1, info->info.data.payload, info->info.data.length);
+			tpdu[1] &= ~63;
+			tpdu[1] |= (info->info.data.apci & 15) << 6;
+			break;
 
-	return knx_dpt_from_apdu(info.info.data.payload, info.info.data.length, type, value);
-}
-
-void knx_tpdu_generate(uint8_t* tpdu, knx_apci apci, knx_dpt type, const void* value) {
-	tpdu[0] = apci >> 2 & 3;
-	tpdu[1] = (apci & 3) << 6;
-	knx_dpt_to_apdu(tpdu + 1, type, value);
-}
-
-uint8_t* knx_tpdu_generate_(size_t* length, knx_apci apci, knx_dpt type, const void* value) {
-	uint8_t* tpdu = newa(uint8_t, *length = 1 + knx_dpt_size(type));
-
-	if (tpdu) {
-		knx_tpdu_generate(tpdu, apci, type, value);
+		case KNX_TPCI_UNNUMBERED_CONTROL:
+		case KNX_TPCI_NUMBERED_CONTROL:
+			tpdu[1] |= info->info.control & 3;
+			break;
 	}
-
-	return tpdu;
 }
+
+// inline static bool knx_tpdu_is_data(const knx_tpdu* info) {
+// 	return
+// 		info->tpci == KNX_TPCI_UNNUMBERED_DATA ||
+// 		info->tpci == KNX_TPCI_NUMBERED_DATA;
+// }
+
+// bool knx_tpdu_interpret(const uint8_t* tpdu, size_t length, knx_dpt type, void* value) {
+// 	knx_tpdu info;
+// 	if (!knx_tpdu_parse(tpdu, length, &info) || !knx_tpdu_is_data(&info))
+// 		return false;
+
+// 	return knx_dpt_from_apdu(info.info.data.payload, info.info.data.length, type, value);
+// }
+
+// void knx_tpdu_generate(uint8_t* tpdu, knx_apci apci, knx_dpt type, const void* value) {
+// 	tpdu[0] = apci >> 2 & 3;
+// 	tpdu[1] = (apci & 3) << 6;
+// 	knx_dpt_to_apdu(tpdu + 1, type, value);
+// }
+
+// uint8_t* knx_tpdu_generate_(size_t* length, knx_apci apci, knx_dpt type, const void* value) {
+// 	uint8_t* tpdu = newa(uint8_t, *length = 1 + knx_dpt_size(type));
+
+// 	if (tpdu) {
+// 		knx_tpdu_generate(tpdu, apci, type, value);
+// 	}
+
+// 	return tpdu;
+// }
