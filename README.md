@@ -5,7 +5,7 @@ Obtain the source and navigate to it's location. Run
 $ make
 ```
 
-to build the library followed by 
+to build the library followed by
 
 ```
 # make install
@@ -17,3 +17,6 @@ to install it.
 So far there is no useful documentation other than the docstrings contained within the header files.
 Maybe start with [src/routerclient.h](https://github.com/vapourismo/knxclient/blob/master/src/routerclient.h) or
 [src/tunnelclient.h](https://github.com/vapourismo/knxclient/blob/master/src/tunnelclient.h).
+
+## Development
+This library is still in pre-release state, you should expect the interface to change without notice.
