@@ -68,10 +68,9 @@ knx_ldata* knx_router_recv(const knx_router_client* client, bool block);
  */
 bool knx_router_send(const knx_router_client* client, const knx_ldata* ldata);
 
-// /**
-//  * Sent a L_Data indication frame using the given destination group address and TPDU.
-//  * Returns true if the frame has been properly transmitted.
-//  */
-// bool knx_router_send_tpdu(const knx_router_client* client, knx_addr dest, const uint8_t* tpdu, size_t length);
-
+/**
+ * Send a `Group Value Write` command.
+ */
+bool knx_router_write_group(knx_router_client* client, knx_addr dest,
+                            knx_dpt type, const void* value);
 #endif

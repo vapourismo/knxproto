@@ -31,7 +31,13 @@
 #include <netinet/in.h>
 
 bool knx_router_connect(knx_router_client* client, const ip4addr* router) {
-	ip4addr local = *router;
+	if (router) {
+		client->router = *router;
+	} else {
+		ip4addr_from_string(&client->router, "224.0.23.12", 3671);
+	}
+
+	ip4addr local = client->router;
 	local.sin_addr.s_addr = INADDR_ANY;
 
 	if ((client->sock = dgramsock_create(&local, true)) < 0) {
@@ -39,11 +45,9 @@ bool knx_router_connect(knx_router_client* client, const ip4addr* router) {
 		return false;
 	}
 
-	client->router = *router;
-
 	// Join multicast group
 	client->mreq.imr_interface.s_addr = INADDR_ANY;
-	client->mreq.imr_multiaddr.s_addr = router->sin_addr.s_addr;
+	client->mreq.imr_multiaddr.s_addr = client->router.sin_addr.s_addr;
 
 	if (setsockopt(client->sock, IPPROTO_IP,
 	               IP_ADD_MEMBERSHIP, &client->mreq, sizeof(client->mreq)) < 0) {
@@ -158,15 +162,27 @@ bool knx_router_send(const knx_router_client* client, const knx_ldata* ldata) {
 	return knx_router_send_raw(client, buffer, sizeof(buffer));
 }
 
-// bool knx_router_send_tpdu(const knx_router_client* client, knx_addr dest, const uint8_t* tpdu, size_t length) {
-// 	knx_ldata ldata = {
-// 		.control1 = {KNX_LDATA_PRIO_LOW, true, true, true, false},
-// 		.control2 = {KNX_LDATA_ADDR_GROUP, 7},
-// 		.source = 0,
-// 		.destination = dest,
-// 		.tpdu = tpdu,
-// 		.length = length
-// 	};
-//
-// 	return knx_router_send_ldata(client, &ldata);
-// }
+bool knx_router_write_group(knx_router_client* client, knx_addr dest,
+                            knx_dpt type, const void* value) {
+	uint8_t buffer[knx_dpt_size(type)];
+	knx_dpt_to_apdu(buffer, type, value);
+
+	knx_ldata frame = {
+		.control1 = {KNX_LDATA_PRIO_LOW, true, true, false, false},
+		.control2 = {KNX_LDATA_ADDR_GROUP, 7},
+		.source = 0,
+		.destination = dest,
+		.tpdu = {
+			.tpci = KNX_TPCI_UNNUMBERED_DATA,
+			.info = {
+				.data = {
+					.apci = KNX_APCI_GROUPVALUEWRITE,
+					.payload = buffer,
+					.length = sizeof(buffer)
+				}
+			}
+		}
+	};
+
+	return knx_router_send(client, &frame);
+}
