@@ -57,33 +57,21 @@ bool knx_router_connect(knx_router_client* client, const ip4addr* router);
 bool knx_router_disconnect(const knx_router_client* client);
 
 /**
- * Retrieve an incoming message. The resulting buffer has to be deallocated using `free`.
- * In case of success, it will return the buffer size, otherwise a negative integer;
- */
-ssize_t knx_router_recv(const knx_router_client* client, uint8_t** buffer, bool block);
-
-/**
  * Retrieve incoming an L_Data indication. You have to `free` the returned pointer manually.
  * Returning a NULL pointer indicates a failure.
  */
-knx_ldata* knx_router_recv_ldata(const knx_router_client* client, bool block);
-
-/**
- * Send a raw message within a routing indication.
- * Returns true if the message has been properly transmitted.
- */
-bool knx_router_send(const knx_router_client* client, const uint8_t* payload, uint16_t length);
+knx_ldata* knx_router_recv(const knx_router_client* client, bool block);
 
 /**
  * Send a L_Data indication frame.
  * Returns true if the frame has been properly transmitted.
  */
-bool knx_router_send_ldata(const knx_router_client* client, const knx_ldata* ldata);
+bool knx_router_send(const knx_router_client* client, const knx_ldata* ldata);
 
-/**
- * Sent a L_Data indication frame using the given destination group address and TPDU.
- * Returns true if the frame has been properly transmitted.
- */
-bool knx_router_send_tpdu(const knx_router_client* client, knx_addr dest, const uint8_t* tpdu, size_t length);
+// /**
+//  * Sent a L_Data indication frame using the given destination group address and TPDU.
+//  * Returns true if the frame has been properly transmitted.
+//  */
+// bool knx_router_send_tpdu(const knx_router_client* client, knx_addr dest, const uint8_t* tpdu, size_t length);
 
 #endif

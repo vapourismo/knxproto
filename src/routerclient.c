@@ -64,7 +64,7 @@ bool knx_router_disconnect(const knx_router_client* client) {
 	return r;
 }
 
-ssize_t knx_router_recv(const knx_router_client* client, uint8_t** result_buffer, bool block) {
+static ssize_t knx_router_recv_raw(const knx_router_client* client, uint8_t** result_buffer, bool block) {
 	if (!block && !dgramsock_ready(client->sock, 0, 0))
 		return -1;
 
@@ -79,7 +79,7 @@ ssize_t knx_router_recv(const knx_router_client* client, uint8_t** result_buffer
 		// We have to rely on the compiler to perform tail-call optimization here,
 		// otherwise this might turn out horribly.
 		// Alternatively we could use a goto ...
-		return knx_router_recv(client, result_buffer, block);
+		return knx_router_recv_raw(client, result_buffer, block);
 	}
 
 	uint8_t buffer[buffer_size];
@@ -100,40 +100,50 @@ ssize_t knx_router_recv(const knx_router_client* client, uint8_t** result_buffer
 		return -1;
 }
 
-knx_ldata* knx_router_recv_ldata(const knx_router_client* client, bool block) {
+knx_ldata* knx_router_recv(const knx_router_client* client, bool block) {
 	uint8_t* data;
-	ssize_t size = knx_router_recv(client, &data, block);
+	ssize_t size = knx_router_recv_raw(client, &data, block);
 
 	knx_cemi_frame cemi;
 
 	if (size < 0)
 		return NULL;
 
-	if (!knx_cemi_parse(data, size, &cemi) || cemi.service != KNX_CEMI_LDATA_IND) {
-		log_error("Failed to parse as L_Data indication frame");
+	// TODO: Seperate between parse failure and wrong frame type
+	if (!knx_cemi_parse(data, size, &cemi) || (cemi.service != KNX_CEMI_LDATA_IND &&
+	                                           cemi.service != KNX_CEMI_LDATA_CON)) {
+		log_error("Failed to parse as L_Data frame");
 		free(data);
 		return NULL;
 	}
 
-	// Preserve TPDU
-	uint8_t tpdu[cemi.payload.ldata.length];
-	memcpy(tpdu, cemi.payload.ldata.tpdu, cemi.payload.ldata.length);
+	switch (cemi.payload.ldata.tpdu.tpci) {
+		case KNX_TPCI_UNNUMBERED_DATA:
+		case KNX_TPCI_NUMBERED_DATA: {
+			uint8_t safe[cemi.payload.ldata.tpdu.info.data.length];
+			memcpy(safe, cemi.payload.ldata.tpdu.info.data.payload, sizeof(safe));
 
-	// Reallocate buffer space to fit the L_Data + TPDU
-	knx_ldata* ret = realloc(data, sizeof(knx_ldata) + sizeof(tpdu));
+			knx_ldata* ret = realloc(data, sizeof(knx_ldata) + sizeof(safe));
 
-	if (!ret)
-		return NULL;
+			if (ret) {
+				*ret = cemi.payload.ldata;
+				ret->tpdu.info.data.payload = (const uint8_t*) (ret + 1);
+				memcpy(ret + 1, safe, sizeof(safe));
+			}
 
-	// Copy L_Data and setup TPDU
-	*ret = cemi.payload.ldata;
-	ret->tpdu = (const uint8_t*) (ret + 1);
-	memcpy(ret + 1, tpdu, sizeof(tpdu));
+			return ret;
+		}
 
-	return ret;
+		case KNX_TPCI_UNNUMBERED_CONTROL:
+		case KNX_TPCI_NUMBERED_CONTROL: {
+			knx_ldata* ret = realloc(data, sizeof(knx_ldata));
+			*ret = cemi.payload.ldata;
+			return ret;
+		}
+	}
 }
 
-bool knx_router_send(const knx_router_client* client, const uint8_t* payload, uint16_t length) {
+static bool knx_router_send_raw(const knx_router_client* client, const uint8_t* payload, uint16_t length) {
 	knx_routing_indication route_ind = {
 		length,
 		payload
@@ -142,21 +152,21 @@ bool knx_router_send(const knx_router_client* client, const uint8_t* payload, ui
 	return dgramsock_send_knx(client->sock, KNX_ROUTING_INDICATION, &route_ind, &client->router);
 }
 
-bool knx_router_send_ldata(const knx_router_client* client, const knx_ldata* ldata) {
+bool knx_router_send(const knx_router_client* client, const knx_ldata* ldata) {
 	uint8_t buffer[knx_cemi_size(KNX_CEMI_LDATA_IND, ldata)];
 	knx_cemi_generate_(buffer, KNX_CEMI_LDATA_IND, ldata);
-	return knx_router_send(client, buffer, sizeof(buffer));
+	return knx_router_send_raw(client, buffer, sizeof(buffer));
 }
 
-bool knx_router_send_tpdu(const knx_router_client* client, knx_addr dest, const uint8_t* tpdu, size_t length) {
-	knx_ldata ldata = {
-		.control1 = {KNX_LDATA_PRIO_LOW, true, true, true, false},
-		.control2 = {KNX_LDATA_ADDR_GROUP, 7},
-		.source = 0,
-		.destination = dest,
-		.tpdu = tpdu,
-		.length = length
-	};
-
-	return knx_router_send_ldata(client, &ldata);
-}
+// bool knx_router_send_tpdu(const knx_router_client* client, knx_addr dest, const uint8_t* tpdu, size_t length) {
+// 	knx_ldata ldata = {
+// 		.control1 = {KNX_LDATA_PRIO_LOW, true, true, true, false},
+// 		.control2 = {KNX_LDATA_ADDR_GROUP, 7},
+// 		.source = 0,
+// 		.destination = dest,
+// 		.tpdu = tpdu,
+// 		.length = length
+// 	};
+//
+// 	return knx_router_send_ldata(client, &ldata);
+// }
