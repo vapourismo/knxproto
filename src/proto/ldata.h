@@ -126,4 +126,9 @@ bool knx_ldata_parse(const uint8_t* buffer, size_t length, knx_ldata* output);
  */
 size_t knx_ldata_size(const knx_ldata* req);
 
+/**
+ * Duplicate the L_Data structure including the data it might refer to.
+ */
+knx_ldata* knx_ldata_duplicate(const knx_ldata* data);
+
 #endif

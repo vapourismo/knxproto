@@ -21,6 +21,7 @@
 
 #include "ldata.h"
 #include "../util/log.h"
+#include "../util/alloc.h"
 
 bool knx_ldata_generate(uint8_t* buffer, const knx_ldata* req) {
 	size_t tpdu_length = knx_tpdu_size(&req->tpdu);
@@ -77,4 +78,35 @@ bool knx_ldata_parse(const uint8_t* buffer, size_t length, knx_ldata* out) {
 
 size_t knx_ldata_size(const knx_ldata* req) {
 	return 7 + knx_tpdu_size(&req->tpdu);
+}
+
+knx_ldata* knx_ldata_duplicate(const knx_ldata* data) {
+	switch (data->tpdu.tpci) {
+		case KNX_TPCI_UNNUMBERED_DATA:
+		case KNX_TPCI_NUMBERED_DATA: {
+			knx_ldata* copy = malloc(sizeof(knx_ldata) + data->tpdu.info.data.length);
+
+			if (copy) {
+				memcpy(copy, data, sizeof(knx_ldata));
+				memcpy(copy + 1, data->tpdu.info.data.payload, data->tpdu.info.data.length);
+				copy->tpdu.info.data.payload = (const uint8_t*) (copy + 1);
+			}
+
+			return copy;
+		}
+
+		case KNX_TPCI_UNNUMBERED_CONTROL:
+		case KNX_TPCI_NUMBERED_CONTROL: {
+			knx_ldata* copy = new(knx_ldata);
+
+			if (copy) {
+				memcpy(copy, data, sizeof(knx_ldata));
+			}
+
+			return copy;
+		}
+
+		default:
+			return NULL;
+	}
 }
