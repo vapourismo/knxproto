@@ -37,6 +37,7 @@ bool knx_tpdu_parse(const uint8_t* tpdu, size_t length, knx_tpdu* info) {
 		return false;
 	} else {
 		info->info.data.apci = (tpdu[0] << 2 & 12) | (tpdu[1] >> 6 & 3);
+		info->info.data.length = length - 1;
 		info->info.data.payload = tpdu + 1;
 	}
 

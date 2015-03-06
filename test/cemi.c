@@ -38,9 +38,13 @@ deftest(cemi_ldata, {
 	req.source = 0xFFCA;
 	req.destination = 0x7FFF;
 
-	uint8_t tpdu[] = {0x0, 0x80, 0xBA, 0xDC, 0x0D, 0xE};
-	req.tpdu = tpdu;
-	req.length = sizeof(tpdu);
+	uint8_t data[] = {0, 0xBA, 0xDC, 0x0D, 0xE};
+
+	req.tpdu.tpci = KNX_TPCI_UNNUMBERED_DATA;
+	req.tpdu.seq_number = 0;
+	req.tpdu.info.data.apci = KNX_APCI_GROUPVALUEWRITE;
+	req.tpdu.info.data.payload = data;
+	req.tpdu.info.data.length = sizeof(data);
 
 	// Generate
 	uint8_t buffer[KNX_CEMI_HEADER_SIZE + knx_ldata_size(&req)];
@@ -63,8 +67,15 @@ deftest(cemi_ldata, {
 	assert(frame.payload.ldata.control2.hops == req.control2.hops);
 	assert(frame.payload.ldata.source == req.source);
 	assert(frame.payload.ldata.destination == req.destination);
-	assert(frame.payload.ldata.length == req.length);
-	assert(memcmp(frame.payload.ldata.tpdu, req.tpdu, req.length) == 0);
+
+	assert(frame.payload.ldata.tpdu.tpci == req.tpdu.tpci);
+	assert(frame.payload.ldata.tpdu.seq_number == req.tpdu.seq_number);
+	assert(frame.payload.ldata.tpdu.info.data.apci == req.tpdu.info.data.apci);
+	assert(frame.payload.ldata.tpdu.info.data.length == req.tpdu.info.data.length);
+
+	// We ignore the first byte, because it contains part of the APCI
+	assert(memcmp(frame.payload.ldata.tpdu.info.data.payload + 1,
+	              req.tpdu.info.data.payload + 1, req.tpdu.info.data.length - 1) == 0);
 })
 
 deftest(cemi, {
