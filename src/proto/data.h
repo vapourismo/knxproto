@@ -146,8 +146,7 @@ typedef float knx_float32;
 bool knx_dpt_from_apdu(const uint8_t* apdu, size_t length, knx_dpt type, void* result);
 
 /**
- * Generate the APDU representation of the given type. This function leaves
- * the first 2 bits (least significant bits of the APCI) untouched.
+ * Generate the APDU representation of the given type.
  */
 void knx_dpt_to_apdu(uint8_t* apdu, knx_dpt type, const void* value);
 
