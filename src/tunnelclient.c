@@ -443,18 +443,30 @@ bool knx_tunnel_send(knx_tunnel_client* client, const knx_ldata* ldata) {
 	return knx_tunnel_send_raw(client, buffer, sizeof(buffer));
 }
 
-// bool knx_tunnel_send_tpdu(knx_tunnel_client* client, knx_addr dest, const uint8_t* tpdu, size_t length) {
-// 	knx_ldata ldata = {
-// 		.control1 = {KNX_LDATA_PRIO_LOW, true, true, true, false},
-// 		.control2 = {KNX_LDATA_ADDR_GROUP, 7},
-// 		.source = 0,
-// 		.destination = dest,
-// 		.tpdu = tpdu,
-// 		.length = length
-// 	};
-//
-// 	return knx_tunnel_send(client, &ldata);
-// }
+bool knx_tunnel_write_group(knx_tunnel_client* client, knx_addr dest,
+                            knx_dpt type, const void* value) {
+	uint8_t buffer[knx_dpt_size(type)];
+	knx_dpt_to_apdu(buffer, type, value);
+
+	knx_ldata frame = {
+		.control1 = {KNX_LDATA_PRIO_LOW, true, true, false, false},
+		.control2 = {KNX_LDATA_ADDR_GROUP, 7},
+		.source = 0,
+		.destination = dest,
+		.tpdu = {
+			.tpci = KNX_TPCI_UNNUMBERED_DATA,
+			.info = {
+				.data = {
+					.apci = KNX_APCI_GROUPVALUEWRITE,
+					.payload = buffer,
+					.length = sizeof(buffer)
+				}
+			}
+		}
+	};
+
+	return knx_tunnel_send(client, &frame);
+}
 
 static ssize_t knx_tunnel_recv_raw(knx_tunnel_client* client, uint8_t** buffer) {
 	if (client->state == KNX_TUNNEL_DISCONNECTED)

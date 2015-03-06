@@ -96,11 +96,11 @@ void knx_tunnel_disconnect(knx_tunnel_client* client);
  */
 bool knx_tunnel_send(knx_tunnel_client* client, const knx_ldata* ldata);
 
-// /**
-//  * Sent a L_Data request frame using the given destination group address and TPDU.
-//  * The return value is inherited from `knx_tunnel_send`.
-//  */
-// bool knx_tunnel_send_tpdu(knx_tunnel_client* client, knx_addr dest, const uint8_t* tpdu, size_t length);
+/**
+ *
+ */
+bool knx_tunnel_write_group(knx_tunnel_client* client, knx_addr dest,
+                            knx_dpt type, const void* value);
 
 /**
  * Retrieve incoming a L_Data indication. You have to `free` the returned pointer manually.
