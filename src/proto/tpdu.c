@@ -22,7 +22,7 @@
 #include "tpdu.h"
 #include "../util/alloc.h"
 
-bool knx_tpdu_info_parse(const uint8_t* tpdu, size_t length, knx_tpdu_info* info) {
+bool knx_tpdu_parse(const uint8_t* tpdu, size_t length, knx_tpdu* info) {
 	if (length == 0)
 		return false;
 
@@ -30,25 +30,29 @@ bool knx_tpdu_info_parse(const uint8_t* tpdu, size_t length, knx_tpdu_info* info
 	info->seq_number = tpdu[0] >> 2 & 15;
 
 	if (info->tpci == KNX_TPCI_UNNUMBERED_CONTROL || info->tpci == KNX_TPCI_NUMBERED_CONTROL) {
-		info->payload.control = tpdu[0] & 3;
+		info->info.control = tpdu[0] & 3;
 	} else if (length < 2) {
 		return false;
 	} else {
-		info->payload.apci = (tpdu[0] << 2 & 12)
-		                   | (tpdu[1] >> 6 & 3);
+		info->info.data.apci = (tpdu[0] << 2 & 12) | (tpdu[1] >> 6 & 3);
+		info->info.data.payload = tpdu + 1;
 	}
 
 	return true;
 }
 
+inline static bool knx_tpdu_is_data(const knx_tpdu* info) {
+	return
+		info->tpci == KNX_TPCI_UNNUMBERED_DATA ||
+		info->tpci == KNX_TPCI_NUMBERED_DATA;
+}
+
 bool knx_tpdu_interpret(const uint8_t* tpdu, size_t length, knx_dpt type, void* value) {
-	knx_tpdu_info info;
+	knx_tpdu info;
+	if (!knx_tpdu_parse(tpdu, length, &info) || !knx_tpdu_is_data(&info))
+		return false;
 
-	if (length < 2 || !knx_tpdu_info_parse(tpdu, length, &info) ||
-	    info.tpci == KNX_TPCI_NUMBERED_CONTROL || info.tpci == KNX_TPCI_UNNUMBERED_CONTROL)
-			return false;
-
-	return knx_dpt_from_apdu(tpdu + 1, length - 1, type, value);
+	return knx_dpt_from_apdu(info.info.data.payload, info.info.data.length, type, value);
 }
 
 void knx_tpdu_generate(uint8_t* tpdu, knx_apci apci, knx_dpt type, const void* value) {

@@ -79,14 +79,18 @@ typedef struct {
 
 	union {
 		knx_tpci_control control;
-		knx_apci apci;
-	} payload;
-} knx_tpdu_info;
+		struct {
+			knx_apci apci;
+			const uint8_t* payload;
+			size_t length;
+		} data;
+	} info;
+} knx_tpdu;
 
 /**
  * Unpack the TPDU fields.
  */
-bool knx_tpdu_info_parse(const uint8_t* tpdu, size_t length, knx_tpdu_info* info);
+bool knx_tpdu_parse(const uint8_t* tpdu, size_t length, knx_tpdu* info);
 
 /**
  * Interpret the TPDU payload to generate a C type.
