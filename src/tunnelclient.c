@@ -34,6 +34,39 @@
 #define KNX_TUNNEL_READ_TIMEOUT 100000        // 100ms
 #define KNX_TUNNEL_QUEUE_SIZE_CAP 1073741824  // 1 MiB queue cap
 
+static void knx_tunnel_queue(knx_tunnel_client* client, const knx_tunnel_request* req) {
+	// Push the message onto the incoming queue
+	pthread_mutex_lock(&client->mutex);
+
+	knx_tunnel_message* msg = NULL;
+	if (client->msg_queue_size + req->size <= KNX_TUNNEL_QUEUE_SIZE_CAP &&
+	    (msg = new(knx_tunnel_message)) &&
+	    (msg->message = newa(uint8_t, req->size))) {
+
+		// Prepare element
+		msg->next = NULL;
+		msg->size = req->size;
+		memcpy(msg->message, req->data, msg->size);
+
+		// Insert element
+		if (client->msg_head)
+			client->msg_tail = client->msg_tail->next = msg;
+		else
+			client->msg_tail = client->msg_head = msg;
+
+		client->msg_queue_size += msg->size + sizeof(knx_tunnel_message);
+
+		pthread_cond_signal(&client->cond);
+	} else if (msg) {
+		log_error("Allocating new queue element failed");
+		free(msg);
+	} else if (client->msg_queue_size + req->size > KNX_TUNNEL_QUEUE_SIZE_CAP) {
+		log_info("Reached maximum queue size");
+	}
+
+	pthread_mutex_unlock(&client->mutex);
+}
+
 // This routine might not be the optimal for inlining,
 // but it is used in one place only, so what the hell.
 inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
@@ -138,36 +171,38 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 				// Send a tunnel response
 				dgramsock_send_knx(client->sock, KNX_TUNNEL_RESPONSE, &res, &client->gateway);
 
-				// Push the message onto the incoming queue
-				pthread_mutex_lock(&client->mutex);
+				// // Push the message onto the incoming queue
+				// pthread_mutex_lock(&client->mutex);
 
-				knx_tunnel_message* msg = NULL;
-				if (client->msg_queue_size + pkg_in.payload.tunnel_req.size <= KNX_TUNNEL_QUEUE_SIZE_CAP &&
-				    (msg = new(knx_tunnel_message)) &&
-				    (msg->message = newa(uint8_t, pkg_in.payload.tunnel_req.size))) {
+				// knx_tunnel_message* msg = NULL;
+				// if (client->msg_queue_size + pkg_in.payload.tunnel_req.size <= KNX_TUNNEL_QUEUE_SIZE_CAP &&
+				//     (msg = new(knx_tunnel_message)) &&
+				//     (msg->message = newa(uint8_t, pkg_in.payload.tunnel_req.size))) {
 
-					// Prepare element
-					msg->next = NULL;
-					msg->size = pkg_in.payload.tunnel_req.size;
-					memcpy(msg->message, pkg_in.payload.tunnel_req.data, msg->size);
+				// 	// Prepare element
+				// 	msg->next = NULL;
+				// 	msg->size = pkg_in.payload.tunnel_req.size;
+				// 	memcpy(msg->message, pkg_in.payload.tunnel_req.data, msg->size);
 
-					// Insert element
-					if (client->msg_head)
-						client->msg_tail = client->msg_tail->next = msg;
-					else
-						client->msg_tail = client->msg_head = msg;
+				// 	// Insert element
+				// 	if (client->msg_head)
+				// 		client->msg_tail = client->msg_tail->next = msg;
+				// 	else
+				// 		client->msg_tail = client->msg_head = msg;
 
-					client->msg_queue_size += msg->size + sizeof(knx_tunnel_message);
+				// 	client->msg_queue_size += msg->size + sizeof(knx_tunnel_message);
 
-					pthread_cond_signal(&client->cond);
-				} else if (msg) {
-					log_error("Allocating new queue element failed");
-					free(msg);
-				} else if (client->msg_queue_size + pkg_in.payload.tunnel_req.size > KNX_TUNNEL_QUEUE_SIZE_CAP) {
-					log_info("Reached maximum queue size");
-				}
+				// 	pthread_cond_signal(&client->cond);
+				// } else if (msg) {
+				// 	log_error("Allocating new queue element failed");
+				// 	free(msg);
+				// } else if (client->msg_queue_size + pkg_in.payload.tunnel_req.size > KNX_TUNNEL_QUEUE_SIZE_CAP) {
+				// 	log_info("Reached maximum queue size");
+				// }
 
-				pthread_mutex_unlock(&client->mutex);
+				// pthread_mutex_unlock(&client->mutex);
+
+				knx_tunnel_queue(client, &pkg_in.payload.tunnel_req);
 
 				break;
 
