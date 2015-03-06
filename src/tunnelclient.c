@@ -415,7 +415,7 @@ void knx_tunnel_disconnect(knx_tunnel_client* client) {
 	knx_tunnel_clear_queue(client);
 }
 
-bool knx_tunnel_send(knx_tunnel_client* client, const void* payload, uint16_t length) {
+static bool knx_tunnel_send_raw(knx_tunnel_client* client, const void* payload, uint16_t length) {
 	if (client->state == KNX_TUNNEL_DISCONNECTED)
 		return false;
 
@@ -437,26 +437,26 @@ bool knx_tunnel_send(knx_tunnel_client* client, const void* payload, uint16_t le
 	return r;
 }
 
-bool knx_tunnel_send_ldata(knx_tunnel_client* client, const knx_ldata* ldata) {
+bool knx_tunnel_send(knx_tunnel_client* client, const knx_ldata* ldata) {
 	uint8_t buffer[knx_cemi_size(KNX_CEMI_LDATA_REQ, ldata)];
 	knx_cemi_generate_(buffer, KNX_CEMI_LDATA_REQ, ldata);
-	return knx_tunnel_send(client, buffer, sizeof(buffer));
+	return knx_tunnel_send_raw(client, buffer, sizeof(buffer));
 }
 
-bool knx_tunnel_send_tpdu(knx_tunnel_client* client, knx_addr dest, const uint8_t* tpdu, size_t length) {
-	knx_ldata ldata = {
-		.control1 = {KNX_LDATA_PRIO_LOW, true, true, true, false},
-		.control2 = {KNX_LDATA_ADDR_GROUP, 7},
-		.source = 0,
-		.destination = dest,
-		.tpdu = tpdu,
-		.length = length
-	};
+// bool knx_tunnel_send_tpdu(knx_tunnel_client* client, knx_addr dest, const uint8_t* tpdu, size_t length) {
+// 	knx_ldata ldata = {
+// 		.control1 = {KNX_LDATA_PRIO_LOW, true, true, true, false},
+// 		.control2 = {KNX_LDATA_ADDR_GROUP, 7},
+// 		.source = 0,
+// 		.destination = dest,
+// 		.tpdu = tpdu,
+// 		.length = length
+// 	};
+//
+// 	return knx_tunnel_send(client, &ldata);
+// }
 
-	return knx_tunnel_send_ldata(client, &ldata);
-}
-
-ssize_t knx_tunnel_recv(knx_tunnel_client* client, uint8_t** buffer) {
+static ssize_t knx_tunnel_recv_raw(knx_tunnel_client* client, uint8_t** buffer) {
 	if (client->state == KNX_TUNNEL_DISCONNECTED)
 		return -1;
 
@@ -484,36 +484,45 @@ ssize_t knx_tunnel_recv(knx_tunnel_client* client, uint8_t** buffer) {
 	return size;
 }
 
-knx_ldata* knx_tunnel_recv_ldata(knx_tunnel_client* client) {
+knx_ldata* knx_tunnel_recv(knx_tunnel_client* client) {
 	uint8_t* data;
-	ssize_t size = knx_tunnel_recv(client, &data);
+	ssize_t size = knx_tunnel_recv_raw(client, &data);
 
 	knx_cemi_frame cemi;
 
 	if (size < 0)
 		return NULL;
 
+	// TODO: Seperate between parse failure and wrong frame type
 	if (!knx_cemi_parse(data, size, &cemi) || (cemi.service != KNX_CEMI_LDATA_IND &&
 	                                           cemi.service != KNX_CEMI_LDATA_CON)) {
-		log_error("Failed to parse as L_Data indication frame");
+		log_error("Failed to parse as L_Data frame");
 		free(data);
 		return NULL;
 	}
 
-	// Preserve TPDU
-	uint8_t tpdu[cemi.payload.ldata.length];
-	memcpy(tpdu, cemi.payload.ldata.tpdu, cemi.payload.ldata.length);
+	switch (cemi.payload.ldata.tpdu.tpci) {
+		case KNX_TPCI_UNNUMBERED_DATA:
+		case KNX_TPCI_NUMBERED_DATA: {
+			uint8_t safe[cemi.payload.ldata.tpdu.info.data.length];
+			memcpy(safe, cemi.payload.ldata.tpdu.info.data.payload, sizeof(safe));
 
-	// Reallocate buffer space to fit the L_Data + TPDU
-	knx_ldata* ret = realloc(data, sizeof(knx_ldata) + sizeof(tpdu));
+			knx_ldata* ret = realloc(data, sizeof(knx_ldata) + sizeof(safe));
 
-	if (!ret)
-		return NULL;
+			if (ret) {
+				*ret = cemi.payload.ldata;
+				ret->tpdu.info.data.payload = (const uint8_t*) (ret + 1);
+				memcpy(ret + 1, safe, sizeof(safe));
+			}
 
-	// Copy L_Data and setup TPDU
-	*ret = cemi.payload.ldata;
-	ret->tpdu = (const uint8_t*) (ret + 1);
-	memcpy(ret + 1, tpdu, sizeof(tpdu));
+			return ret;
+		}
 
-	return ret;
+		case KNX_TPCI_UNNUMBERED_CONTROL:
+		case KNX_TPCI_NUMBERED_CONTROL: {
+			knx_ldata* ret = realloc(data, sizeof(knx_ldata));
+			*ret = cemi.payload.ldata;
+			return ret;
+		}
+	}
 }
