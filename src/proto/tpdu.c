@@ -51,7 +51,7 @@ void knx_tpdu_generate(uint8_t* tpdu, const knx_tpdu* info) {
 		case KNX_TPCI_UNNUMBERED_DATA:
 		case KNX_TPCI_NUMBERED_DATA:
 			memcpy(tpdu + 1, info->info.data.payload, info->info.data.length);
-			tpdu[1] &= ~63;
+			tpdu[1] &= 63;
 			tpdu[1] |= (info->info.data.apci & 15) << 6;
 			break;
 
