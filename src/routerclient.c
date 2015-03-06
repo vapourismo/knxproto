@@ -113,12 +113,13 @@ knx_ldata* knx_router_recv(const knx_router_client* client, bool block) {
 	if (size < 0)
 		return NULL;
 
-	// TODO: Seperate between parse failure and wrong frame type
 	if (!knx_cemi_parse(data, size, &cemi) || (cemi.service != KNX_CEMI_LDATA_IND &&
 	                                           cemi.service != KNX_CEMI_LDATA_CON)) {
-		log_error("Failed to parse as L_Data frame");
+		log_error("Invalid frame contents");
 		free(data);
-		return NULL;
+
+		// Rely on tail-call optimization, otherwise this will get messy
+		return knx_router_recv(client, block);
 	}
 
 	switch (cemi.payload.ldata.tpdu.tpci) {
