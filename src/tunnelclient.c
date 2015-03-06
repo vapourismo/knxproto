@@ -32,39 +32,49 @@
 #define KNX_TUNNEL_HEARTBEAT_TIMEOUT 30       // 5 Seconds
 #define KNX_TUNNEL_ACK_TIMEOUT 5              // 5 Seconds
 #define KNX_TUNNEL_READ_TIMEOUT 100000        // 100ms
-#define KNX_TUNNEL_QUEUE_SIZE_CAP 1073741824  // 1 MiB queue cap
 
 static void knx_tunnel_queue(knx_tunnel_client* client, const knx_tunnel_request* req) {
-	// Push the message onto the incoming queue
-	pthread_mutex_lock(&client->mutex);
+	knx_cemi_frame cemi;
 
-	knx_tunnel_message* msg = NULL;
-	if (client->msg_queue_size + req->size <= KNX_TUNNEL_QUEUE_SIZE_CAP &&
-	    (msg = new(knx_tunnel_message)) &&
-	    (msg->message = newa(uint8_t, req->size))) {
-
-		// Prepare element
-		msg->next = NULL;
-		msg->size = req->size;
-		memcpy(msg->message, req->data, msg->size);
-
-		// Insert element
-		if (client->msg_head)
-			client->msg_tail = client->msg_tail->next = msg;
-		else
-			client->msg_tail = client->msg_head = msg;
-
-		client->msg_queue_size += msg->size + sizeof(knx_tunnel_message);
-
-		pthread_cond_signal(&client->cond);
-	} else if (msg) {
-		log_error("Allocating new queue element failed");
-		free(msg);
-	} else if (client->msg_queue_size + req->size > KNX_TUNNEL_QUEUE_SIZE_CAP) {
-		log_info("Reached maximum queue size");
+	if (!knx_cemi_parse(req->data, req->size, &cemi)) {
+		log_error("Failed to parse CEMI frame");
+		return;
 	}
 
-	pthread_mutex_unlock(&client->mutex);
+	switch (cemi.service) {
+		case KNX_CEMI_LDATA_IND:
+		case KNX_CEMI_LDATA_CON: {
+			knx_tunnel_message* msg = new(knx_tunnel_message);
+
+			if (!msg)
+				break;
+
+			// Prepare element
+			msg->ldata = knx_ldata_duplicate(&cemi.payload.ldata);
+			msg->next = NULL;
+
+			if (!msg->ldata) {
+				free(msg);
+				break;
+			}
+
+			pthread_mutex_lock(&client->mutex);
+
+			// Insert element
+			if (client->msg_head)
+				client->msg_tail = client->msg_tail->next = msg;
+			else
+				client->msg_tail = client->msg_head = msg;
+
+			pthread_cond_signal(&client->cond);
+			pthread_mutex_unlock(&client->mutex);
+			break;
+		}
+
+		default:
+			log_error("Unsupported CEMI service %02X", cemi.service);
+			break;
+	}
 }
 
 // This routine might not be the optimal for inlining,
@@ -170,37 +180,6 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 
 				// Send a tunnel response
 				dgramsock_send_knx(client->sock, KNX_TUNNEL_RESPONSE, &res, &client->gateway);
-
-				// // Push the message onto the incoming queue
-				// pthread_mutex_lock(&client->mutex);
-
-				// knx_tunnel_message* msg = NULL;
-				// if (client->msg_queue_size + pkg_in.payload.tunnel_req.size <= KNX_TUNNEL_QUEUE_SIZE_CAP &&
-				//     (msg = new(knx_tunnel_message)) &&
-				//     (msg->message = newa(uint8_t, pkg_in.payload.tunnel_req.size))) {
-
-				// 	// Prepare element
-				// 	msg->next = NULL;
-				// 	msg->size = pkg_in.payload.tunnel_req.size;
-				// 	memcpy(msg->message, pkg_in.payload.tunnel_req.data, msg->size);
-
-				// 	// Insert element
-				// 	if (client->msg_head)
-				// 		client->msg_tail = client->msg_tail->next = msg;
-				// 	else
-				// 		client->msg_tail = client->msg_head = msg;
-
-				// 	client->msg_queue_size += msg->size + sizeof(knx_tunnel_message);
-
-				// 	pthread_cond_signal(&client->cond);
-				// } else if (msg) {
-				// 	log_error("Allocating new queue element failed");
-				// 	free(msg);
-				// } else if (client->msg_queue_size + pkg_in.payload.tunnel_req.size > KNX_TUNNEL_QUEUE_SIZE_CAP) {
-				// 	log_info("Reached maximum queue size");
-				// }
-
-				// pthread_mutex_unlock(&client->mutex);
 
 				knx_tunnel_queue(client, &pkg_in.payload.tunnel_req);
 
@@ -383,7 +362,6 @@ bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port
 	client->seq_number = 0;
 	client->ack_seq_number = UINT8_MAX;
 	client->heartbeat = false;
-	client->msg_queue_size = 0;
 	client->msg_head = client->msg_tail = NULL;
 
 	knx_connection_request req = {
@@ -425,7 +403,7 @@ static void knx_tunnel_clear_queue(knx_tunnel_client* client) {
 		knx_tunnel_message* free_me = msg;
 		msg = msg->next;
 
-		free(free_me->message);
+		free(free_me->ldata);
 		free(free_me);
 	}
 
@@ -502,73 +480,27 @@ bool knx_tunnel_write_group(knx_tunnel_client* client, knx_addr dest,
 	return knx_tunnel_send(client, &frame);
 }
 
-static ssize_t knx_tunnel_recv_raw(knx_tunnel_client* client, uint8_t** buffer) {
+knx_ldata* knx_tunnel_recv(knx_tunnel_client* client) {
 	if (client->state == KNX_TUNNEL_DISCONNECTED)
-		return -1;
+		return NULL;
 
 	pthread_mutex_lock(&client->mutex);
 
 	while (client->state == KNX_TUNNEL_CONNECTED && client->msg_head == NULL)
 		pthread_cond_wait(&client->cond, &client->mutex);
 
-	ssize_t size = -1;
+	knx_ldata* data = NULL;
 
 	if (client->msg_head != NULL) {
 		knx_tunnel_message* head = client->msg_head;
 
-		size = head->size;
-		if (buffer) *buffer = head->message;
-
+		data = head->ldata;
 		client->msg_head = head->next;
-		client->msg_queue_size -= size + sizeof(knx_tunnel_message);
 
 		free(head);
 		pthread_cond_signal(&client->cond);
 	}
 
 	pthread_mutex_unlock(&client->mutex);
-	return size;
-}
-
-knx_ldata* knx_tunnel_recv(knx_tunnel_client* client) {
-	uint8_t* data;
-	ssize_t size = knx_tunnel_recv_raw(client, &data);
-
-	knx_cemi_frame cemi;
-
-	if (size < 0)
-		return NULL;
-
-	// TODO: Seperate between parse failure and wrong frame type
-	if (!knx_cemi_parse(data, size, &cemi) || (cemi.service != KNX_CEMI_LDATA_IND &&
-	                                           cemi.service != KNX_CEMI_LDATA_CON)) {
-		log_error("Failed to parse as L_Data frame");
-		free(data);
-		return NULL;
-	}
-
-	switch (cemi.payload.ldata.tpdu.tpci) {
-		case KNX_TPCI_UNNUMBERED_DATA:
-		case KNX_TPCI_NUMBERED_DATA: {
-			uint8_t safe[cemi.payload.ldata.tpdu.info.data.length];
-			memcpy(safe, cemi.payload.ldata.tpdu.info.data.payload, sizeof(safe));
-
-			knx_ldata* ret = realloc(data, sizeof(knx_ldata) + sizeof(safe));
-
-			if (ret) {
-				*ret = cemi.payload.ldata;
-				ret->tpdu.info.data.payload = (const uint8_t*) (ret + 1);
-				memcpy(ret + 1, safe, sizeof(safe));
-			}
-
-			return ret;
-		}
-
-		case KNX_TPCI_UNNUMBERED_CONTROL:
-		case KNX_TPCI_NUMBERED_CONTROL: {
-			knx_ldata* ret = realloc(data, sizeof(knx_ldata));
-			*ret = cemi.payload.ldata;
-			return ret;
-		}
-	}
+	return data;
 }

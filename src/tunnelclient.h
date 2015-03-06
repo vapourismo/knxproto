@@ -44,9 +44,7 @@ typedef enum {
  * Message from the gateway
  */
 typedef struct knx_tunnel_message {
-	uint8_t* message;
-	size_t size;
-
+	knx_ldata* ldata;
 	struct knx_tunnel_message* next;
 } knx_tunnel_message;
 
@@ -58,7 +56,6 @@ typedef struct {
 	ip4addr gateway;
 	pthread_t worker;
 
-	size_t msg_queue_size;
 	knx_tunnel_message* msg_head;
 	knx_tunnel_message* msg_tail;
 
