@@ -90,6 +90,9 @@ knx_ldata* knx_ldata_duplicate(const knx_ldata* data) {
 				memcpy(copy, data, sizeof(knx_ldata));
 				memcpy(copy + 1, data->tpdu.info.data.payload, data->tpdu.info.data.length);
 				copy->tpdu.info.data.payload = (const uint8_t*) (copy + 1);
+
+				if (copy->tpdu.info.data.length > 0)
+					* (uint8_t*) (copy + 1) &= 63;
 			}
 
 			return copy;
