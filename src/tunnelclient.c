@@ -187,7 +187,7 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 
 			// Everything else should be ignored
 			default:
-				log_warn("Unsupported service 0x%04X", pkg_in.service);
+				log_warn("Unsupported KNXnet/IP service 0x%04X", pkg_in.service);
 				break;
 		}
 	}
@@ -231,7 +231,6 @@ void* knx_tunnel_heartbeat_thread(void* data) {
 
 			sleep(1);
 		}
-
 
 		// If the heartbeat has not been confirmed, terminate the connection
 		if (!client->heartbeat) {
