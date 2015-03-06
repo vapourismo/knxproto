@@ -22,6 +22,8 @@
 #ifndef KNXCLIENT_PROTO_CEMI_LDATA_H
 #define KNXCLIENT_PROTO_CEMI_LDATA_H
 
+#include "tpdu.h"
+
 #include "../util/address.h"
 
 #include <stdbool.h>
@@ -106,12 +108,7 @@ typedef struct {
 	/**
 	 * Transport data unit
 	 */
-	const uint8_t* tpdu;
-
-	/**
-	 * Transport data length
-	 */
-	size_t length;
+	knx_tpdu tpdu;
 } knx_ldata;
 
 /**

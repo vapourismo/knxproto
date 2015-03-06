@@ -23,10 +23,12 @@
 #include "../util/log.h"
 
 bool knx_ldata_generate(uint8_t* buffer, const knx_ldata* req) {
-	if (req->length == 0 || req->length > UINT8_MAX + 1)
+	size_t tpdu_length = knx_tpdu_size(&req->tpdu);
+
+	if (tpdu_length == 0 || tpdu_length > UINT8_MAX + 1)
 		return false;
 
-	*buffer++ = (req->length <= 16) << 7                    // Standard Frame
+	*buffer++ = (tpdu_length <= 16) << 7                    // Standard Frame
 	          | (~req->control1.repeat & 1) << 5            // Repeat
 	          | (~req->control1.system_broadcast & 1) << 4  // System Broadcast
 	          | (req->control1.priority & 3) << 2           // Priority
@@ -42,8 +44,8 @@ bool knx_ldata_generate(uint8_t* buffer, const knx_ldata* req) {
 	*buffer++ = req->destination >> 8 & 0xFF;
 	*buffer++ = req->destination & 0xFF;
 
-	*buffer++ = req->length - 1;
-	memcpy(buffer, req->tpdu, req->length);
+	*buffer++ = tpdu_length - 1;
+	knx_tpdu_generate(buffer, &req->tpdu);
 
 	return true;
 }
@@ -67,12 +69,12 @@ bool knx_ldata_parse(const uint8_t* buffer, size_t length, knx_ldata* out) {
 	out->source = buffer[2] << 8 | buffer[3];
 	out->destination = buffer[4] << 8 | buffer[5];
 
-	out->length = buffer[6] + 1;
-	out->tpdu = buffer + 7;
+	if (buffer[6] + 8 > length)
+		return false;
 
-	return out->length + 7 <= length;
+	return knx_tpdu_parse(buffer + 7, buffer[6] + 1, &out->tpdu);
 }
 
 size_t knx_ldata_size(const knx_ldata* req) {
-	return 7 + req->length;
+	return 7 + knx_tpdu_size(&req->tpdu);
 }
