@@ -97,7 +97,7 @@ void knx_tunnel_disconnect(knx_tunnel_client* client);
 bool knx_tunnel_send(knx_tunnel_client* client, const knx_ldata* ldata);
 
 /**
- *
+ * Send `Group Value Write` command.
  */
 bool knx_tunnel_write_group(knx_tunnel_client* client, knx_addr dest,
                             knx_dpt type, const void* value);
