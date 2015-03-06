@@ -68,9 +68,9 @@ bool knx_router_disconnect(const knx_router_client* client) {
 	return r;
 }
 
-static ssize_t knx_router_recv_raw(const knx_router_client* client, uint8_t** result_buffer, bool block) {
+knx_ldata* knx_router_recv(const knx_router_client* client, bool block) {
 	if (!block && !dgramsock_ready(client->sock, 0, 0))
-		return -1;
+		return NULL;
 
 	ssize_t buffer_size = dgramsock_peek_knx(client->sock);
 
@@ -83,84 +83,41 @@ static ssize_t knx_router_recv_raw(const knx_router_client* client, uint8_t** re
 		// We have to rely on the compiler to perform tail-call optimization here,
 		// otherwise this might turn out horribly.
 		// Alternatively we could use a goto ...
-		return knx_router_recv_raw(client, result_buffer, block);
+		return knx_router_recv(client, block);
 	}
 
 	uint8_t buffer[buffer_size];
 	knx_packet packet;
-
-	if (dgramsock_recv_knx(client->sock, buffer, buffer_size, &packet, NULL, 0) &&
-	    packet.service == KNX_ROUTING_INDICATION) {
-		uint8_t* payload = newa(uint8_t, packet.payload.routing_ind.size);
-
-		if (!payload)
-			return -1;
-
-		memcpy(payload, packet.payload.routing_ind.data, packet.payload.routing_ind.size);
-
-		*result_buffer = payload;
-		return packet.payload.routing_ind.size;
-	} else
-		return -1;
-}
-
-knx_ldata* knx_router_recv(const knx_router_client* client, bool block) {
-	uint8_t* data;
-	ssize_t size = knx_router_recv_raw(client, &data, block);
-
 	knx_cemi_frame cemi;
 
-	if (size < 0)
+	if (dgramsock_recv_knx(client->sock, buffer, buffer_size, &packet, NULL, 0) &&
+	    packet.service == KNX_ROUTING_INDICATION &&
+	    knx_cemi_parse(packet.payload.routing_ind.data, packet.payload.routing_ind.size, &cemi)) {
+
+		switch (cemi.service) {
+			case KNX_CEMI_LDATA_IND:
+			case KNX_CEMI_LDATA_CON:
+				return knx_ldata_duplicate(&cemi.payload.ldata);
+
+			default:
+				log_error("Unsupported CEMI service %02X", cemi.service);
+				return knx_router_recv(client, block);
+		}
+	} else {
+		log_error("Error during recv after peek, this should be technically impossible");
 		return NULL;
-
-	if (!knx_cemi_parse(data, size, &cemi) || (cemi.service != KNX_CEMI_LDATA_IND &&
-	                                           cemi.service != KNX_CEMI_LDATA_CON)) {
-		log_error("Invalid frame contents");
-		free(data);
-
-		// Rely on tail-call optimization, otherwise this will get messy
-		return knx_router_recv(client, block);
 	}
-
-	switch (cemi.payload.ldata.tpdu.tpci) {
-		case KNX_TPCI_UNNUMBERED_DATA:
-		case KNX_TPCI_NUMBERED_DATA: {
-			uint8_t safe[cemi.payload.ldata.tpdu.info.data.length];
-			memcpy(safe, cemi.payload.ldata.tpdu.info.data.payload, sizeof(safe));
-
-			knx_ldata* ret = realloc(data, sizeof(knx_ldata) + sizeof(safe));
-
-			if (ret) {
-				*ret = cemi.payload.ldata;
-				ret->tpdu.info.data.payload = (const uint8_t*) (ret + 1);
-				memcpy(ret + 1, safe, sizeof(safe));
-			}
-
-			return ret;
-		}
-
-		case KNX_TPCI_UNNUMBERED_CONTROL:
-		case KNX_TPCI_NUMBERED_CONTROL: {
-			knx_ldata* ret = realloc(data, sizeof(knx_ldata));
-			*ret = cemi.payload.ldata;
-			return ret;
-		}
-	}
-}
-
-static bool knx_router_send_raw(const knx_router_client* client, const uint8_t* payload, uint16_t length) {
-	knx_routing_indication route_ind = {
-		length,
-		payload
-	};
-
-	return dgramsock_send_knx(client->sock, KNX_ROUTING_INDICATION, &route_ind, &client->router);
 }
 
 bool knx_router_send(const knx_router_client* client, const knx_ldata* ldata) {
 	uint8_t buffer[knx_cemi_size(KNX_CEMI_LDATA_IND, ldata)];
 	knx_cemi_generate_(buffer, KNX_CEMI_LDATA_IND, ldata);
-	return knx_router_send_raw(client, buffer, sizeof(buffer));
+
+	knx_routing_indication route_ind = {
+		sizeof(buffer), buffer
+	};
+
+	return dgramsock_send_knx(client->sock, KNX_ROUTING_INDICATION, &route_ind, &client->router);
 }
 
 bool knx_router_write_group(knx_router_client* client, knx_addr dest,
