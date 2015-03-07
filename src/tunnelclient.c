@@ -393,12 +393,7 @@ bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port
 	}
 
 	// Wait for connecting state to transition to connected state
-	bool r = knx_tunnel_timed_wait_state(client, KNX_TUNNEL_CONNECTION_TIMEOUT, 0);
-
-	// Connection could not be established
-	if (!r) knx_tunnel_disconnect(client);
-
-	return r;
+	return knx_tunnel_timed_wait_state(client, KNX_TUNNEL_CONNECTION_TIMEOUT, 0);
 }
 
 static void knx_tunnel_clear_queue(knx_tunnel_client* client) {
@@ -415,7 +410,7 @@ static void knx_tunnel_clear_queue(knx_tunnel_client* client) {
 	client->msg_head = client->msg_tail = NULL;
 }
 
-void knx_tunnel_disconnect(knx_tunnel_client* client) {
+void knx_tunnel_destroy(knx_tunnel_client* client) {
 	if (client->state != KNX_TUNNEL_DISCONNECTED)
 		knx_tunnel_init_disconnect(client);
 

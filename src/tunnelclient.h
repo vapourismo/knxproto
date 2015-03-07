@@ -82,10 +82,9 @@ typedef struct {
 bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port_t port);
 
 /**
- * Disconnect from a gateway. This procedure also acts as a deconstructor.
- * It will not clear the queue for incoming packets.
+ * Disconnect from the gateway if a connection is active, and free resources.
  */
-void knx_tunnel_disconnect(knx_tunnel_client* client);
+void knx_tunnel_destroy(knx_tunnel_client* client);
 
 /**
  * Send a L_Data request frame through the gateway.
