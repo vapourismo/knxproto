@@ -226,6 +226,9 @@ void knx_tunnel_init_disconnect(knx_tunnel_client* client) {
 }
 
 void* knx_tunnel_heartbeat_thread(void* data) {
+	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+
 	knx_tunnel_client* client = data;
 
 	sleep(25);
@@ -263,8 +266,10 @@ void* knx_tunnel_worker_thread(void* data) {
 
 	// Start heartbeat thread
 	pthread_t heartbeat_thread;
-	if (pthread_create(&heartbeat_thread, NULL, &knx_tunnel_heartbeat_thread, client) != 0)
+	if (pthread_create(&heartbeat_thread, NULL, &knx_tunnel_heartbeat_thread, client) != 0) {
+		log_error("Failed to start heartbeat observer thread");
 		pthread_exit(NULL);
+	}
 
 	// Start processing input
 	while (client->state != KNX_TUNNEL_DISCONNECTED)
