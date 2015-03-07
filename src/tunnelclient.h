@@ -103,6 +103,6 @@ bool knx_tunnel_write_group(knx_tunnel_client* client, knx_addr dest,
  * Retrieve incoming a L_Data indication. You have to `free` the returned pointer manually.
  * Returning a NULL pointer indicates a failure.
  */
-knx_ldata* knx_tunnel_recv(knx_tunnel_client* client);
+knx_ldata* knx_tunnel_recv(knx_tunnel_client* client, bool block);
 
 #endif
