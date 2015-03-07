@@ -52,6 +52,7 @@ bool knx_router_connect(knx_router_client* client, const ip4addr* router) {
 	if (setsockopt(client->sock, IPPROTO_IP,
 	               IP_ADD_MEMBERSHIP, &client->mreq, sizeof(client->mreq)) < 0) {
 		log_error("Could not join multicast group");
+		close(client->sock);
 		return false;
 	}
 
