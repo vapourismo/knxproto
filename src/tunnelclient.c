@@ -482,7 +482,7 @@ bool knx_tunnel_write_group(knx_tunnel_client* client, knx_addr dest,
 
 knx_ldata* knx_tunnel_recv(knx_tunnel_client* client, bool block) {
 	if (client->state == KNX_TUNNEL_DISCONNECTED ||
-	    (block && client->msg_head == NULL))
+	    (!block && client->msg_head == NULL))
 		return NULL;
 
 	pthread_mutex_lock(&client->mutex);
