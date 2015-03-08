@@ -115,6 +115,9 @@ inline static size_t knx_tpdu_size(const knx_tpdu* info) {
 		case KNX_TPCI_UNNUMBERED_CONTROL:
 		case KNX_TPCI_NUMBERED_CONTROL:
 			return 1;
+
+		default:
+			return 0;
 	}
 }
 
