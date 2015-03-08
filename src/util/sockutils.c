@@ -119,7 +119,9 @@ ssize_t knx_dgramsock_peek_knx(int sock) {
 	socklen_t sender_len = sizeof(sender);
 
 	uint8_t buffer[KNX_HEADER_SIZE];
-	if (recvfrom(sock, buffer, KNX_HEADER_SIZE, MSG_PEEK, &sender, &sender_len) == KNX_HEADER_SIZE) {
+	if (recvfrom(sock, buffer, KNX_HEADER_SIZE, MSG_PEEK,
+	    (struct sockaddr*) &sender, &sender_len) == KNX_HEADER_SIZE) {
+
 		uint16_t length;
 		if (knx_unpack_header(buffer, NULL, &length))
 			return length >= KNX_HEADER_SIZE ? length : 0;
