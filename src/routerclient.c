@@ -40,7 +40,7 @@ bool knx_router_connect(knx_router_client* client, const ip4addr* router) {
 	ip4addr local = client->router;
 	local.sin_addr.s_addr = INADDR_ANY;
 
-	if ((client->sock = dgramsock_create(&local, true)) < 0) {
+	if ((client->sock = knx_dgramsock_create(&local, true)) < 0) {
 		log_error("Failed to create socket");
 		return false;
 	}
@@ -70,10 +70,10 @@ bool knx_router_disconnect(const knx_router_client* client) {
 }
 
 knx_ldata* knx_router_recv(const knx_router_client* client, bool block) {
-	if (!block && !dgramsock_ready(client->sock, 0, 0))
+	if (!block && !knx_dgramsock_ready(client->sock, 0, 0))
 		return NULL;
 
-	ssize_t buffer_size = dgramsock_peek_knx(client->sock);
+	ssize_t buffer_size = knx_dgramsock_peek_knx(client->sock);
 
 	if (buffer_size < 0) {
 		// Discard this packet
@@ -91,7 +91,7 @@ knx_ldata* knx_router_recv(const knx_router_client* client, bool block) {
 	knx_packet packet;
 	knx_cemi_frame cemi;
 
-	if (dgramsock_recv_knx(client->sock, buffer, buffer_size, &packet, NULL, 0) &&
+	if (knx_dgramsock_recv(client->sock, buffer, buffer_size, &packet, NULL, 0) &&
 	    packet.service == KNX_ROUTING_INDICATION &&
 	    knx_cemi_parse(packet.payload.routing_ind.data, packet.payload.routing_ind.size, &cemi)) {
 
@@ -118,7 +118,7 @@ bool knx_router_send(const knx_router_client* client, const knx_ldata* ldata) {
 		sizeof(buffer), buffer
 	};
 
-	return dgramsock_send_knx(client->sock, KNX_ROUTING_INDICATION, &route_ind, &client->router);
+	return knx_dgramsock_send(client->sock, KNX_ROUTING_INDICATION, &route_ind, &client->router);
 }
 
 bool knx_router_write_group(knx_router_client* client, knx_addr dest,

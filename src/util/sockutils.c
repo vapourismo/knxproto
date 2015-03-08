@@ -26,7 +26,7 @@
 #include <sys/socket.h>
 #include <sys/select.h>
 
-int dgramsock_create(const ip4addr* local, bool reuse) {
+int knx_dgramsock_create(const ip4addr* local, bool reuse) {
 	int sock;
 
 	if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
@@ -44,7 +44,7 @@ int dgramsock_create(const ip4addr* local, bool reuse) {
 	return sock;
 }
 
-bool dgramsock_ready(int sock, time_t timeout_sec, long timeout_usec) {
+bool knx_dgramsock_ready(int sock, time_t timeout_sec, long timeout_usec) {
 	fd_set fds;
 	FD_ZERO(&fds);
 	FD_SET(sock, &fds);
@@ -56,8 +56,19 @@ bool dgramsock_ready(int sock, time_t timeout_sec, long timeout_usec) {
 	return select(sock + 1, &fds, NULL, NULL, &tm) > 0;
 }
 
-inline bool dgramsock_valid_sender(const ip4addr* endpoints, size_t num_endpoints,
-                                   const ip4addr* sender, socklen_t sender_len) {
+static bool knx_dgramsock_send_raw(int sock, const void* buffer, size_t buffer_size,
+                                   const ip4addr* target) {
+	ssize_t r = sendto(sock, buffer, buffer_size, 0,
+	                   (const struct sockaddr*) target, sizeof(ip4addr));
+
+	if (r < 0)
+		return false;
+	else
+		return (size_t) r == buffer_size;
+}
+
+static bool knx_dgramsock_valid_sender(const ip4addr* endpoints, size_t num_endpoints,
+                                       const ip4addr* sender, socklen_t sender_len) {
 	if (!endpoints || !num_endpoints)
 		return true;
 
@@ -73,30 +84,37 @@ inline bool dgramsock_valid_sender(const ip4addr* endpoints, size_t num_endpoint
 	return false;
 }
 
-ssize_t dgramsock_recv(int sock, void* buffer, size_t buffer_size,
-                       const ip4addr* endpoints, size_t num_endpoints) {
+static ssize_t knx_dgramsock_recv_raw(int sock, void* buffer, size_t buffer_size,
+                                      const ip4addr* endpoints, size_t num_endpoints) {
 	ip4addr remote;
 	socklen_t remote_size = sizeof(remote);
 
 	ssize_t rv = recvfrom(sock, buffer, buffer_size, 0, (struct sockaddr*) &remote, &remote_size);
 
-	if (rv > 0 && dgramsock_valid_sender(endpoints, num_endpoints, &remote, remote_size))
+	if (rv > 0 && knx_dgramsock_valid_sender(endpoints, num_endpoints, &remote, remote_size))
 		return rv;
 	else
 		return -1;
 }
 
-bool dgramsock_send_knx(int sock, knx_service srv, const void* payload, const ip4addr* target) {
+bool knx_dgramsock_recv(int sock, uint8_t* buffer, size_t size,
+                        knx_packet* packet,
+                        const ip4addr* endpoints, size_t num_endpoints) {
+	ssize_t rv = knx_dgramsock_recv_raw(sock, buffer, size, endpoints, num_endpoints);
+	return rv > 0 && knx_parse(buffer, rv, packet);
+}
+
+bool knx_dgramsock_send(int sock, knx_service srv, const void* payload, const ip4addr* target) {
 	size_t size = knx_size(srv, payload);
 	uint8_t buffer[size];
 
 	if (!knx_generate(buffer, srv, payload))
 		return false;
 
-	return dgramsock_send(sock, buffer, size, target);
+	return knx_dgramsock_send_raw(sock, buffer, size, target);
 }
 
-ssize_t dgramsock_peek_knx(int sock) {
+ssize_t knx_dgramsock_peek_knx(int sock) {
 	ip4addr sender;
 	socklen_t sender_len = sizeof(sender);
 

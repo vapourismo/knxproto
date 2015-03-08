@@ -32,51 +32,28 @@
 /**
  * Create a datagram socket.
  */
-int dgramsock_create(const ip4addr* local, bool reuse);
+int knx_dgramsock_create(const ip4addr* local, bool reuse);
 
 /**
  * Check if data is available.
  */
-bool dgramsock_ready(int sock, time_t timeout_sec, long timeout_usec);
-
-/**
- * Receive data from a number of given endpoints.
- */
-ssize_t dgramsock_recv(int sock, void* buffer, size_t buffer_size,
-                       const ip4addr* endpoints, size_t num_endpoints);
-
-/**
- * Send a datagram.
- */
-inline static bool dgramsock_send(int sock, const void* buffer, size_t buffer_size,
-                           const ip4addr* target) {
-	ssize_t r = sendto(sock, buffer, buffer_size, 0,
-	                   (const struct sockaddr*) target, sizeof(ip4addr));
-
-	if (r < 0)
-		return false;
-	else
-		return (size_t) r == buffer_size;
-}
+bool knx_dgramsock_ready(int sock, time_t timeout_sec, long timeout_usec);
 
 /**
  * Send a KNXnet/IP packet.
  */
-bool dgramsock_send_knx(int sock, knx_service srv, const void* payload, const ip4addr* target);
+bool knx_dgramsock_send(int sock, knx_service srv, const void* payload, const ip4addr* target);
 
 /**
  * Receive a KNXnet/IP packet.
  */
-inline static bool dgramsock_recv_knx(int sock, uint8_t* buffer, size_t size,
-                               knx_packet* packet, const ip4addr* endpoints,
-                               size_t num_endpoints) {
-	ssize_t rv = dgramsock_recv(sock, buffer, size, endpoints, num_endpoints);
-	return rv > 0 && knx_parse(buffer, rv, packet);
-}
+bool knx_dgramsock_recv(int sock, uint8_t* buffer, size_t size,
+                        knx_packet* packet,
+                        const ip4addr* endpoints, size_t num_endpoints);
 
 /**
  * Peek for a KNXnet/IP packet and return it's length.
  */
-ssize_t dgramsock_peek_knx(int sock);
+ssize_t knx_dgramsock_peek_knx(int sock);
 
 #endif

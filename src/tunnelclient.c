@@ -87,10 +87,10 @@ static void knx_tunnel_queue(knx_tunnel_client* client, const knx_tunnel_request
 // This routine might not be the optimal for inlining,
 // but it is used in one place only, so what the hell.
 inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
-	if (!dgramsock_ready(client->sock, 0, KNX_TUNNEL_READ_TIMEOUT))
+	if (!knx_dgramsock_ready(client->sock, 0, KNX_TUNNEL_READ_TIMEOUT))
 		return;
 
-	ssize_t buffer_size = dgramsock_peek_knx(client->sock);
+	ssize_t buffer_size = knx_dgramsock_peek_knx(client->sock);
 	if (buffer_size < 0) {
 		// This is not a KNXnet/IP packet so we'll discard it
 		recvfrom(client->sock, NULL, 0, 0, NULL, NULL);
@@ -99,11 +99,9 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 	}
 
 	uint8_t buffer[buffer_size];
-
-	ssize_t r = dgramsock_recv(client->sock, buffer, buffer_size, &client->gateway, 1);
 	knx_packet pkg_in;
 
-	if (r > 0 && knx_parse(buffer, r, &pkg_in)) {
+	if (knx_dgramsock_recv(client->sock, buffer, buffer_size, &pkg_in, &client->gateway, 1)) {
 		log_debug("Received (service = 0x%04X)", pkg_in.service);
 
 		switch (pkg_in.service) {
@@ -172,7 +170,7 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 				};
 
 				// Send a tunnel response
-				dgramsock_send_knx(client->sock, KNX_TUNNEL_RESPONSE, &res, &client->gateway);
+				knx_dgramsock_send(client->sock, KNX_TUNNEL_RESPONSE, &res, &client->gateway);
 				knx_tunnel_queue(client, &pkg_in.payload.tunnel_req);
 
 				break;
@@ -207,7 +205,7 @@ void knx_tunnel_init_disconnect(knx_tunnel_client* client) {
 	};
 
 	// Send disconnect request
-	if (!dgramsock_send_knx(client->sock, KNX_DISCONNECT_REQUEST, &dc_req, &client->gateway))
+	if (!knx_dgramsock_send(client->sock, KNX_DISCONNECT_REQUEST, &dc_req, &client->gateway))
 		log_error("Failed to send disconnect request");
 
 	// Set new state
@@ -232,7 +230,7 @@ void* knx_tunnel_heartbeat_thread(void* data) {
 		while (send_counter++ < 5) {
 			if (!client->heartbeat && client->state == KNX_TUNNEL_CONNECTED) {
 				log_debug("Sending heartbeat");
-				dgramsock_send_knx(client->sock, KNX_CONNECTION_STATE_REQUEST, &req, &client->gateway);
+				knx_dgramsock_send(client->sock, KNX_CONNECTION_STATE_REQUEST, &req, &client->gateway);
 			}
 
 			sleep(1);
@@ -347,7 +345,7 @@ bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port
 		return false;
 	}
 
-	if ((client->sock = dgramsock_create(NULL, false)) < 0) {
+	if ((client->sock = knx_dgramsock_create(NULL, false)) < 0) {
 		log_error("Failed to create socket");
 		return false;
 	}
@@ -366,7 +364,7 @@ bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port
 	};
 
 	// Initiate connection
-	if (!dgramsock_send_knx(client->sock, KNX_CONNECTION_REQUEST, &req, &client->gateway)) {
+	if (!knx_dgramsock_send(client->sock, KNX_CONNECTION_REQUEST, &req, &client->gateway)) {
 		log_error("Failed to send connection request");
 		close(client->sock);
 		return false;
@@ -425,7 +423,7 @@ static bool knx_tunnel_send_raw(knx_tunnel_client* client, const void* payload, 
 	// Send tunnel request
 	knx_tunnel_request req = {client->channel, client->seq_number++, length, payload};
 
-	if (!dgramsock_send_knx(client->sock, KNX_TUNNEL_REQUEST, &req, &client->gateway)) {
+	if (!knx_dgramsock_send(client->sock, KNX_TUNNEL_REQUEST, &req, &client->gateway)) {
 		client->seq_number = req.seq_number;
 		pthread_mutex_unlock(&client->send_mutex);
 		return false;
