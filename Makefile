@@ -57,7 +57,7 @@ BASECFLAGS      = -std=c99 -O2 -pthread \
 CFLAGS          += $(BASECFLAGS) -fPIC
 LDFLAGS         += -flto -pthread -lm -shared -Wl,-soname,$(SONAME)
 TESTCFLAGS      += $(BASECFLAGS)
-TESTLDFLAGS     += -flto -pthread -lm
+TESTLDFLAGS     += -flto -pthread -lm -levent
 
 # Default Targets
 all: $(SOOUTPUT)
