@@ -70,7 +70,7 @@ bool knx_ldata_parse(const uint8_t* buffer, size_t length, knx_ldata* out) {
 	out->source = buffer[2] << 8 | buffer[3];
 	out->destination = buffer[4] << 8 | buffer[5];
 
-	if (buffer[6] + 8 > length)
+	if (((size_t) buffer[6]) + 8 > length)
 		return false;
 
 	return knx_tpdu_parse(buffer + 7, buffer[6] + 1, &out->tpdu);
