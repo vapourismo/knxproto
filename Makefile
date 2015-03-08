@@ -44,11 +44,16 @@ SOREAL          = $(SONAME).$(SOMINOR)
 SOOUTPUT        = $(DISTDIR)/$(SOREAL)
 TESTOUTPUT      = $(DISTDIR)/$(BASENAME)-test
 
+# On Debug
+ifeq ($(DEBUG), 1)
+	DEBUGCFLAGS = -DDEBUG -g
+endif
+
 # Compiler
 CC              ?= clang
 BASECFLAGS      = -std=c99 -O2 -pthread \
                   -fmessage-length=0 -Wall -Wextra -pedantic \
-                  -DDEBUG -D_POSIX_SOURCE -D_GNU_SOURCE -g
+                  -D_POSIX_SOURCE -D_GNU_SOURCE $(DEBUGCFLAGS)
 CFLAGS          += $(BASECFLAGS) -fPIC
 LDFLAGS         += -flto -pthread -lm -shared -Wl,-soname,$(SONAME)
 TESTCFLAGS      += $(BASECFLAGS)
