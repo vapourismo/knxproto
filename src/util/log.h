@@ -67,10 +67,10 @@ void knx_log_commit_raw(knx_log_level level, const char* file, size_t line, cons
 	 */
 	#define knx_log_error(...) knx_log_commit_raw(LOG_ERROR, __FILE__, __LINE__, __VA_ARGS__)
 #else
-	#define knx_log_debug(...) ;
-	#define knx_log_info(...) ;
-	#define knx_log_warn(...) ;
-	#define knx_log_error(...) ;
+	#define knx_log_debug(...) ((void) NULL);
+	#define knx_log_info(...) ((void) NULL);
+	#define knx_log_warn(...) ((void) NULL);
+	#define knx_log_error(...) ((void) NULL);
 #endif
 
 #endif
