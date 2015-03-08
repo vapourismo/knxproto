@@ -443,7 +443,7 @@ void knx_tunnel_destroy(knx_tunnel_client* client) {
 	close(client->sock);
 
 	// Deconstruct event manifest
-	event_base_loopbreak(client->ev_manifest);
+	event_base_loopexit(client->ev_manifest, NULL);
 	event_base_free(client->ev_manifest);
 
 	// Clear incoming queue
