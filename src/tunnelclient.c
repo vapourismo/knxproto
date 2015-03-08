@@ -25,6 +25,7 @@
 #include "util/log.h"
 #include "util/alloc.h"
 
+#include <event.h>
 #include <sys/time.h>
 
 // Temporary configuration
@@ -55,6 +56,8 @@ struct knx_tunnel_client {
 	knx_host_info host_info;
 
 	bool heartbeat;
+
+	struct event_base* ev_manifest;
 };
 
 static void knx_tunnel_set_state(knx_tunnel_client* client, knx_tunnel_state state) {
@@ -364,6 +367,11 @@ static bool knx_tunnel_init_thread_coms(knx_tunnel_client* client) {
 }
 
 bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port_t port) {
+	if (!(client->ev_manifest = event_base_new())) {
+		knx_log_error("Failed to instantiate event base");
+		return false;
+	}
+
 	if (!ip4addr_resolve(&client->gateway, hostname, port)) {
 		knx_log_error("Failed to resolve hostname '%s'", hostname);
 		return false;
@@ -433,6 +441,10 @@ void knx_tunnel_destroy(knx_tunnel_client* client) {
 
 	// Close socket
 	close(client->sock);
+
+	// Deconstruct event manifest
+	event_base_loopbreak(client->ev_manifest);
+	event_base_free(client->ev_manifest);
 
 	// Clear incoming queue
 	knx_tunnel_clear_queue(client);
