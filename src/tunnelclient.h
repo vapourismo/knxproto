@@ -88,7 +88,7 @@ void knx_tunnel_destroy(knx_tunnel_client* client);
 
 /**
  * Send a L_Data request frame through the gateway.
- * The return value is inherited from `knx_tunnel_send`.
+ * Returns `true` if the message has been successfully acknowledged.
  */
 bool knx_tunnel_send(knx_tunnel_client* client, const knx_ldata* ldata);
 
