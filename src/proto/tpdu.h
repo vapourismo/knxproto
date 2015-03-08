@@ -118,19 +118,4 @@ inline static size_t knx_tpdu_size(const knx_tpdu* info) {
 	}
 }
 
-// /**
-//  * Interpret the TPDU payload to generate a C type.
-//  */
-// bool knx_tpdu_interpret(const uint8_t* tpdu, size_t length, knx_dpt type, void* value);
-
-// /**
-//  * Generate the TPDU containing the given datapoint type.
-//  */
-// void knx_tpdu_generate(uint8_t* tpdu, knx_apci apci, knx_dpt type, const void* value);
-
-// /**
-//  * Same as `knx_tpdu_generate` but allocates the array for you. The result needs to `free`d.
-//  */
-// uint8_t* knx_tpdu_generate_(size_t* length, knx_apci apci, knx_dpt type, const void* value);
-
 #endif
