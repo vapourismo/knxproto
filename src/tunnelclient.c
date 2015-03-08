@@ -149,8 +149,8 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 				// If connection was previously intact
 				if (client->state != KNX_TUNNEL_DISCONNECTED)
 					knx_log_info("Disconnected (channel = %i, status = %i)",
-					         pkg_in.payload.dc_req.channel,
-					         pkg_in.payload.dc_req.status);
+					             pkg_in.payload.dc_req.channel,
+					             pkg_in.payload.dc_req.status);
 
 				// Entering this state will stop the worker gently
 				knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
