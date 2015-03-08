@@ -44,7 +44,7 @@ static void knx_tunnel_queue(knx_tunnel_client* client, const knx_tunnel_request
 	knx_cemi_frame cemi;
 
 	if (!knx_cemi_parse(req->data, req->size, &cemi)) {
-		log_error("Failed to parse CEMI frame");
+		knx_log_error("Failed to parse CEMI frame");
 		return;
 	}
 
@@ -79,7 +79,7 @@ static void knx_tunnel_queue(knx_tunnel_client* client, const knx_tunnel_request
 		}
 
 		default:
-			log_error("Unsupported CEMI service %02X", cemi.service);
+			knx_log_error("Unsupported CEMI service %02X", cemi.service);
 			break;
 	}
 }
@@ -102,7 +102,7 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 	knx_packet pkg_in;
 
 	if (knx_dgramsock_recv(client->sock, buffer, buffer_size, &pkg_in, &client->gateway, 1)) {
-		log_debug("Received (service = 0x%04X)", pkg_in.service);
+		knx_log_debug("Received (service = 0x%04X)", pkg_in.service);
 
 		switch (pkg_in.service) {
 			// Result of a connection request (duh)
@@ -115,10 +115,10 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 					client->channel = pkg_in.payload.conn_res.channel;
 					client->host_info = pkg_in.payload.conn_res.host;
 
-					log_info("Connected (channel = %i)", client->channel);
+					knx_log_info("Connected (channel = %i)", client->channel);
 					knx_tunnel_set_state(client, KNX_TUNNEL_CONNECTED);
 				} else {
-					log_error("Connection failed (code = %i)", pkg_in.payload.conn_res.status);
+					knx_log_error("Connection failed (code = %i)", pkg_in.payload.conn_res.status);
 					knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
 				}
 
@@ -130,7 +130,7 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 				    client->state != KNX_TUNNEL_CONNECTED)
 					break;
 
-				log_info("Heartbeat (status = %i)", pkg_in.payload.conn_state_res.status);
+				knx_log_info("Heartbeat (status = %i)", pkg_in.payload.conn_state_res.status);
 
 				// Anything other than 0 means the bad news
 				if (pkg_in.payload.conn_state_res.status != 0) {
@@ -148,7 +148,7 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 
 				// If connection was previously intact
 				if (client->state != KNX_TUNNEL_DISCONNECTED)
-					log_info("Disconnected (channel = %i, status = %i)",
+					knx_log_info("Disconnected (channel = %i, status = %i)",
 					         pkg_in.payload.dc_req.channel,
 					         pkg_in.payload.dc_req.status);
 
@@ -191,7 +191,7 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 
 			// Everything else should be ignored
 			default:
-				log_warn("Unsupported KNXnet/IP service 0x%04X", pkg_in.service);
+				knx_log_warn("Unsupported KNXnet/IP service 0x%04X", pkg_in.service);
 				break;
 		}
 	}
@@ -206,7 +206,7 @@ void knx_tunnel_init_disconnect(knx_tunnel_client* client) {
 
 	// Send disconnect request
 	if (!knx_dgramsock_send(client->sock, KNX_DISCONNECT_REQUEST, &dc_req, &client->gateway))
-		log_error("Failed to send disconnect request");
+		knx_log_error("Failed to send disconnect request");
 
 	// Set new state
 	knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
@@ -229,7 +229,7 @@ void* knx_tunnel_heartbeat_thread(void* data) {
 		size_t send_counter = 0;
 		while (send_counter++ < 5) {
 			if (!client->heartbeat && client->state == KNX_TUNNEL_CONNECTED) {
-				log_debug("Sending heartbeat");
+				knx_log_debug("Sending heartbeat");
 				knx_dgramsock_send(client->sock, KNX_CONNECTION_STATE_REQUEST, &req, &client->gateway);
 			}
 
@@ -238,7 +238,7 @@ void* knx_tunnel_heartbeat_thread(void* data) {
 
 		// If the heartbeat has not been confirmed, terminate the connection
 		if (!client->heartbeat) {
-			log_error("Gateway has ignored heartbeat requests");
+			knx_log_error("Gateway has ignored heartbeat requests");
 			knx_tunnel_init_disconnect(client);
 		} else {
 			sleep(25);
@@ -254,7 +254,7 @@ void* knx_tunnel_worker_thread(void* data) {
 	// Start heartbeat thread
 	pthread_t heartbeat_thread;
 	if (pthread_create(&heartbeat_thread, NULL, &knx_tunnel_heartbeat_thread, client) != 0) {
-		log_error("Failed to start heartbeat observer thread");
+		knx_log_error("Failed to start heartbeat observer thread");
 		pthread_exit(NULL);
 	}
 
@@ -341,12 +341,12 @@ static bool knx_tunnel_init_thread_coms(knx_tunnel_client* client) {
 
 bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port_t port) {
 	if (!ip4addr_resolve(&client->gateway, hostname, port)) {
-		log_error("Failed to resolve hostname '%s'", hostname);
+		knx_log_error("Failed to resolve hostname '%s'", hostname);
 		return false;
 	}
 
 	if ((client->sock = knx_dgramsock_create(NULL, false)) < 0) {
-		log_error("Failed to create socket");
+		knx_log_error("Failed to create socket");
 		return false;
 	}
 
@@ -365,14 +365,14 @@ bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port
 
 	// Initiate connection
 	if (!knx_dgramsock_send(client->sock, KNX_CONNECTION_REQUEST, &req, &client->gateway)) {
-		log_error("Failed to send connection request");
+		knx_log_error("Failed to send connection request");
 		close(client->sock);
 		return false;
 	}
 
 	// Initialise thread components
 	if (!knx_tunnel_init_thread_coms(client)) {
-		log_error("Failed to initialise thread components");
+		knx_log_error("Failed to initialise thread components");
 
 		client->state = KNX_TUNNEL_DISCONNECTED;
 		close(client->sock);

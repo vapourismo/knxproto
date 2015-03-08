@@ -41,7 +41,7 @@ bool knx_router_connect(knx_router_client* client, const ip4addr* router) {
 	local.sin_addr.s_addr = INADDR_ANY;
 
 	if ((client->sock = knx_dgramsock_create(&local, true)) < 0) {
-		log_error("Failed to create socket");
+		knx_log_error("Failed to create socket");
 		return false;
 	}
 
@@ -51,7 +51,7 @@ bool knx_router_connect(knx_router_client* client, const ip4addr* router) {
 
 	if (setsockopt(client->sock, IPPROTO_IP,
 	               IP_ADD_MEMBERSHIP, &client->mreq, sizeof(client->mreq)) < 0) {
-		log_error("Could not join multicast group");
+		knx_log_error("Could not join multicast group");
 		close(client->sock);
 		return false;
 	}
@@ -79,7 +79,7 @@ knx_ldata* knx_router_recv(const knx_router_client* client, bool block) {
 		// Discard this packet
 		recvfrom(client->sock, NULL, 0, 0, NULL, NULL);
 
-		log_warn("Dequeued bogus message");
+		knx_log_warn("Dequeued bogus message");
 
 		// We have to rely on the compiler to perform tail-call optimization here,
 		// otherwise this might turn out horribly.
@@ -101,11 +101,11 @@ knx_ldata* knx_router_recv(const knx_router_client* client, bool block) {
 				return knx_ldata_duplicate(&cemi.payload.ldata);
 
 			default:
-				log_error("Unsupported CEMI service %02X", cemi.service);
+				knx_log_error("Unsupported CEMI service %02X", cemi.service);
 				return knx_router_recv(client, block);
 		}
 	} else {
-		log_error("Error during recv after peek, this should be technically impossible");
+		knx_log_error("Error during recv after peek, this should be technically impossible");
 		return NULL;
 	}
 }

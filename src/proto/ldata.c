@@ -54,7 +54,7 @@ bool knx_ldata_generate(uint8_t* buffer, const knx_ldata* req) {
 bool knx_ldata_parse(const uint8_t* buffer, size_t length, knx_ldata* out) {
 	// Check for length and standard frame
 	if (length < 8 || (buffer[1] & 15)) {
-		log_debug("Insufficient length or unknown frame format");
+		knx_log_debug("Insufficient length or unknown frame format");
 		return false;
 	}
 

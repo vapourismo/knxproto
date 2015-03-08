@@ -34,43 +34,43 @@ typedef enum {
 	LOG_INFO = 1,
 	LOG_WARN = 2,
 	LOG_ERROR = 3
-} log_level;
+} knx_log_level;
 
 /**
  * Start logging
  */
-bool log_setup(const char* path, log_level level);
+bool knx_log_setup(const char* path, knx_log_level level);
 
 /**
  * Raw log entry
  */
-void log_commit_raw(log_level level, const char* file, size_t line, const char* format, ...);
+void knx_log_commit_raw(knx_log_level level, const char* file, size_t line, const char* format, ...);
 
 #ifdef DEBUG
 	/**
 	 * Log a debug message
 	 */
-	#define log_debug(...) log_commit_raw(LOG_DEBUG, __FILE__, __LINE__, __VA_ARGS__)
+	#define knx_log_debug(...) knx_log_commit_raw(LOG_DEBUG, __FILE__, __LINE__, __VA_ARGS__)
 
 	/**
 	 * Log a information
 	 */
-	#define log_info(...) log_commit_raw(LOG_INFO, __FILE__, __LINE__, __VA_ARGS__)
+	#define knx_log_info(...) knx_log_commit_raw(LOG_INFO, __FILE__, __LINE__, __VA_ARGS__)
 
 	/**
 	 * Log a warning
 	 */
-	#define log_warn(...) log_commit_raw(LOG_WARN, __FILE__, __LINE__, __VA_ARGS__)
+	#define knx_log_warn(...) knx_log_commit_raw(LOG_WARN, __FILE__, __LINE__, __VA_ARGS__)
 
 	/**
 	 * Log an error
 	 */
-	#define log_error(...) log_commit_raw(LOG_ERROR, __FILE__, __LINE__, __VA_ARGS__)
+	#define knx_log_error(...) knx_log_commit_raw(LOG_ERROR, __FILE__, __LINE__, __VA_ARGS__)
 #else
-	#define log_debug(...)
-	#define log_info(...)
-	#define log_warn(...)
-	#define log_error(...)
+	#define knx_log_debug(...)
+	#define knx_log_info(...)
+	#define knx_log_warn(...)
+	#define knx_log_error(...)
 #endif
 
 #endif

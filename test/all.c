@@ -10,7 +10,7 @@ deftest(all, {
 })
 
 int main(void) {
-	log_setup(NULL, LOG_DEBUG);
+	knx_log_setup(NULL, LOG_DEBUG);
 	runtest(all);
 	return 0;
 }
