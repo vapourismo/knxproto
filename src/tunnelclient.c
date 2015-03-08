@@ -33,6 +33,30 @@
 #define KNX_TUNNEL_ACK_TIMEOUT 5              // 5 Seconds
 #define KNX_TUNNEL_READ_TIMEOUT 100000        // 100ms
 
+struct knx_tunnel_client {
+	int sock;
+	ip4addr gateway;
+	pthread_t worker;
+
+	knx_tunnel_message* msg_head;
+	knx_tunnel_message* msg_tail;
+
+	pthread_mutex_t mutex;
+	pthread_cond_t cond;
+
+	knx_tunnel_state state;
+
+	pthread_mutex_t send_mutex;
+
+	uint8_t seq_number;
+	uint8_t ack_seq_number;
+
+	uint8_t channel;
+	knx_host_info host_info;
+
+	bool heartbeat;
+};
+
 static void knx_tunnel_set_state(knx_tunnel_client* client, knx_tunnel_state state) {
 	pthread_mutex_lock(&client->mutex);
 	client->state = state;

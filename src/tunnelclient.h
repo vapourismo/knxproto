@@ -51,29 +51,7 @@ typedef struct knx_tunnel_message {
 /**
  * Tunnel Connection
  */
-typedef struct {
-	int sock;
-	ip4addr gateway;
-	pthread_t worker;
-
-	knx_tunnel_message* msg_head;
-	knx_tunnel_message* msg_tail;
-
-	pthread_mutex_t mutex;
-	pthread_cond_t cond;
-
-	knx_tunnel_state state;
-
-	pthread_mutex_t send_mutex;
-
-	uint8_t seq_number;
-	uint8_t ack_seq_number;
-
-	uint8_t channel;
-	knx_host_info host_info;
-
-	bool heartbeat;
-} knx_tunnel_client;
+typedef struct knx_tunnel_client knx_tunnel_client;
 
 /**
  * Connect to a gateway. This function returns `true` if a connection has
