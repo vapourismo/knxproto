@@ -42,7 +42,7 @@ bool knx_cemi_parse(const uint8_t* message, size_t length, knx_cemi_frame* frame
 	knx_cemi_unpack_header(message, &frame->service, &frame->add_info_length);
 
 	// Does the additional information exceed the frame?
-	if (KNX_CEMI_HEADER_SIZE + frame->add_info_length > length)
+	if (KNX_CEMI_HEADER_SIZE + ((size_t) frame->add_info_length) > length)
 		return false;
 
 	frame->add_info = message + KNX_CEMI_HEADER_SIZE;
