@@ -33,6 +33,13 @@
 #define KNX_TUNNEL_ACK_TIMEOUT 5              // 5 Seconds
 #define KNX_TUNNEL_READ_TIMEOUT 100000        // 100ms
 
+static void knx_tunnel_set_state(knx_tunnel_client* client, knx_tunnel_state state) {
+	pthread_mutex_lock(&client->mutex);
+	client->state = state;
+	pthread_cond_broadcast(&client->cond);
+	pthread_mutex_unlock(&client->mutex);
+}
+
 static void knx_tunnel_queue(knx_tunnel_client* client, const knx_tunnel_request* req) {
 	knx_cemi_frame cemi;
 
@@ -111,18 +118,10 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 					client->host_info = pkg_in.payload.conn_res.host;
 
 					log_info("Connected (channel = %i)", client->channel);
-
-					pthread_mutex_lock(&client->mutex);
-					client->state = KNX_TUNNEL_CONNECTED;
-					pthread_cond_broadcast(&client->cond);
-					pthread_mutex_unlock(&client->mutex);
+					knx_tunnel_set_state(client, KNX_TUNNEL_CONNECTED);
 				} else {
 					log_error("Connection failed (code = %i)", pkg_in.payload.conn_res.status);
-
-					pthread_mutex_lock(&client->mutex);
-					client->state = KNX_TUNNEL_DISCONNECTED;
-					pthread_cond_broadcast(&client->cond);
-					pthread_mutex_unlock(&client->mutex);
+					knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
 				}
 
 				break;
@@ -137,10 +136,7 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 
 				// Anything other than 0 means the bad news
 				if (pkg_in.payload.conn_state_res.status != 0) {
-					pthread_mutex_lock(&client->mutex);
-					client->state = KNX_TUNNEL_DISCONNECTED;
-					pthread_cond_broadcast(&client->cond);
-					pthread_mutex_unlock(&client->mutex);
+					knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
 				} else {
 					client->heartbeat = true;
 				}
@@ -159,10 +155,7 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 					         pkg_in.payload.dc_req.status);
 
 				// Entering this state will stop the worker gently
-				pthread_mutex_lock(&client->mutex);
-				client->state = KNX_TUNNEL_DISCONNECTED;
-				pthread_cond_broadcast(&client->cond);
-				pthread_mutex_unlock(&client->mutex);
+				knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
 
 				break;
 
@@ -180,7 +173,6 @@ inline static void knx_tunnel_process_incoming(knx_tunnel_client* client) {
 
 				// Send a tunnel response
 				dgramsock_send_knx(client->sock, KNX_TUNNEL_RESPONSE, &res, &client->gateway);
-
 				knx_tunnel_queue(client, &pkg_in.payload.tunnel_req);
 
 				break;
@@ -219,10 +211,7 @@ void knx_tunnel_init_disconnect(knx_tunnel_client* client) {
 		log_error("Failed to send disconnect request");
 
 	// Set new state
-	pthread_mutex_lock(&client->mutex);
-	client->state = KNX_TUNNEL_DISCONNECTED;
-	pthread_cond_broadcast(&client->cond);
-	pthread_mutex_unlock(&client->mutex);
+	knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
 }
 
 void* knx_tunnel_heartbeat_thread(void* data) {
