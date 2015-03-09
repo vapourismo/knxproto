@@ -1,5 +1,5 @@
 ## Installation
-First off, you need a compatible C standard library and the `pthread` library. These might come
+First off, you need a compatible C standard library, the `libevent` and `pthread` library. These might come
 with your distribution of choice. So far, the library has been tested against `glibc` only.
 It is known to work under Arch Linux and Debian Linux on both `amd64` and `armv6l` architectures.
 
