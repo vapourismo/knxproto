@@ -55,7 +55,7 @@ BASECFLAGS      = -std=c99 -O2 -pthread \
                   -fmessage-length=0 -Wall -Wextra -pedantic \
                   -D_POSIX_SOURCE -D_GNU_SOURCE $(DEBUGCFLAGS)
 CFLAGS          += $(BASECFLAGS) -fPIC
-LDFLAGS         += -flto -pthread -lm -levent -levent_pthreads -shared -Wl,-soname,$(SONAME)
+LDFLAGS         := -flto -pthread -lm -levent -levent_pthreads -shared -Wl,-soname,$(SONAME) $(LDFLAGS)
 
 TESTCFLAGS      = $(BASECFLAGS)
 TESTLDFLAGS     = -flto -pthread -lm -levent -levent_pthreads
