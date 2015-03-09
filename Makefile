@@ -51,14 +51,15 @@ endif
 
 # Compiler
 CC              ?= clang
-BASECFLAGS      = -std=c99 -O2 -pthread \
-                  -fmessage-length=0 -Wall -Wextra -pedantic \
-                  -D_POSIX_SOURCE -D_GNU_SOURCE $(DEBUGCFLAGS)
+BASECFLAGS      := -std=c99 -O2 -pthread \
+                   -fmessage-length=0 -Wall -Wextra -pedantic \
+                   -D_POSIX_SOURCE -D_GNU_SOURCE $(DEBUGCFLAGS)
 CFLAGS          += $(BASECFLAGS) -fPIC
-LDFLAGS         := -flto -pthread -lm -levent -levent_pthreads -shared -Wl,-soname,$(SONAME) $(LDFLAGS)
+LDFLAGS         += -flto -shared -Wl,-soname,$(SONAME)
+LDLIBS          := -pthread -lm -levent -levent_pthreads
 
 TESTCFLAGS      = $(BASECFLAGS)
-TESTLDFLAGS     = -flto -pthread -lm -levent -levent_pthreads
+TESTLDFLAGS     = -flto
 
 # Default Targets
 all: $(SOOUTPUT)
@@ -84,7 +85,7 @@ valgrind: $(TESTOUTPUT)
 # Shared Object
 $(SOOUTPUT): $(SOURCEOBJS) Makefile
 	@$(MKDIR) $(dir $@)
-	$(CC) $(LDFLAGS) -o$@ $(SOURCEOBJS)
+	$(CC) $(LDFLAGS) -o$@ $(SOURCEOBJS) $(LDLIBS)
 
 $(DISTDIR)/%.o: $(SOURCEDIR)/%.c Makefile
 	@$(MKDIR) $(dir $@)
@@ -93,7 +94,7 @@ $(DISTDIR)/%.o: $(SOURCEDIR)/%.c Makefile
 # Test
 $(TESTOUTPUT): $(TESTOBJS) $(SOURCEOBJS) Makefile
 	@$(MKDIR) $(dir $@)
-	$(CC) $(TESTLDFLAGS) -o$@ $(TESTOBJS) $(SOURCEOBJS)
+	$(CC) $(TESTLDFLAGS) -o$@ $(TESTOBJS) $(SOURCEOBJS) $(LDLIBS)
 
 $(TESTDIR)/%.o: $(TESTDIR)/%.c Makefile
 	@$(MKDIR) $(dir $@)
