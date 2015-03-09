@@ -30,6 +30,7 @@
 #include <pthread.h>
 #include <stdbool.h>
 #include <time.h>
+#include <event2/event.h>
 
 /**
  * Tunnel Connection State
