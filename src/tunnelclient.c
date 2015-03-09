@@ -473,7 +473,7 @@ bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port
 	return false;
 }
 
-void knx_tunnel_destroy(knx_tunnel_client* client) {
+void knx_tunnel_disconnect(knx_tunnel_client* client) {
 	if (client->state != KNX_TUNNEL_DISCONNECTED)
 		knx_tunnel_init_disconnect(client);
 

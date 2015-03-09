@@ -87,8 +87,10 @@ bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port
 
 /**
  * Disconnect from the gateway if a connection is active, and free resources.
+ * You must not invoke this method twice or on connections that did not
+ * connect successfully, because this would lead to a double free of resources.
  */
-void knx_tunnel_destroy(knx_tunnel_client* client);
+void knx_tunnel_disconnect(knx_tunnel_client* client);
 
 /**
  * Send a L_Data request frame through the gateway.
