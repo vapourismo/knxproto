@@ -279,9 +279,71 @@ static bool knx_tunnel_timed_wait_ack(knx_tunnel_client* conn, uint8_t number, l
 	return r;
 }
 
-static bool knx_tunnel_init_thread_coms(knx_tunnel_client* client) {
-	if (pthread_mutex_init(&client->mutex, NULL) != 0)
+static void knx_tunnel_del_events(knx_tunnel_client* client) {
+	if (client->ev_read)
+		event_del(client->ev_read);
+
+	if (client->ev_heartbeat)
+		event_del(client->ev_heartbeat);
+}
+
+static void knx_tunnel_free_events(knx_tunnel_client* client) {
+	if (client->ev_read)
+		event_free(client->ev_read);
+
+	if (client->ev_heartbeat)
+		event_free(client->ev_heartbeat);
+
+	if (client->ev_manifest)
+		event_base_free(client->ev_manifest);
+
+	client->ev_read = client->ev_heartbeat = NULL;
+	client->ev_manifest = NULL;
+}
+
+static bool knx_tunnel_create_events(knx_tunnel_client* client) {
+	if (evthread_use_pthreads() != 0) {
+		knx_log_error("Failed to enable pthreads for libevent");
 		return false;
+	}
+
+	client->ev_manifest = event_base_new();
+
+	if (!client->ev_manifest) {
+		knx_log_error("Failed to allocate event base");
+		return false;
+	}
+
+ 	client->ev_read = event_new(client->ev_manifest,
+ 	                            client->sock, EV_READ | EV_PERSIST,
+ 	                            knx_tunnel_worker_cb_read, client);
+
+	client->ev_heartbeat = event_new(client->ev_manifest,
+	                                 -1, EV_PERSIST | EV_TIMEOUT,
+	                                 knx_tunnel_worker_cb_heartbeat, client);
+
+	struct timeval timeout = {30, 0};
+
+	if (!client->ev_read ||
+	    !client->ev_heartbeat ||
+	    event_add(client->ev_read, NULL) != 0 ||
+		event_add(client->ev_heartbeat, &timeout) != 0) {
+
+		knx_tunnel_del_events(client);
+		knx_tunnel_free_events(client);
+
+		return false;
+	}
+
+	return true;
+}
+
+static bool knx_tunnel_create_pthread(knx_tunnel_client* client) {
+	if (!knx_tunnel_create_events(client))
+		return false;
+
+	if (pthread_mutex_init(&client->mutex, NULL) != 0)
+		goto clean_events;
 
 	if (pthread_mutex_init(&client->send_mutex, NULL) != 0)
 		goto clean_mutex;
@@ -300,39 +362,22 @@ static bool knx_tunnel_init_thread_coms(knx_tunnel_client* client) {
 	clean_mutex:
 		pthread_mutex_destroy(&client->mutex);
 
+	clean_events:
+		knx_tunnel_del_events(client);
+		knx_tunnel_free_events(client);
+
 	return false;
 }
 
-static bool knx_tunnel_init_events(knx_tunnel_client* client) {
- 	// Add read event
- 	client->ev_read = event_new(client->ev_manifest, client->sock, EV_READ | EV_PERSIST,
- 	                            knx_tunnel_worker_cb_read, client);
+static void knx_tunnel_free_pthread(knx_tunnel_client* client) {
+	knx_tunnel_del_events(client);
 
- 	if (!client->ev_read)
- 		return false;
+	pthread_join(client->worker, NULL);
+	pthread_mutex_destroy(&client->mutex);
+	pthread_mutex_destroy(&client->send_mutex);
+	pthread_cond_destroy(&client->cond);
 
-	if (event_add(client->ev_read, NULL) != 0) {
-		event_free(client->ev_read);
-		return false;
-	}
-
-	// Add heartbeat event
-	client->ev_heartbeat = event_new(client->ev_manifest, -1, EV_PERSIST | EV_TIMEOUT,
-	                                 knx_tunnel_worker_cb_heartbeat, client);
-
-	if (!client->ev_heartbeat) {
-		event_free(client->ev_read);
-		return false;
-	}
-
-	struct timeval to = {30, 0};
-	if (event_add(client->ev_heartbeat, &to) != 0) {
-		event_free(client->ev_read);
-		event_free(client->ev_heartbeat);
-		return false;
-	}
-
-	return true;
+	knx_tunnel_free_events(client);
 }
 
 static void knx_tunnel_clear_queue(knx_tunnel_client* client) {
@@ -371,17 +416,18 @@ static bool knx_tunnel_send_raw(knx_tunnel_client* client, const void* payload, 
 	return r;
 }
 
+static bool knx_tunnel_request_connection(knx_tunnel_client* client) {
+	knx_connection_request req = {
+		KNX_CONNECTION_REQUEST_TUNNEL,
+		KNX_LAYER_TUNNEL,
+		KNX_HOST_INFO_NAT(KNX_PROTO_UDP),
+		KNX_HOST_INFO_NAT(KNX_PROTO_UDP)
+	};
+
+	return knx_dgramsock_send(client->sock, KNX_CONNECTION_REQUEST, &req, &client->gateway);
+}
+
 bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port_t port) {
-	if (evthread_use_pthreads() != 0) {
-		knx_log_error("Failed to enable pthreads for libevent");
-		return false;
-	}
-
-	if (!(client->ev_manifest = event_base_new())) {
-		knx_log_error("Failed to instantiate event base");
-		return false;
-	}
-
 	if (!ip4addr_resolve(&client->gateway, hostname, port)) {
 		knx_log_error("Failed to resolve hostname '%s'", hostname);
 		return false;
@@ -392,60 +438,51 @@ bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port
 		return false;
 	}
 
+	// Initialise structure
 	client->state = KNX_TUNNEL_CONNECTING;
 	client->seq_number = 0;
 	client->ack_seq_number = UINT8_MAX;
 	client->heartbeat = false;
 	client->msg_head = client->msg_tail = NULL;
 
-	knx_connection_request req = {
-		KNX_CONNECTION_REQUEST_TUNNEL,
-		KNX_LAYER_TUNNEL,
-		KNX_HOST_INFO_NAT(KNX_PROTO_UDP),
-		KNX_HOST_INFO_NAT(KNX_PROTO_UDP)
-	};
-
 	evutil_make_socket_nonblocking(client->sock);
 
-	// Initiate connection
-	if (!knx_dgramsock_send(client->sock, KNX_CONNECTION_REQUEST, &req, &client->gateway) ||
-	    !knx_tunnel_init_events(client) ||
-	    !knx_tunnel_init_thread_coms(client)) {
+	// Create thread
+	if (!knx_tunnel_create_pthread(client)) {
+		knx_log_error("Failed to start thread facilities");
+		goto clean_socket;
+	}
 
-		knx_log_error("Failed to setup connection");
-
-		client->state = KNX_TUNNEL_DISCONNECTED;
-		close(client->sock);
-		client->sock = -1;
-
-		return false;
+	// Send connection request
+	if (!knx_tunnel_request_connection(client)) {
+		knx_log_error("Failed to request a connection");
+		goto clean_pthread;
 	}
 
 	// Wait for connecting state to transition to connected state
-	return knx_tunnel_timed_wait_state(client, KNX_TUNNEL_CONNECTION_TIMEOUT, 0);
+	if (knx_tunnel_timed_wait_state(client, KNX_TUNNEL_CONNECTION_TIMEOUT, 0))
+		return true;
+
+	clean_pthread:
+		knx_tunnel_free_pthread(client);
+
+	clean_socket:
+		close(client->sock);
+		client->sock = -1;
+
+	return false;
 }
 
 void knx_tunnel_destroy(knx_tunnel_client* client) {
 	if (client->state != KNX_TUNNEL_DISCONNECTED)
 		knx_tunnel_init_disconnect(client);
 
-	// Remove events
-	event_del(client->ev_read);
-	event_free(client->ev_read);
-	event_del(client->ev_heartbeat);
-	event_free(client->ev_heartbeat);
-
-	// Join thread and cleanup resources
-	pthread_join(client->worker, NULL);
-	pthread_mutex_destroy(&client->mutex);
-	pthread_mutex_destroy(&client->send_mutex);
-	pthread_cond_destroy(&client->cond);
+	// Clean thread facilities
+	knx_tunnel_free_pthread(client);
 
 	// Close socket
 	close(client->sock);
-
-	// Deconstruct event base
-	event_base_free(client->ev_manifest);
+	client->sock = -1;
 
 	// Clear incoming queue
 	knx_tunnel_clear_queue(client);
