@@ -22,6 +22,8 @@
 #ifndef KNXCLIENT_PROTO_KNXNETIP_ROUTINGIND_H
 #define KNXCLIENT_PROTO_KNXNETIP_ROUTINGIND_H
 
+#include "cemi.h"
+
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
@@ -30,14 +32,13 @@
  * Routing Indication
  */
 typedef struct {
-	uint16_t size;
-	const void* data;
+	knx_cemi_frame data;
 } knx_routing_indication;
 
 /**
  * Generate the message for a routing indication.
  */
-void knx_routing_indication_generate(uint8_t* buffer, const knx_routing_indication* ind);
+bool knx_routing_indication_generate(uint8_t* buffer, const knx_routing_indication* ind);
 
 /**
  * Parse a message (excluding header) which contains a routing indication.
@@ -48,7 +49,7 @@ bool knx_routing_indication_parse(const uint8_t* message, size_t length, knx_rou
  * Routing indication size
  */
 inline static size_t knx_routing_indication_size(const knx_routing_indication* ind) {
-	return ind->size;
+	return knx_cemi_size(&ind->data);
 }
 
 #endif

@@ -26,58 +26,61 @@
 #include <stdbool.h>
 #include <string.h>
 
-deftest(cemi_ldata, {
-	knx_ldata req;
-	req.control1.priority = KNX_LDATA_PRIO_LOW;
-	req.control1.repeat = true;
-	req.control1.system_broadcast = true;
-	req.control1.request_ack = true;
-	req.control1.error = false;
-	req.control2.address_type = KNX_LDATA_ADDR_GROUP;
-	req.control2.hops = 7;
-	req.source = 0xFFCA;
-	req.destination = 0x7FFF;
+deftest(cemi, {
+	uint8_t example_Data[4] = {11, 22, 33, 44};
 
-	uint8_t data[] = {0, 0xBA, 0xDC, 0x0D, 0xE};
-
-	req.tpdu.tpci = KNX_TPCI_UNNUMBERED_DATA;
-	req.tpdu.seq_number = 0;
-	req.tpdu.info.data.apci = KNX_APCI_GROUPVALUEWRITE;
-	req.tpdu.info.data.payload = data;
-	req.tpdu.info.data.length = sizeof(data);
+	knx_cemi_frame req = {
+		KNX_CEMI_LDATA_REQ,
+		0,
+		NULL,
+		{
+			.ldata = {
+				.control1 = {KNX_LDATA_PRIO_LOW, true, true, true, false},
+				.control2 = {KNX_LDATA_ADDR_GROUP, 7},
+				.source = 123,
+				.destination = 456,
+				.tpdu = {
+					.tpci = KNX_TPCI_UNNUMBERED_DATA,
+					.info = {
+						.data = {
+							.apci = KNX_APCI_GROUPVALUEWRITE,
+							.payload = example_Data,
+							.length = sizeof(example_Data)
+						}
+					}
+				}
+			}
+		}
+	};
 
 	// Generate
-	uint8_t buffer[KNX_CEMI_HEADER_SIZE + knx_ldata_size(&req)];
-	assert(knx_cemi_generate_(buffer, KNX_CEMI_LDATA_REQ, &req));
+	uint8_t buffer[knx_cemi_size(&req)];
+	assert(knx_cemi_generate(buffer, &req));
 
 	// Parse
 	knx_cemi_frame frame;
 	assert(knx_cemi_parse(buffer, sizeof(buffer), &frame));
 
 	// Check
-	assert(frame.service == KNX_CEMI_LDATA_REQ);
-	assert(frame.add_info_length == 0);
+	assert(frame.service == req.service);
+	assert(frame.add_info_length == req.add_info_length);
 
-	assert(frame.payload.ldata.control1.priority == req.control1.priority);
-	assert(frame.payload.ldata.control1.repeat == req.control1.repeat);
-	assert(frame.payload.ldata.control1.system_broadcast == req.control1.system_broadcast);
-	assert(frame.payload.ldata.control1.request_ack == req.control1.request_ack);
-	assert(frame.payload.ldata.control1.error == req.control1.error);
-	assert(frame.payload.ldata.control2.address_type == req.control2.address_type);
-	assert(frame.payload.ldata.control2.hops == req.control2.hops);
-	assert(frame.payload.ldata.source == req.source);
-	assert(frame.payload.ldata.destination == req.destination);
+	assert(frame.payload.ldata.control1.priority == req.payload.ldata.control1.priority);
+	assert(frame.payload.ldata.control1.repeat == req.payload.ldata.control1.repeat);
+	assert(frame.payload.ldata.control1.system_broadcast == req.payload.ldata.control1.system_broadcast);
+	assert(frame.payload.ldata.control1.request_ack == req.payload.ldata.control1.request_ack);
+	assert(frame.payload.ldata.control1.error == req.payload.ldata.control1.error);
+	assert(frame.payload.ldata.control2.address_type == req.payload.ldata.control2.address_type);
+	assert(frame.payload.ldata.control2.hops == req.payload.ldata.control2.hops);
+	assert(frame.payload.ldata.source == req.payload.ldata.source);
+	assert(frame.payload.ldata.destination == req.payload.ldata.destination);
 
-	assert(frame.payload.ldata.tpdu.tpci == req.tpdu.tpci);
-	assert(frame.payload.ldata.tpdu.seq_number == req.tpdu.seq_number);
-	assert(frame.payload.ldata.tpdu.info.data.apci == req.tpdu.info.data.apci);
-	assert(frame.payload.ldata.tpdu.info.data.length == req.tpdu.info.data.length);
+	assert(frame.payload.ldata.tpdu.tpci == req.payload.ldata.tpdu.tpci);
+	assert(frame.payload.ldata.tpdu.seq_number == req.payload.ldata.tpdu.seq_number);
+	assert(frame.payload.ldata.tpdu.info.data.apci == req.payload.ldata.tpdu.info.data.apci);
+	assert(frame.payload.ldata.tpdu.info.data.length == req.payload.ldata.tpdu.info.data.length);
 
 	// We ignore the first byte, because it contains part of the APCI
 	assert(memcmp(frame.payload.ldata.tpdu.info.data.payload + 1,
-	              req.tpdu.info.data.payload + 1, req.tpdu.info.data.length - 1) == 0);
-})
-
-deftest(cemi, {
-	runsubtest(cemi_ldata);
+	              req.payload.ldata.tpdu.info.data.payload + 1, req.payload.ldata.tpdu.info.data.length - 1) == 0);
 })

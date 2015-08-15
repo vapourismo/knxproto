@@ -26,13 +26,10 @@
 // Routing Indication:
 //   Octet 0-n: Payload
 
-void knx_routing_indication_generate(uint8_t* buffer, const knx_routing_indication* ind) {
-	memcpy(buffer, ind->data, ind->size);
+bool knx_routing_indication_generate(uint8_t* buffer, const knx_routing_indication* ind) {
+	return knx_cemi_generate(buffer, &ind->data);
 }
 
 bool knx_routing_indication_parse(const uint8_t* message, size_t length, knx_routing_indication* ind) {
-	ind->size = length;
-	ind->data = message;
-
-	return true;
+	return knx_cemi_parse(message, length, &ind->data);
 }

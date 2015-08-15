@@ -56,9 +56,6 @@ typedef struct {
 	 */
 	const uint8_t* add_info;
 
-	/**
-	 * Payload
-	 */
 	union {
 		/**
 		 * L_Data Frame
@@ -88,19 +85,11 @@ bool knx_cemi_parse(const uint8_t* message, size_t length, knx_cemi_frame* frame
  * You may set `add_info` to NULL or `add_info_length` to 0. This indicates
  * that there is no additional information.
  */
-bool knx_cemi_generate(uint8_t* buffer, knx_cemi_service service,
-                       uint8_t* add_info, uint8_t add_info_length, const void* payload);
-
-/**
- * Same as `knx_cemi_generate` but without any additional information.
- */
-inline static bool knx_cemi_generate_(uint8_t* buffer, knx_cemi_service service, const void* payload) {
-	return knx_cemi_generate(buffer, service, NULL, 0, payload);
-}
+bool knx_cemi_generate(uint8_t* buffer, const knx_cemi_frame* cemi);
 
 /**
  * Calculate the space required to fit the given CEMI frame.
  */
-size_t knx_cemi_size(knx_cemi_service service, const void* payload);
+size_t knx_cemi_size(const knx_cemi_frame* cemi);
 
 #endif

@@ -22,6 +22,8 @@
 #ifndef KNXCLIENT_PROTO_KNXNETIP_TUNNELREQ_H
 #define KNXCLIENT_PROTO_KNXNETIP_TUNNELREQ_H
 
+#include "cemi.h"
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -32,8 +34,7 @@
 typedef struct {
 	uint8_t channel;
 	uint8_t seq_number;
-	uint16_t size;
-	const void* data;
+	knx_cemi_frame data;
 } knx_tunnel_request;
 
 /**
@@ -50,7 +51,7 @@ bool knx_tunnel_request_parse(const uint8_t* message, size_t length, knx_tunnel_
  * Tunnel request size
  */
 inline static size_t knx_tunnel_request_size(const knx_tunnel_request* req) {
-	return 4 + req->size;
+	return 4 + knx_cemi_size(&req->data);
 }
 
 #endif

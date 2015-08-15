@@ -38,7 +38,7 @@ void knx_tunnel_request_generate(uint8_t* buffer, const knx_tunnel_request* req)
 	*buffer++ = req->seq_number;
 	*buffer++ = 0;
 
-	memcpy(buffer, req->data, req->size);
+	knx_cemi_generate(buffer, &req->data);
 }
 
 bool knx_tunnel_request_parse(const uint8_t* message, size_t length, knx_tunnel_request* req) {
@@ -47,8 +47,6 @@ bool knx_tunnel_request_parse(const uint8_t* message, size_t length, knx_tunnel_
 
 	req->channel = message[1];
 	req->seq_number = message[2];
-	req->size = length - 4;
-	req->data = message + 4;
 
-	return true;
+	return knx_cemi_parse(message + 4, length - 4, &req->data);
 }

@@ -89,19 +89,18 @@ knx_ldata* knx_router_recv(const knx_router_client* client, bool block) {
 
 	uint8_t buffer[buffer_size];
 	knx_packet packet;
-	knx_cemi_frame cemi;
 
 	if (knx_dgramsock_recv(client->sock, buffer, buffer_size, &packet, NULL, 0) &&
-	    packet.service == KNX_ROUTING_INDICATION &&
-	    knx_cemi_parse(packet.payload.routing_ind.data, packet.payload.routing_ind.size, &cemi)) {
+	    packet.service == KNX_ROUTING_INDICATION) {
 
-		switch (cemi.service) {
+		switch (packet.payload.routing_ind.data.service) {
 			case KNX_CEMI_LDATA_IND:
 			case KNX_CEMI_LDATA_CON:
-				return knx_ldata_duplicate(&cemi.payload.ldata);
+				return knx_ldata_duplicate(&packet.payload.routing_ind.data.payload.ldata);
 
 			default:
-				knx_log_error("Unsupported CEMI service %02X", cemi.service);
+				knx_log_error("Unsupported CEMI service %02X",
+				              packet.payload.routing_ind.data.service);
 				return knx_router_recv(client, block);
 		}
 	} else {
@@ -111,11 +110,13 @@ knx_ldata* knx_router_recv(const knx_router_client* client, bool block) {
 }
 
 bool knx_router_send(const knx_router_client* client, const knx_ldata* ldata) {
-	uint8_t buffer[knx_cemi_size(KNX_CEMI_LDATA_IND, ldata)];
-	knx_cemi_generate_(buffer, KNX_CEMI_LDATA_IND, ldata);
-
 	knx_routing_indication route_ind = {
-		sizeof(buffer), buffer
+		{
+			KNX_CEMI_LDATA_IND,
+			0,
+			NULL,
+			{ .ldata = *ldata }
+		}
 	};
 
 	return knx_dgramsock_send(client->sock, KNX_ROUTING_INDICATION, &route_ind, &client->router);

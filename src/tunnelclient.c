@@ -43,14 +43,7 @@ static void knx_tunnel_set_state(knx_tunnel_client* client, knx_tunnel_state sta
 }
 
 static void knx_tunnel_queue(knx_tunnel_client* client, const knx_tunnel_request* req) {
-	knx_cemi_frame cemi;
-
-	if (!knx_cemi_parse(req->data, req->size, &cemi)) {
-		knx_log_error("Failed to parse CEMI frame");
-		return;
-	}
-
-	switch (cemi.service) {
+	switch (req->data.service) {
 		case KNX_CEMI_LDATA_IND:
 		case KNX_CEMI_LDATA_CON: {
 			knx_tunnel_message* msg = new(knx_tunnel_message);
@@ -59,7 +52,7 @@ static void knx_tunnel_queue(knx_tunnel_client* client, const knx_tunnel_request
 				break;
 
 			// Prepare element
-			msg->ldata = knx_ldata_duplicate(&cemi.payload.ldata);
+			msg->ldata = knx_ldata_duplicate(&req->data.payload.ldata);
 			msg->next = NULL;
 
 			if (!msg->ldata) {
@@ -394,14 +387,23 @@ static void knx_tunnel_clear_queue(knx_tunnel_client* client) {
 	client->msg_head = client->msg_tail = NULL;
 }
 
-static bool knx_tunnel_send_raw(knx_tunnel_client* client, const void* payload, uint16_t length) {
+static bool knx_tunnel_send_raw(knx_tunnel_client* client, const knx_ldata* ldata) {
 	if (client->state == KNX_TUNNEL_DISCONNECTED)
 		return false;
 
 	pthread_mutex_lock(&client->send_mutex);
 
 	// Send tunnel request
-	knx_tunnel_request req = {client->channel, client->seq_number++, length, payload};
+	knx_tunnel_request req = {
+		client->channel,
+		client->seq_number++,
+		{
+			KNX_CEMI_LDATA_REQ,
+			0,
+			NULL,
+			{ .ldata = *ldata }
+		}
+	};
 
 	if (!knx_dgramsock_send(client->sock, KNX_TUNNEL_REQUEST, &req, &client->gateway)) {
 		client->seq_number = req.seq_number;
@@ -489,9 +491,7 @@ void knx_tunnel_disconnect(knx_tunnel_client* client) {
 }
 
 bool knx_tunnel_send(knx_tunnel_client* client, const knx_ldata* ldata) {
-	uint8_t buffer[knx_cemi_size(KNX_CEMI_LDATA_REQ, ldata)];
-	knx_cemi_generate_(buffer, KNX_CEMI_LDATA_REQ, ldata);
-	return knx_tunnel_send_raw(client, buffer, sizeof(buffer));
+	return knx_tunnel_send_raw(client, ldata);
 }
 
 bool knx_tunnel_write_group(knx_tunnel_client* client, knx_addr dest,

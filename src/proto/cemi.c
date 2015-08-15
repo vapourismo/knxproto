@@ -61,22 +61,21 @@ bool knx_cemi_parse(const uint8_t* message, size_t length, knx_cemi_frame* frame
 	}
 }
 
-bool knx_cemi_generate(uint8_t* buffer, knx_cemi_service service,
-                       uint8_t* add_info, uint8_t add_info_length, const void* payload) {
-	buffer[0] = service;
-	buffer[1] = add_info_length;
+bool knx_cemi_generate(uint8_t* buffer, const knx_cemi_frame* frame) {
+	buffer[0] = frame->service;
+	buffer[1] = frame->add_info_length;
 
-	if (add_info_length > 0 && add_info)
-		memcpy(buffer + KNX_CEMI_HEADER_SIZE, add_info, add_info_length);
+	if (frame->add_info_length > 0 && frame->add_info)
+		memcpy(buffer + KNX_CEMI_HEADER_SIZE, frame->add_info, frame->add_info_length);
 
 	// Calculate buffer offset
-	buffer += KNX_CEMI_HEADER_SIZE + add_info_length;
+	buffer += KNX_CEMI_HEADER_SIZE + frame->add_info_length;
 
-	switch (service) {
+	switch (frame->service) {
 		case KNX_CEMI_LDATA_IND:
 		case KNX_CEMI_LDATA_REQ:
 		case KNX_CEMI_LDATA_CON:
-			return knx_ldata_generate(buffer, payload);
+			return knx_ldata_generate(buffer, &frame->payload.ldata);
 
 		default:
 			knx_log_error("Unsupported CEMI service %02X", service);
@@ -84,12 +83,15 @@ bool knx_cemi_generate(uint8_t* buffer, knx_cemi_service service,
 	}
 }
 
-size_t knx_cemi_size(knx_cemi_service service, const void* payload) {
-	switch (service) {
+size_t knx_cemi_size(const knx_cemi_frame* frame) {
+	switch (frame->service) {
 		case KNX_CEMI_LDATA_IND:
 		case KNX_CEMI_LDATA_REQ:
 		case KNX_CEMI_LDATA_CON:
-			return KNX_CEMI_HEADER_SIZE + knx_ldata_size(payload);
+			return
+				KNX_CEMI_HEADER_SIZE +
+				frame->add_info_length +
+				knx_ldata_size(&frame->payload.ldata);
 
 		default:
 			knx_log_error("Unsupported CEMI service %02X", service);
