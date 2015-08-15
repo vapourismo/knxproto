@@ -74,7 +74,7 @@ static void knx_tunnel_queue(knx_tunnel_client* client, const knx_tunnel_request
 		}
 
 		default:
-			knx_log_error("Unsupported CEMI service %02X", cemi.service);
+			knx_log_error("Unsupported CEMI service %02X", req->data.service);
 			break;
 	}
 }
