@@ -32,7 +32,7 @@ void knx_cemi_unpack_header(const uint8_t* buffer, knx_cemi_service* service, ui
 		*info_length = buffer[1];
 }
 
-bool knx_cemi_parse(const uint8_t* message, size_t length, knx_cemi_frame* frame) {
+bool knx_cemi_parse(const uint8_t* message, size_t length, knx_cemi* frame) {
 	if (length < KNX_CEMI_HEADER_SIZE) {
 		knx_log_error("Insufficient message length %zu", length);
 		return false;
@@ -61,7 +61,7 @@ bool knx_cemi_parse(const uint8_t* message, size_t length, knx_cemi_frame* frame
 	}
 }
 
-bool knx_cemi_generate(uint8_t* buffer, const knx_cemi_frame* frame) {
+bool knx_cemi_generate(uint8_t* buffer, const knx_cemi* frame) {
 	buffer[0] = frame->service;
 	buffer[1] = frame->add_info_length;
 
@@ -83,7 +83,7 @@ bool knx_cemi_generate(uint8_t* buffer, const knx_cemi_frame* frame) {
 	}
 }
 
-size_t knx_cemi_size(const knx_cemi_frame* frame) {
+size_t knx_cemi_size(const knx_cemi* frame) {
 	switch (frame->service) {
 		case KNX_CEMI_LDATA_IND:
 		case KNX_CEMI_LDATA_REQ:

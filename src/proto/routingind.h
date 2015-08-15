@@ -32,7 +32,7 @@
  * Routing Indication
  */
 typedef struct {
-	knx_cemi_frame data;
+	knx_cemi data;
 } knx_routing_indication;
 
 /**

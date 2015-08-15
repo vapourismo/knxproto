@@ -34,7 +34,7 @@
 typedef struct {
 	uint8_t channel;
 	uint8_t seq_number;
-	knx_cemi_frame data;
+	knx_cemi data;
 } knx_tunnel_request;
 
 /**

@@ -62,7 +62,7 @@ typedef struct {
 		 */
 		knx_ldata ldata;
 	} payload;
-} knx_cemi_frame;
+} knx_cemi;
 
 /**
  * CEMI Header Size
@@ -78,18 +78,18 @@ void knx_cemi_unpack_header(const uint8_t* buffer, knx_cemi_service* service, ui
 /**
  * Parse a message which contains a CEMI frame.
  */
-bool knx_cemi_parse(const uint8_t* message, size_t length, knx_cemi_frame* frame);
+bool knx_cemi_parse(const uint8_t* message, size_t length, knx_cemi* frame);
 
 /**
  * Generate a CEMI frame.
  * You may set `add_info` to NULL or `add_info_length` to 0. This indicates
  * that there is no additional information.
  */
-bool knx_cemi_generate(uint8_t* buffer, const knx_cemi_frame* cemi);
+bool knx_cemi_generate(uint8_t* buffer, const knx_cemi* cemi);
 
 /**
  * Calculate the space required to fit the given CEMI frame.
  */
-size_t knx_cemi_size(const knx_cemi_frame* cemi);
+size_t knx_cemi_size(const knx_cemi* cemi);
 
 #endif

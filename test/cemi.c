@@ -29,7 +29,7 @@
 deftest(cemi, {
 	uint8_t example_Data[4] = {11, 22, 33, 44};
 
-	knx_cemi_frame req = {
+	knx_cemi req = {
 		KNX_CEMI_LDATA_REQ,
 		0,
 		NULL,
@@ -58,7 +58,7 @@ deftest(cemi, {
 	assert(knx_cemi_generate(buffer, &req));
 
 	// Parse
-	knx_cemi_frame frame;
+	knx_cemi frame;
 	assert(knx_cemi_parse(buffer, sizeof(buffer), &frame));
 
 	// Check
