@@ -45,6 +45,12 @@ bool knx_dgramsock_ready(int sock, time_t timeout_sec, long timeout_usec);
 bool knx_dgramsock_send(int sock, knx_service srv, const void* payload, const ip4addr* target);
 
 /**
+ * Receive a packet from a number of endpoints.
+ */
+ssize_t knx_dgramsock_recv_raw(int sock, void* buffer, size_t buffer_size,
+                               const ip4addr* endpoints, size_t num_endpoints);
+
+/**
  * Receive a KNXnet/IP packet.
  */
 bool knx_dgramsock_recv(int sock, uint8_t* buffer, size_t size,

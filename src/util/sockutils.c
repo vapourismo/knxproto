@@ -84,8 +84,8 @@ static bool knx_dgramsock_valid_sender(const ip4addr* endpoints, size_t num_endp
 	return false;
 }
 
-static ssize_t knx_dgramsock_recv_raw(int sock, void* buffer, size_t buffer_size,
-                                      const ip4addr* endpoints, size_t num_endpoints) {
+ssize_t knx_dgramsock_recv_raw(int sock, void* buffer, size_t buffer_size,
+                               const ip4addr* endpoints, size_t num_endpoints) {
 	ip4addr remote;
 	socklen_t remote_size = sizeof(remote);
 
