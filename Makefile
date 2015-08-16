@@ -61,6 +61,10 @@ LDLIBS          := -pthread -lm -lev
 TESTCFLAGS      = $(BASECFLAGS)
 TESTLDFLAGS     = -flto
 
+ifeq ($(TEST_TUNNEL), 1)
+	TESTCFLAGS  += -DKNXCLIENT_TEST_TUNNEL
+endif
+
 # Default Targets
 all: $(SOOUTPUT)
 
