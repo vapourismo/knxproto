@@ -25,8 +25,7 @@
 #include "util/log.h"
 #include "util/alloc.h"
 
-#include <event2/event.h>
-#include <event2/thread.h>
+#include <fcntl.h>
 #include <sys/time.h>
 
 // Temporary configuration
@@ -190,45 +189,41 @@ static void knx_tunnel_init_disconnect(knx_tunnel_client* client) {
 	knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
 }
 
-static void knx_tunnel_worker_cb_read(evutil_socket_t sock, short what, void* data) {
-	knx_tunnel_client* client = data;
+static void knx_tunnel_worker_cb_read(struct ev_loop* loop, struct ev_io* watcher, int revents) {
+	knx_tunnel_client* client = watcher->data;
 
-	if (sock == client->sock && what == EV_READ) {
-		ssize_t buffer_size = knx_dgramsock_peek_knx(client->sock);
-		if (buffer_size < 0) {
-			// This is not a KNXnet/IP packet so we'll discard it
-			recvfrom(client->sock, NULL, 0, 0, NULL, NULL);
-			return;
-		}
-
-		uint8_t buffer[buffer_size];
-		ssize_t buffer_rv = knx_dgramsock_recv_raw(client->sock, buffer, buffer_size,
-		                                           &client->gateway, 1);
-
-		// KNXnet header is mandatory
-		if (buffer_rv < KNX_HEADER_SIZE)
-			return;
-
-		knx_packet pkg_in;
-
-		// Parse and process the packet
-		if (knx_parse(buffer, buffer_rv, &pkg_in))
-			knx_tunnel_process_packet(client, &pkg_in);
+	ssize_t buffer_size = knx_dgramsock_peek_knx(client->sock);
+	if (buffer_size < 0) {
+		// This is not a KNXnet/IP packet so we'll discard it
+		recvfrom(client->sock, NULL, 0, 0, NULL, NULL);
+		return;
 	}
+
+	uint8_t buffer[buffer_size];
+	ssize_t buffer_rv = knx_dgramsock_recv_raw(client->sock, buffer, buffer_size,
+	                                           &client->gateway, 1);
+
+	// KNXnet header is mandatory
+	if (buffer_rv < KNX_HEADER_SIZE)
+		return;
+
+	knx_packet pkg_in;
+
+	// Parse and process the packet
+	if (knx_parse(buffer, buffer_rv, &pkg_in))
+		knx_tunnel_process_packet(client, &pkg_in);
 }
 
-static void knx_tunnel_worker_cb_heartbeat(evutil_socket_t sock, short what, void* data) {
-	knx_tunnel_client* client = data;
-
-	if (sock == -1 && what == EV_TIMEOUT) {
-		knx_connection_state_request req = {client->channel, 0, client->host_info};
-		knx_dgramsock_send(client->sock, KNX_CONNECTION_STATE_REQUEST, &req, &client->gateway);
-	}
+static void knx_tunnel_worker_cb_heartbeat(struct ev_loop* loop, struct ev_timer* watcher,
+                                           int revents) {
+	knx_tunnel_client* client = watcher->data;
+	knx_connection_state_request req = {client->channel, 0, client->host_info};
+	knx_dgramsock_send(client->sock, KNX_CONNECTION_STATE_REQUEST, &req, &client->gateway);
 }
 
 static void* knx_tunnel_worker_thread(void* data) {
 	knx_tunnel_client* client = data;
-	event_base_dispatch(client->ev_manifest);
+	ev_loop(client->ev_loop, 0);
 	pthread_exit(NULL);
 }
 
@@ -279,60 +274,40 @@ static bool knx_tunnel_timed_wait_ack(knx_tunnel_client* conn, uint8_t number, l
 }
 
 static void knx_tunnel_del_events(knx_tunnel_client* client) {
-	if (client->ev_read)
-		event_del(client->ev_read);
-
-	if (client->ev_heartbeat)
-		event_del(client->ev_heartbeat);
+	ev_io_stop(client->ev_loop, &client->ev_read);
+	ev_timer_stop(client->ev_loop, &client->ev_heartbeat);
 }
 
 static void knx_tunnel_free_events(knx_tunnel_client* client) {
-	if (client->ev_read)
-		event_free(client->ev_read);
-
-	if (client->ev_heartbeat)
-		event_free(client->ev_heartbeat);
-
-	if (client->ev_manifest)
-		event_base_free(client->ev_manifest);
-
-	client->ev_read = client->ev_heartbeat = NULL;
-	client->ev_manifest = NULL;
+	if (client->ev_loop) {
+		ev_loop_destroy(client->ev_loop);
+		client->ev_loop = NULL;
+	}
 }
 
 static bool knx_tunnel_create_events(knx_tunnel_client* client) {
-	if (evthread_use_pthreads() != 0) {
-		knx_log_error("Failed to enable pthreads for libevent");
+	// TODO: Figure out if libev needs thread backend intialization
+	// if (evthread_use_pthreads() != 0) {
+	// 	knx_log_error("Failed to enable pthreads for libevent");
+	// 	return false;
+	// }
+
+	client->ev_loop = ev_loop_new(0);
+
+	if (!client->ev_loop) {
+		knx_log_error("Failed to allocate event loop");
 		return false;
 	}
 
-	client->ev_manifest = event_base_new();
+	// Packet processor
+	ev_io_init(&client->ev_read, knx_tunnel_worker_cb_read, client->sock, EV_READ);
+	client->ev_read.data = client;
+	ev_io_start(client->ev_loop, &client->ev_read);
 
-	if (!client->ev_manifest) {
-		knx_log_error("Failed to allocate event base");
-		return false;
-	}
-
- 	client->ev_read = event_new(client->ev_manifest,
- 	                            client->sock, EV_READ | EV_PERSIST,
- 	                            knx_tunnel_worker_cb_read, client);
-
-	client->ev_heartbeat = event_new(client->ev_manifest,
-	                                 -1, EV_PERSIST | EV_TIMEOUT,
-	                                 knx_tunnel_worker_cb_heartbeat, client);
-
-	struct timeval timeout = {30, 0};
-
-	if (!client->ev_read ||
-	    !client->ev_heartbeat ||
-	    event_add(client->ev_read, NULL) != 0 ||
-		event_add(client->ev_heartbeat, &timeout) != 0) {
-
-		knx_tunnel_del_events(client);
-		knx_tunnel_free_events(client);
-
-		return false;
-	}
+	// Heartbeat timer
+	ev_timer_init(&client->ev_heartbeat, knx_tunnel_worker_cb_heartbeat, 30, 30);
+	client->ev_heartbeat.data = client;
+	ev_timer_start(client->ev_loop, &client->ev_heartbeat);
 
 	return true;
 }
@@ -453,10 +428,10 @@ bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port
 	client->heartbeat = false;
 	client->msg_head = client->msg_tail = NULL;
 
-	evutil_make_socket_nonblocking(client->sock);
-
 	// Create thread
-	if (!knx_tunnel_create_pthread(client)) {
+	if (fcntl(client->sock, F_SETFL, fcntl(client->sock, F_GETFL, 0) | O_NONBLOCK) != 0 ||
+	    !knx_tunnel_create_pthread(client)) {
+
 		knx_log_error("Failed to start thread facilities");
 		goto clean_socket;
 	}
@@ -489,7 +464,9 @@ void knx_tunnel_disconnect(knx_tunnel_client* client) {
 	knx_tunnel_free_pthread(client);
 
 	// Close socket
-	close(client->sock);
+	if (client->sock != -1)
+		close(client->sock);
+
 	client->sock = -1;
 
 	// Clear incoming queue

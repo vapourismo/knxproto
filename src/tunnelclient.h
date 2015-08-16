@@ -30,7 +30,7 @@
 #include <pthread.h>
 #include <stdbool.h>
 #include <time.h>
-#include <event2/event.h>
+#include <ev.h>
 
 /**
  * Tunnel Connection State
@@ -75,9 +75,9 @@ typedef struct {
 
 	bool heartbeat;
 
-	struct event_base* ev_manifest;
-	struct event* ev_read;
-	struct event* ev_heartbeat;
+	struct ev_loop* ev_loop;
+	struct ev_io ev_read;
+	struct ev_timer ev_heartbeat;
 } knx_tunnel_client;
 
 /**
