@@ -44,6 +44,7 @@ static void knx_tunnel_set_state(knx_tunnel_client* client, knx_tunnel_state sta
 
 static void knx_tunnel_queue(knx_tunnel_client* client, const knx_tunnel_request* req) {
 	switch (req->data.service) {
+		case KNX_CEMI_LDATA_REQ:
 		case KNX_CEMI_LDATA_IND:
 		case KNX_CEMI_LDATA_CON: {
 			knx_tunnel_message* msg = new(knx_tunnel_message);
