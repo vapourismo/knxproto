@@ -26,7 +26,7 @@
 #include "../src/tunnelclient.h"
 
 static
-const uint8_t example_ldata_payload[4] = {0, 11, 22, 33, 44};
+const uint8_t example_ldata_payload[5] = {0, 11, 22, 33, 44};
 
 static
 const knx_ldata example_ldata = {
