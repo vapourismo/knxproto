@@ -111,4 +111,9 @@ bool knx_tunnel_write_group(knx_tunnel_client* client, knx_addr dest,
  */
 knx_ldata* knx_tunnel_recv(knx_tunnel_client* client, bool block);
 
+/**
+ * Process the KNX packet as if it has been received through the router socket.
+ */
+void knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_in);
+
 #endif
