@@ -49,16 +49,20 @@ typedef struct knx_tunnel_message {
 	struct knx_tunnel_message* next;
 } knx_tunnel_message;
 
+struct _knx_tunnel_client;
+
+/**
+ * Receive callback
+ */
+typedef void (* knx_tunnel_recv_callback)(struct _knx_tunnel_client*, const knx_ldata*, void*);
+
 /**
  * Tunnel Connection
  */
-typedef struct {
+typedef struct _knx_tunnel_client {
 	int sock;
 	ip4addr gateway;
 	pthread_t worker;
-
-	knx_tunnel_message* msg_head;
-	knx_tunnel_message* msg_tail;
 
 	pthread_mutex_t mutex;
 	pthread_cond_t cond;
@@ -75,9 +79,10 @@ typedef struct {
 
 	bool heartbeat;
 
-	struct ev_loop* ev_loop;
 	struct ev_io ev_read;
 	struct ev_timer ev_heartbeat;
+	knx_tunnel_recv_callback recv_cb;
+	void* recv_data;
 } knx_tunnel_client;
 
 /**
@@ -106,14 +111,19 @@ bool knx_tunnel_write_group(knx_tunnel_client* client, knx_addr dest,
                             knx_dpt type, const void* value);
 
 /**
- * Retrieve incoming a L_Data indication. You have to `free` the returned pointer manually.
- * Returning a NULL pointer indicates a failure.
- */
-knx_ldata* knx_tunnel_recv(knx_tunnel_client* client, bool block);
-
-/**
  * Process the KNX packet as if it has been received through the router socket.
  */
 void knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_in);
+
+/**
+ * Start processing packets within the event loop.
+ */
+void knx_tunnel_start(knx_tunnel_client* client, struct ev_loop* loop,
+                      knx_tunnel_recv_callback cb, void* data);
+
+/**
+ * Stop processing packets.
+ */
+void knx_tunnel_stop(knx_tunnel_client* client, struct ev_loop* loop);
 
 #endif
