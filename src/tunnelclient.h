@@ -27,9 +27,7 @@
 
 #include "util/address.h"
 
-#include <pthread.h>
 #include <stdbool.h>
-#include <time.h>
 #include <ev.h>
 
 /**
@@ -49,37 +47,40 @@ struct _knx_tunnel_client;
 typedef void (* knx_tunnel_recv_callback)(struct _knx_tunnel_client*, const knx_ldata*, void*);
 
 /**
+ * State change callback
+ */
+typedef void (* knx_tunnel_state_callback)(struct _knx_tunnel_client*, knx_tunnel_state, void*);
+
+/**
  * Tunnel Connection
  */
 typedef struct _knx_tunnel_client {
 	int sock;
 	ip4addr gateway;
-	pthread_t worker;
 
-	pthread_mutex_t mutex;
-	pthread_cond_t cond;
-
+	// Connection information
 	knx_tunnel_state state;
-
-	pthread_mutex_t send_mutex;
-
-	uint8_t seq_number;
-	uint8_t ack_seq_number;
-
 	uint8_t channel;
 	knx_host_info host_info;
 
-	bool heartbeat;
+	// Packet counter
+	uint8_t seq_number;
 
-	struct ev_io ev_read;
-	struct ev_timer ev_heartbeat;
+	// Receive callback
 	knx_tunnel_recv_callback recv_cb;
 	void* recv_data;
+
+	// State change callback
+	knx_tunnel_state_callback state_cb;
+	void* state_data;
+
+	// Events
+	struct ev_io ev_read;
+	struct ev_timer ev_heartbeat;
 } knx_tunnel_client;
 
 /**
- * Connect to a gateway. This function returns `true` if a connection has
- * been established.
+ * Connect to a gateway.
  */
 bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port_t port);
 

@@ -26,34 +26,6 @@
 #include "util/alloc.h"
 
 #include <fcntl.h>
-#include <sys/time.h>
-
-// Temporary configuration
-#define KNX_TUNNEL_CONNECTION_TIMEOUT 5       // 5 Seconds
-#define KNX_TUNNEL_HEARTBEAT_TIMEOUT 30       // 5 Seconds
-#define KNX_TUNNEL_ACK_TIMEOUT 5              // 5 Seconds
-#define KNX_TUNNEL_READ_TIMEOUT 100000        // 100ms
-
-static void knx_tunnel_set_state(knx_tunnel_client* client, knx_tunnel_state state) {
-	pthread_mutex_lock(&client->mutex);
-	client->state = state;
-	pthread_cond_broadcast(&client->cond);
-	pthread_mutex_unlock(&client->mutex);
-}
-
-static void knx_tunnel_process_req(knx_tunnel_client* client, const knx_tunnel_request* req) {
-	switch (req->data.service) {
-		case KNX_CEMI_LDATA_REQ:
-		case KNX_CEMI_LDATA_IND:
-		case KNX_CEMI_LDATA_CON:
-			client->recv_cb(client, &req->data.payload.ldata, client->recv_data);
-			break;
-
-		default:
-			knx_log_error("Unsupported CEMI service %02X", req->data.service);
-			break;
-	}
-}
 
 void knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_in) {
 	knx_log_debug("Received (service = 0x%04X)", pkg_in->service);
@@ -70,10 +42,10 @@ void knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_
 				client->host_info = pkg_in->payload.conn_res.host;
 
 				knx_log_info("Connected (channel = %i)", client->channel);
-				knx_tunnel_set_state(client, KNX_TUNNEL_CONNECTED);
+				client->state = KNX_TUNNEL_CONNECTED;
 			} else {
 				knx_log_error("Connection failed (code = %i)", pkg_in->payload.conn_res.status);
-				knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
+				client->state = KNX_TUNNEL_DISCONNECTED;
 			}
 
 			break;
@@ -87,11 +59,8 @@ void knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_
 			knx_log_info("Heartbeat (status = %i)", pkg_in->payload.conn_state_res.status);
 
 			// Anything other than 0 means the bad news
-			if (pkg_in->payload.conn_state_res.status != 0) {
-				knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
-			} else {
-				client->heartbeat = true;
-			}
+			if (pkg_in->payload.conn_state_res.status != 0)
+				client->state = KNX_TUNNEL_DISCONNECTED;
 
 			break;
 
@@ -107,7 +76,7 @@ void knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_
 				             pkg_in->payload.dc_req.status);
 
 			// Entering this state will stop the worker gently
-			knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
+			client->state = KNX_TUNNEL_DISCONNECTED;
 
 			break;
 
@@ -125,7 +94,21 @@ void knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_
 
 			// Send a tunnel response
 			knx_dgramsock_send(client->sock, KNX_TUNNEL_RESPONSE, &res, &client->gateway);
-			knx_tunnel_process_req(client, &pkg_in->payload.tunnel_req);
+
+			switch (pkg_in->payload.tunnel_req.data.service) {
+				case KNX_CEMI_LDATA_REQ:
+				case KNX_CEMI_LDATA_IND:
+				case KNX_CEMI_LDATA_CON:
+					if (client->recv_cb)
+						client->recv_cb(client, &pkg_in->payload.tunnel_req.data.payload.ldata,
+						                client->recv_data);
+					break;
+
+				default:
+					knx_log_error("Unsupported CEMI service %02X",
+					              pkg_in->payload.tunnel_req.data.service);
+					break;
+			}
 
 			break;
 
@@ -135,11 +118,7 @@ void knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_
 			    client->channel != pkg_in->payload.tunnel_res.channel)
 				break;
 
-			// Signal acknowledgement
-			pthread_mutex_lock(&client->mutex);
-			client->ack_seq_number = pkg_in->payload.tunnel_res.seq_number;
-			pthread_cond_broadcast(&client->cond);
-			pthread_mutex_unlock(&client->mutex);
+			// ...
 
 			break;
 
@@ -150,22 +129,8 @@ void knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_
 	}
 }
 
-static void knx_tunnel_init_disconnect(knx_tunnel_client* client) {
-	knx_disconnect_request dc_req = {
-		client->channel,
-		0,
-		client->host_info
-	};
-
-	// Send disconnect request
-	if (!knx_dgramsock_send(client->sock, KNX_DISCONNECT_REQUEST, &dc_req, &client->gateway))
-		knx_log_error("Failed to send disconnect request");
-
-	// Set new state
-	knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
-}
-
-static void knx_tunnel_worker_cb_read(struct ev_loop* loop, struct ev_io* watcher, int revents) {
+static
+void knx_tunnel_worker_cb_read(struct ev_loop* loop, struct ev_io* watcher, int revents) {
 	knx_tunnel_client* client = watcher->data;
 
 	ssize_t buffer_size = knx_dgramsock_peek_knx(client->sock);
@@ -190,68 +155,11 @@ static void knx_tunnel_worker_cb_read(struct ev_loop* loop, struct ev_io* watche
 		knx_tunnel_process_packet(client, &pkg_in);
 }
 
-static void knx_tunnel_worker_cb_heartbeat(struct ev_loop* loop, struct ev_timer* watcher,
-                                           int revents) {
+static
+void knx_tunnel_worker_cb_heartbeat(struct ev_loop* loop, struct ev_timer* watcher, int revents) {
 	knx_tunnel_client* client = watcher->data;
 	knx_connection_state_request req = {client->channel, 0, client->host_info};
 	knx_dgramsock_send(client->sock, KNX_CONNECTION_STATE_REQUEST, &req, &client->gateway);
-}
-
-inline static void mk_timespec(struct timespec* ts, long sec, long nsec) {
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-
-	while (nsec >= 1000000000) {
-		sec++;
-		nsec -= 1000000000;
-	}
-
-	ts->tv_sec = tv.tv_sec + sec;
-	ts->tv_nsec = tv.tv_usec * 1000 + nsec;
-
-	while (ts->tv_nsec >= 1000000000) {
-		ts->tv_sec++;
-		ts->tv_nsec -= 1000000000;
-	}
-}
-
-static bool knx_tunnel_timed_wait_state(knx_tunnel_client* conn, long sec, long nsec) {
-	struct timespec ts;
-	mk_timespec(&ts, sec, nsec);
-
-	pthread_mutex_lock(&conn->mutex);
-	while (conn->state == KNX_TUNNEL_CONNECTING &&
-	       pthread_cond_timedwait(&conn->cond, &conn->mutex, &ts) == 0);
-
-	bool r = conn->state == KNX_TUNNEL_CONNECTED;
-	pthread_mutex_unlock(&conn->mutex);
-
-	return r;
-}
-
-static bool knx_tunnel_timed_wait_ack(knx_tunnel_client* conn, uint8_t number, long sec, long nsec) {
-	struct timespec ts;
-	mk_timespec(&ts, sec, nsec);
-
-	pthread_mutex_lock(&conn->mutex);
-	while (conn->state == KNX_TUNNEL_CONNECTED && conn->ack_seq_number != number &&
-	       pthread_cond_timedwait(&conn->cond, &conn->mutex, &ts) == 0);
-
-	bool r = conn->ack_seq_number == number;
-	pthread_mutex_unlock(&conn->mutex);
-
-	return r;
-}
-
-static bool knx_tunnel_request_connection(knx_tunnel_client* client) {
-	knx_connection_request req = {
-		KNX_CONNECTION_REQUEST_TUNNEL,
-		KNX_LAYER_TUNNEL,
-		KNX_HOST_INFO_NAT(KNX_PROTO_UDP),
-		KNX_HOST_INFO_NAT(KNX_PROTO_UDP)
-	};
-
-	return knx_dgramsock_send(client->sock, KNX_CONNECTION_REQUEST, &req, &client->gateway);
 }
 
 bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port_t port) {
@@ -268,35 +176,49 @@ bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port
 	// Initialise structure
 	client->state = KNX_TUNNEL_CONNECTING;
 	client->seq_number = 0;
-	client->ack_seq_number = UINT8_MAX;
-	client->heartbeat = false;
+	client->recv_cb = NULL;
+	client->recv_data = NULL;
+	client->state_cb = NULL;
+	client->state_data = NULL;
 
 	// Create thread
-	if (fcntl(client->sock, F_SETFL, fcntl(client->sock, F_GETFL, 0) | O_NONBLOCK) != 0) {
+	if (fcntl(client->sock, F_SETFL, fcntl(client->sock, F_GETFL, 0) | O_NONBLOCK) == 0) {
+		knx_connection_request req = {
+			KNX_CONNECTION_REQUEST_TUNNEL,
+			KNX_LAYER_TUNNEL,
+			KNX_HOST_INFO_NAT(KNX_PROTO_UDP),
+			KNX_HOST_INFO_NAT(KNX_PROTO_UDP)
+		};
+
+		// Send connection request
+		if (knx_dgramsock_send(client->sock, KNX_CONNECTION_REQUEST, &req, &client->gateway))
+			return true;
+		else
+			knx_log_error("Failed to request a connection");
+	} else
 		knx_log_error("Failed to start thread facilities");
-		goto clean_socket;
-	}
 
-	// Send connection request
-	if (!knx_tunnel_request_connection(client)) {
-		knx_log_error("Failed to request a connection");
-		goto clean_socket;
-	}
-
-	// Wait for connecting state to transition to connected state
-	if (knx_tunnel_timed_wait_state(client, KNX_TUNNEL_CONNECTION_TIMEOUT, 0))
-		return true;
-
-	clean_socket:
-		close(client->sock);
-		client->sock = -1;
+	close(client->sock);
+	client->sock = -1;
 
 	return false;
 }
 
 void knx_tunnel_disconnect(knx_tunnel_client* client) {
-	if (client->state != KNX_TUNNEL_DISCONNECTED)
-		knx_tunnel_init_disconnect(client);
+	if (client->state != KNX_TUNNEL_DISCONNECTED) {
+		// Set new state
+		client->state = KNX_TUNNEL_DISCONNECTED;
+
+		knx_disconnect_request dc_req = {
+			client->channel,
+			0,
+			client->host_info
+		};
+
+		// Send disconnect request
+		if (!knx_dgramsock_send(client->sock, KNX_DISCONNECT_REQUEST, &dc_req, &client->gateway))
+			knx_log_error("Failed to send disconnect request");
+	}
 
 	// Close socket
 	if (client->sock != -1)
@@ -309,9 +231,6 @@ bool knx_tunnel_send(knx_tunnel_client* client, const knx_ldata* ldata) {
 	if (client->state == KNX_TUNNEL_DISCONNECTED)
 		return false;
 
-	pthread_mutex_lock(&client->send_mutex);
-
-	// Send tunnel request
 	knx_tunnel_request req = {
 		client->channel,
 		client->seq_number++,
@@ -319,21 +238,11 @@ bool knx_tunnel_send(knx_tunnel_client* client, const knx_ldata* ldata) {
 			KNX_CEMI_LDATA_REQ,
 			0,
 			NULL,
-			{ .ldata = *ldata }
+			{.ldata = *ldata}
 		}
 	};
 
-	if (!knx_dgramsock_send(client->sock, KNX_TUNNEL_REQUEST, &req, &client->gateway)) {
-		client->seq_number = req.seq_number;
-		pthread_mutex_unlock(&client->send_mutex);
-		return false;
-	}
-
-	// Wait for tunnel response
-	bool r = knx_tunnel_timed_wait_ack(client, req.seq_number, KNX_TUNNEL_ACK_TIMEOUT, 0);
-	pthread_mutex_unlock(&client->send_mutex);
-
-	return r;
+	return knx_dgramsock_send(client->sock, KNX_TUNNEL_REQUEST, &req, &client->gateway);
 }
 
 bool knx_tunnel_write_group(knx_tunnel_client* client, knx_addr dest,
