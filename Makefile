@@ -54,14 +54,19 @@ CC              ?= clang
 BASECFLAGS      := -std=c99 -O2 -D_POSIX_SOURCE -D_GNU_SOURCE $(DEBUGCFLAGS) \
                    -fmessage-length=0 -Wall -Wextra -pedantic -Wno-unused-parameter
 CFLAGS          += $(BASECFLAGS) -fPIC
-LDFLAGS         += -flto -shared -Wl,-soname,$(SONAME)
+LDFLAGS         += -shared -Wl,-soname,$(SONAME)
 LDLIBS          := -lm -lev
 
 TESTCFLAGS      = $(BASECFLAGS)
-TESTLDFLAGS     = -flto
+TESTLDFLAGS     =
 
 ifeq ($(TEST_TUNNEL), 1)
 	TESTCFLAGS  += -DKNXCLIENT_TEST_TUNNEL
+endif
+
+ifeq ($(LTO), 1)
+	TESTLDFLAGS += -flto
+	LDFLAGS += -flto
 endif
 
 # Default Targets
