@@ -51,11 +51,11 @@ endif
 
 # Compiler
 CC              ?= clang
-BASECFLAGS      := -std=c99 -O2 -pthread -D_POSIX_SOURCE -D_GNU_SOURCE $(DEBUGCFLAGS) \
+BASECFLAGS      := -std=c99 -O2 -D_POSIX_SOURCE -D_GNU_SOURCE $(DEBUGCFLAGS) \
                    -fmessage-length=0 -Wall -Wextra -pedantic -Wno-unused-parameter
 CFLAGS          += $(BASECFLAGS) -fPIC
 LDFLAGS         += -flto -shared -Wl,-soname,$(SONAME)
-LDLIBS          := -pthread -lm -lev
+LDLIBS          := -lm -lev
 
 TESTCFLAGS      = $(BASECFLAGS)
 TESTLDFLAGS     = -flto
