@@ -41,14 +41,6 @@ typedef enum {
 	KNX_TUNNEL_DISCONNECTED
 } knx_tunnel_state;
 
-/**
- * Message from the gateway
- */
-typedef struct knx_tunnel_message {
-	knx_ldata* ldata;
-	struct knx_tunnel_message* next;
-} knx_tunnel_message;
-
 struct _knx_tunnel_client;
 
 /**
