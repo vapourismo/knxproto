@@ -1,6 +1,7 @@
-language: cpp
+language: c
 compiler:
   - gcc
   - clang
 script:
+  - make all
   - make test
