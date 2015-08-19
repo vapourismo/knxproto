@@ -23,9 +23,8 @@
 #define KNXCLIENT_NET_TUNNELCLIENT_H
 
 #include "proto/knxnetip.h"
-#include "proto/cemi.h"
-
-#include "util/address.h"
+#include "proto/ldata.h"
+#include "proto/data.h"
 
 #include <stdbool.h>
 #include <ev.h>
@@ -39,64 +38,46 @@ typedef enum {
 	KNX_TUNNEL_DISCONNECTED
 } knx_tunnel_state;
 
-struct _knx_tunnel_client;
+/**
+ * Tunnel Connection
+ */
+typedef struct _knx_tunnel_client knx_tunnel_client;
 
 /**
  * Receive callback
  */
-typedef void (* knx_tunnel_recv_callback)(struct _knx_tunnel_client*, const knx_ldata*, void*);
+typedef void (* knx_tunnel_recv_cb)(knx_tunnel_client*, const knx_ldata*, void*);
 
 /**
  * State change callback
  */
-typedef void (* knx_tunnel_state_callback)(struct _knx_tunnel_client*, knx_tunnel_state, void*);
+typedef void (* knx_tunnel_state_cb)(knx_tunnel_client*, knx_tunnel_state, void*);
 
 /**
- * Tunnel Connection
+ * Create a new tunnel client. This functions only allocates the necessary resources, it does not
+ * perform any tunneling-related actions. On failure `NULL` is returned, otherwise a pointer to the
+ * newly created tunnel client.
  */
-typedef struct _knx_tunnel_client {
-	int sock;
-	ip4addr gateway;
-
-	// Connection information
-	knx_tunnel_state state;
-	uint8_t channel;
-	knx_host_info host_info;
-
-	// Packet counter
-	uint8_t seq_number;
-
-	// Receive callback
-	knx_tunnel_recv_callback recv_cb;
-	void* recv_data;
-
-	// State change callback
-	knx_tunnel_state_callback state_cb;
-	void* state_data;
-
-	// Events
-	struct ev_io ev_read;
-	struct ev_timer ev_heartbeat;
-} knx_tunnel_client;
+knx_tunnel_client* knx_tunnel_new(knx_tunnel_state_cb on_state, void* state_data,
+                                  knx_tunnel_recv_cb on_recv, void* recv_data);
 
 /**
- * Connect to a gateway located at `hostname:port`. The provides callback (if not NULL) will be
- * invoked when the internal state changes. It can be used to detect when a connection has been
- * established or if an existing one has been terminated.
+ * Destroys a tunnel client. You must not destroy the instance if the client is connected.
  */
-bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port_t port,
-                        knx_tunnel_state_callback cb, void* cb_data);
+void knx_tunnel_destroy(knx_tunnel_client* client);
 
 /**
- * Disconnect from the gateway if a connection is active, and free resources.
- * You must not invoke this method twice or on connections that did not
- * connect successfully, because this would lead to a double free of resources.
+ * Send a connection request to the gateway.
  */
-void knx_tunnel_disconnect(knx_tunnel_client* client);
+bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port_t port);
 
 /**
- * Send a L_Data request frame through the gateway.
- * Returns `true` if the message has been sent.
+ * Send a disconnect request.
+ */
+bool knx_tunnel_disconnect(knx_tunnel_client* client);
+
+/**
+ * Send a L_Data request.
  */
 bool knx_tunnel_send(knx_tunnel_client* client, const knx_ldata* ldata);
 
@@ -107,15 +88,19 @@ bool knx_tunnel_write_group(knx_tunnel_client* client, knx_addr dest,
                             knx_dpt type, const void* value);
 
 /**
+ * Process one packet.
+ */
+bool knx_tunnel_process(knx_tunnel_client* client);
+
+/**
  * Process the KNX packet as if it has been received through the router socket.
  */
-void knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_in);
+bool knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_in);
 
 /**
  * Start processing packets within the event loop.
  */
-void knx_tunnel_start(knx_tunnel_client* client, struct ev_loop* loop,
-                      knx_tunnel_recv_callback cb, void* data);
+void knx_tunnel_start(knx_tunnel_client* client, struct ev_loop* loop);
 
 /**
  * Stop processing packets.

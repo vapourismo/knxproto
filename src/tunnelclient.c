@@ -22,10 +22,36 @@
 #include "tunnelclient.h"
 
 #include "util/sockutils.h"
-#include "util/log.h"
+#include "util/address.h"
 #include "util/alloc.h"
+#include "util/log.h"
 
 #include <fcntl.h>
+
+struct _knx_tunnel_client {
+	int sock;
+	knx_tunnel_state state;
+
+	// Connection information
+	ip4addr gateway;
+	uint8_t channel;
+	knx_host_info host_info;
+
+	// Packet counter
+	uint8_t seq_number;
+
+	// Receive callback
+	knx_tunnel_recv_cb recv_cb;
+	void* recv_data;
+
+	// State change callback
+	knx_tunnel_state_cb state_cb;
+	void* state_data;
+
+	// Events
+	struct ev_io ev_read;
+	struct ev_timer ev_heartbeat;
+};
 
 static
 void knx_tunnel_set_state(knx_tunnel_client* client, knx_tunnel_state state) {
@@ -36,132 +62,10 @@ void knx_tunnel_set_state(knx_tunnel_client* client, knx_tunnel_state state) {
 	}
 }
 
-void knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_in) {
-	knx_log_debug("Received (service = 0x%04X)", pkg_in->service);
-
-	switch (pkg_in->service) {
-		// Result of a connection request (duh)
-		case KNX_CONNECTION_RESPONSE:
-			if (client->state != KNX_TUNNEL_CONNECTING)
-				break;
-
-			if (pkg_in->payload.conn_res.status == 0) {
-				// Save channel and host info
-				client->channel = pkg_in->payload.conn_res.channel;
-				client->host_info = pkg_in->payload.conn_res.host;
-
-				knx_log_info("Connected (channel = %i)", client->channel);
-				knx_tunnel_set_state(client, KNX_TUNNEL_CONNECTED);
-			} else {
-				knx_log_error("Connection failed (code = %i)", pkg_in->payload.conn_res.status);
-				knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
-			}
-
-			break;
-
-		// Heartbeat
-		case KNX_CONNECTION_STATE_RESPONSE:
-			if (pkg_in->payload.conn_state_res.channel != client->channel ||
-			    client->state != KNX_TUNNEL_CONNECTED)
-				break;
-
-			knx_log_info("Heartbeat (status = %i)", pkg_in->payload.conn_state_res.status);
-
-			// Anything other than 0 means the bad news
-			if (pkg_in->payload.conn_state_res.status != 0)
-				knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
-
-			break;
-
-		// Result of a disconnect request (duh)
-		case KNX_DISCONNECT_RESPONSE:
-			if (pkg_in->payload.dc_res.channel != client->channel)
-				break;
-
-			// If connection was previously intact
-			if (client->state != KNX_TUNNEL_DISCONNECTED)
-				knx_log_info("Disconnected (channel = %i, status = %i)",
-				             pkg_in->payload.dc_req.channel,
-				             pkg_in->payload.dc_req.status);
-
-			// Entering this state will stop the worker gently
-			knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
-
-			break;
-
-		// Tunnel Request
-		case KNX_TUNNEL_REQUEST:
-			if (client->state != KNX_TUNNEL_CONNECTED ||
-			    client->channel != pkg_in->payload.tunnel_req.channel)
-				break;
-
-			knx_tunnel_response res = {
-				client->channel,
-				pkg_in->payload.tunnel_req.seq_number,
-				0
-			};
-
-			// Send a tunnel response
-			knx_dgramsock_send(client->sock, KNX_TUNNEL_RESPONSE, &res, &client->gateway);
-
-			switch (pkg_in->payload.tunnel_req.data.service) {
-				case KNX_CEMI_LDATA_REQ:
-				case KNX_CEMI_LDATA_IND:
-				case KNX_CEMI_LDATA_CON:
-					if (client->recv_cb)
-						client->recv_cb(client, &pkg_in->payload.tunnel_req.data.payload.ldata,
-						                client->recv_data);
-					break;
-
-				default:
-					knx_log_error("Unsupported CEMI service %02X",
-					              pkg_in->payload.tunnel_req.data.service);
-					break;
-			}
-
-			break;
-
-		// Tunnel Response
-		case KNX_TUNNEL_RESPONSE:
-			if (client->state != KNX_TUNNEL_CONNECTED ||
-			    client->channel != pkg_in->payload.tunnel_res.channel)
-				break;
-
-			// ...
-
-			break;
-
-		// Everything else should be ignored
-		default:
-			knx_log_warn("Unsupported KNXnet/IP service 0x%04X", pkg_in->service);
-			break;
-	}
-}
-
 static
 void knx_tunnel_worker_cb_read(struct ev_loop* loop, struct ev_io* watcher, int revents) {
 	knx_tunnel_client* client = watcher->data;
-
-	ssize_t buffer_size = knx_dgramsock_peek_knx(client->sock);
-	if (buffer_size < 0) {
-		// This is not a KNXnet/IP packet so we'll discard it
-		recvfrom(client->sock, NULL, 0, 0, NULL, NULL);
-		return;
-	}
-
-	uint8_t buffer[buffer_size];
-	ssize_t buffer_rv = knx_dgramsock_recv_raw(client->sock, buffer, buffer_size,
-	                                           &client->gateway, 1);
-
-	// KNXnet header is mandatory
-	if (buffer_rv < KNX_HEADER_SIZE)
-		return;
-
-	knx_packet pkg_in;
-
-	// Parse and process the packet
-	if (knx_parse(buffer, buffer_rv, &pkg_in))
-		knx_tunnel_process_packet(client, &pkg_in);
+	knx_tunnel_process(client);
 }
 
 static
@@ -171,73 +75,91 @@ void knx_tunnel_worker_cb_heartbeat(struct ev_loop* loop, struct ev_timer* watch
 	knx_dgramsock_send(client->sock, KNX_CONNECTION_STATE_REQUEST, &req, &client->gateway);
 }
 
-bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port_t port,
-                        knx_tunnel_state_callback cb, void* cb_data) {
-	if (!ip4addr_resolve(&client->gateway, hostname, port)) {
-		knx_log_error("Failed to resolve hostname '%s'", hostname);
-		return false;
-	}
+knx_tunnel_client* knx_tunnel_new(knx_tunnel_state_cb on_state, void* state_data,
+                                  knx_tunnel_recv_cb on_recv, void* recv_data) {
+	knx_tunnel_client* client = new(knx_tunnel_client);
+	int sock = knx_dgramsock_create(NULL, false);
 
-	if ((client->sock = knx_dgramsock_create(NULL, false)) < 0) {
-		knx_log_error("Failed to create socket");
-		return false;
-	}
+	bool is_nonblocking = false;
+	if (sock >= 0)
+		is_nonblocking =
+			fcntl(client->sock, F_SETFL, fcntl(client->sock, F_GETFL, 0) | O_NONBLOCK) == 0;
 
-	// Initialise structure
-	client->state = KNX_TUNNEL_DISCONNECTED;
-	client->seq_number = 0;
-	client->recv_cb = NULL;
-	client->recv_data = NULL;
-	client->state_cb = cb;
-	client->state_data = cb_data;
+	if (client != NULL && sock >= 0 && is_nonblocking) {
+		client->sock = sock;
+		client->state = KNX_TUNNEL_DISCONNECTED;
 
-	// Create thread
-	if (fcntl(client->sock, F_SETFL, fcntl(client->sock, F_GETFL, 0) | O_NONBLOCK) == 0) {
-		knx_connection_request req = {
-			KNX_CONNECTION_REQUEST_TUNNEL,
-			KNX_LAYER_TUNNEL,
-			KNX_HOST_INFO_NAT(KNX_PROTO_UDP),
-			KNX_HOST_INFO_NAT(KNX_PROTO_UDP)
-		};
+		// Callback information
+		client->recv_cb = on_recv;
+		client->recv_data = recv_data;
+		client->state_cb = on_state;
+		client->state_data = state_data;
 
-		// Send connection request
-		if (knx_dgramsock_send(client->sock, KNX_CONNECTION_REQUEST, &req, &client->gateway)) {
-			knx_tunnel_set_state(client, KNX_TUNNEL_CONNECTING);
-			return true;
-		} else {
-			knx_log_error("Failed to request a connection");
-		}
+		// Packet processor
+		ev_io_init(&client->ev_read, knx_tunnel_worker_cb_read, client->sock, EV_READ);
+		client->ev_read.data = client;
+
+		// Heartbeat timer
+		ev_timer_init(&client->ev_heartbeat, knx_tunnel_worker_cb_heartbeat, 25, 25);
+		client->ev_heartbeat.data = client;
+
+		return client;
 	} else {
-		knx_log_error("Failed to start thread facilities");
+		if (client) free(client);
+		if (sock >= 0) close(sock);
+
+		return NULL;
 	}
-
-	close(client->sock);
-	client->sock = -1;
-
-	return false;
 }
 
-void knx_tunnel_disconnect(knx_tunnel_client* client) {
-	if (client->state != KNX_TUNNEL_DISCONNECTED) {
-		// Set new state
-		knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
+void knx_tunnel_destroy(knx_tunnel_client* client) {
+	if (client->sock >= 0) close(client->sock);
+	free(client);
+}
 
-		knx_disconnect_request dc_req = {
-			client->channel,
-			0,
-			client->host_info
-		};
 
-		// Send disconnect request
-		if (!knx_dgramsock_send(client->sock, KNX_DISCONNECT_REQUEST, &dc_req, &client->gateway))
-			knx_log_error("Failed to send disconnect request");
+bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port_t port) {
+	if (!ip4addr_resolve(&client->gateway, hostname, port)) {
+		knx_log_error("Failed to resolve %s:%i", hostname, port);
+		return false;
 	}
 
-	// Close socket
-	if (client->sock != -1)
-		close(client->sock);
+	knx_connection_request req = {
+		KNX_CONNECTION_REQUEST_TUNNEL,
+		KNX_LAYER_TUNNEL,
+		KNX_HOST_INFO_NAT(KNX_PROTO_UDP),
+		KNX_HOST_INFO_NAT(KNX_PROTO_UDP)
+	};
 
-	client->sock = -1;
+	if (knx_dgramsock_send(client->sock, KNX_CONNECTION_REQUEST, &req, &client->gateway)) {
+		knx_tunnel_set_state(client, KNX_TUNNEL_CONNECTING);
+		return true;
+	} else {
+		knx_log_error("Failed to send connection request");
+		return false;
+	}
+}
+
+bool knx_tunnel_disconnect(knx_tunnel_client* client) {
+	if (client->state == KNX_TUNNEL_DISCONNECTED)
+		return true;
+
+	// Set new state
+	knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
+
+	knx_disconnect_request dc_req = {
+		client->channel,
+		0,
+		client->host_info
+	};
+
+	// Send disconnect request
+	if (!knx_dgramsock_send(client->sock, KNX_DISCONNECT_REQUEST, &dc_req, &client->gateway)) {
+		knx_log_error("Failed to send disconnect request");
+		return false;
+	} else {
+		return true;
+	}
 }
 
 bool knx_tunnel_send(knx_tunnel_client* client, const knx_ldata* ldata) {
@@ -283,19 +205,139 @@ bool knx_tunnel_write_group(knx_tunnel_client* client, knx_addr dest,
 	return knx_tunnel_send(client, &frame);
 }
 
-void knx_tunnel_start(knx_tunnel_client* client, struct ev_loop* loop,
-                      knx_tunnel_recv_callback cb, void* data) {
-	client->recv_cb = cb;
-	client->recv_data = data;
+bool knx_tunnel_process(knx_tunnel_client* client) {
+	ssize_t buffer_size = knx_dgramsock_peek_knx(client->sock);
+	if (buffer_size == 0) {
+		// This is not a KNXnet/IP packet so we'll discard it
+		recvfrom(client->sock, NULL, 0, 0, NULL, NULL);
+		return false;
+	} else if (buffer_size < 0) {
+		return false;
+	}
 
-	// Packet processor
-	ev_io_init(&client->ev_read, knx_tunnel_worker_cb_read, client->sock, EV_READ);
-	client->ev_read.data = client;
+	uint8_t buffer[buffer_size];
+	ssize_t buffer_rv = knx_dgramsock_recv_raw(client->sock, buffer, buffer_size,
+	                                           &client->gateway, 1);
+
+	// KNXnet header is mandatory
+	if (buffer_rv < KNX_HEADER_SIZE)
+		return false;
+
+	knx_packet pkg_in;
+
+	// Parse and process the packet
+	if (knx_parse(buffer, buffer_rv, &pkg_in))
+		return knx_tunnel_process_packet(client, &pkg_in);
+	else
+		return false;
+}
+
+bool knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_in) {
+	knx_log_debug("Received (service = 0x%04X)", pkg_in->service);
+
+	switch (pkg_in->service) {
+		// Result of a connection request (duh)
+		case KNX_CONNECTION_RESPONSE:
+			if (client->state != KNX_TUNNEL_CONNECTING)
+				return false;
+
+			if (pkg_in->payload.conn_res.status == 0) {
+				// Save channel and host info
+				client->channel = pkg_in->payload.conn_res.channel;
+				client->host_info = pkg_in->payload.conn_res.host;
+
+				knx_log_info("Connected (channel = %i)", client->channel);
+				knx_tunnel_set_state(client, KNX_TUNNEL_CONNECTED);
+			} else {
+				knx_log_error("Connection failed (code = %i)", pkg_in->payload.conn_res.status);
+				knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
+			}
+
+			break;
+
+		// Heartbeat
+		case KNX_CONNECTION_STATE_RESPONSE:
+			if (pkg_in->payload.conn_state_res.channel != client->channel ||
+			    client->state != KNX_TUNNEL_CONNECTED)
+				return false;
+
+			knx_log_info("Heartbeat (status = %i)", pkg_in->payload.conn_state_res.status);
+
+			// Anything other than 0 means the bad news
+			if (pkg_in->payload.conn_state_res.status != 0)
+				knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
+
+			break;
+
+		// Result of a disconnect request (duh)
+		case KNX_DISCONNECT_RESPONSE:
+			if (pkg_in->payload.dc_res.channel != client->channel)
+				return false;
+
+			// If connection was previously intact
+			if (client->state != KNX_TUNNEL_DISCONNECTED)
+				knx_log_info("Disconnected (channel = %i, status = %i)",
+				             pkg_in->payload.dc_req.channel,
+				             pkg_in->payload.dc_req.status);
+
+			// Entering this state will stop the worker gently
+			knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
+
+			break;
+
+		// Tunnel Request
+		case KNX_TUNNEL_REQUEST:
+			if (client->state != KNX_TUNNEL_CONNECTED ||
+			    client->channel != pkg_in->payload.tunnel_req.channel)
+				return false;
+
+			knx_tunnel_response res = {
+				client->channel,
+				pkg_in->payload.tunnel_req.seq_number,
+				0
+			};
+
+			// Send a tunnel response
+			knx_dgramsock_send(client->sock, KNX_TUNNEL_RESPONSE, &res, &client->gateway);
+
+			switch (pkg_in->payload.tunnel_req.data.service) {
+				case KNX_CEMI_LDATA_REQ:
+				case KNX_CEMI_LDATA_IND:
+				case KNX_CEMI_LDATA_CON:
+					if (client->recv_cb)
+						client->recv_cb(client, &pkg_in->payload.tunnel_req.data.payload.ldata,
+						                client->recv_data);
+					break;
+
+				default:
+					knx_log_error("Unsupported CEMI service %02X",
+					              pkg_in->payload.tunnel_req.data.service);
+					return false;
+			}
+
+			break;
+
+		// Tunnel Response
+		case KNX_TUNNEL_RESPONSE:
+			if (client->state != KNX_TUNNEL_CONNECTED ||
+			    client->channel != pkg_in->payload.tunnel_res.channel)
+				break;
+
+			// ...
+
+			break;
+
+		// Everything else should be ignored
+		default:
+			knx_log_warn("Unsupported KNXnet/IP service 0x%04X", pkg_in->service);
+			return false;
+	}
+
+	return true;
+}
+
+void knx_tunnel_start(knx_tunnel_client* client, struct ev_loop* loop) {
 	ev_io_start(loop, &client->ev_read);
-
-	// Heartbeat timer
-	ev_timer_init(&client->ev_heartbeat, knx_tunnel_worker_cb_heartbeat, 25, 25);
-	client->ev_heartbeat.data = client;
 	ev_timer_start(loop, &client->ev_heartbeat);
 }
 
