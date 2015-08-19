@@ -3,12 +3,10 @@
 
 externtest(knxnetip)
 externtest(cemi)
-externtest(tunnelclient)
 
 deftest(all, {
 	runsubtest(knxnetip);
 	runsubtest(cemi);
-	runsubtest(tunnelclient);
 })
 
 int main(void) {

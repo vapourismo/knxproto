@@ -60,10 +60,6 @@ LDLIBS          := -lm -lev
 TESTCFLAGS      = $(BASECFLAGS)
 TESTLDFLAGS     =
 
-ifeq ($(TEST_TUNNEL), 1)
-	TESTCFLAGS  += -DKNXCLIENT_TEST_TUNNEL
-endif
-
 ifeq ($(LTO), 1)
 	TESTLDFLAGS += -flto
 	LDFLAGS += -flto
