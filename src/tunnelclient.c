@@ -27,6 +27,15 @@
 
 #include <fcntl.h>
 
+static
+void knx_tunnel_set_state(knx_tunnel_client* client, knx_tunnel_state state) {
+	client->state = state;
+
+	if (client->state_cb) {
+		client->state_cb(client, state, client->state_data);
+	}
+}
+
 void knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_in) {
 	knx_log_debug("Received (service = 0x%04X)", pkg_in->service);
 
@@ -42,10 +51,10 @@ void knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_
 				client->host_info = pkg_in->payload.conn_res.host;
 
 				knx_log_info("Connected (channel = %i)", client->channel);
-				client->state = KNX_TUNNEL_CONNECTED;
+				knx_tunnel_set_state(client, KNX_TUNNEL_CONNECTED);
 			} else {
 				knx_log_error("Connection failed (code = %i)", pkg_in->payload.conn_res.status);
-				client->state = KNX_TUNNEL_DISCONNECTED;
+				knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
 			}
 
 			break;
@@ -60,7 +69,7 @@ void knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_
 
 			// Anything other than 0 means the bad news
 			if (pkg_in->payload.conn_state_res.status != 0)
-				client->state = KNX_TUNNEL_DISCONNECTED;
+				knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
 
 			break;
 
@@ -76,7 +85,7 @@ void knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_
 				             pkg_in->payload.dc_req.status);
 
 			// Entering this state will stop the worker gently
-			client->state = KNX_TUNNEL_DISCONNECTED;
+			knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
 
 			break;
 
@@ -162,7 +171,8 @@ void knx_tunnel_worker_cb_heartbeat(struct ev_loop* loop, struct ev_timer* watch
 	knx_dgramsock_send(client->sock, KNX_CONNECTION_STATE_REQUEST, &req, &client->gateway);
 }
 
-bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port_t port) {
+bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port_t port,
+                        knx_tunnel_state_callback cb, void* cb_data) {
 	if (!ip4addr_resolve(&client->gateway, hostname, port)) {
 		knx_log_error("Failed to resolve hostname '%s'", hostname);
 		return false;
@@ -174,12 +184,12 @@ bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port
 	}
 
 	// Initialise structure
-	client->state = KNX_TUNNEL_CONNECTING;
+	client->state = KNX_TUNNEL_DISCONNECTED;
 	client->seq_number = 0;
 	client->recv_cb = NULL;
 	client->recv_data = NULL;
-	client->state_cb = NULL;
-	client->state_data = NULL;
+	client->state_cb = cb;
+	client->state_data = cb_data;
 
 	// Create thread
 	if (fcntl(client->sock, F_SETFL, fcntl(client->sock, F_GETFL, 0) | O_NONBLOCK) == 0) {
@@ -191,12 +201,15 @@ bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port
 		};
 
 		// Send connection request
-		if (knx_dgramsock_send(client->sock, KNX_CONNECTION_REQUEST, &req, &client->gateway))
+		if (knx_dgramsock_send(client->sock, KNX_CONNECTION_REQUEST, &req, &client->gateway)) {
+			knx_tunnel_set_state(client, KNX_TUNNEL_CONNECTING);
 			return true;
-		else
+		} else {
 			knx_log_error("Failed to request a connection");
-	} else
+		}
+	} else {
 		knx_log_error("Failed to start thread facilities");
+	}
 
 	close(client->sock);
 	client->sock = -1;
@@ -207,7 +220,7 @@ bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port
 void knx_tunnel_disconnect(knx_tunnel_client* client) {
 	if (client->state != KNX_TUNNEL_DISCONNECTED) {
 		// Set new state
-		client->state = KNX_TUNNEL_DISCONNECTED;
+		knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
 
 		knx_disconnect_request dc_req = {
 			client->channel,

@@ -80,9 +80,12 @@ typedef struct _knx_tunnel_client {
 } knx_tunnel_client;
 
 /**
- * Connect to a gateway.
+ * Connect to a gateway located at `hostname:port`. The provides callback (if not NULL) will be
+ * invoked when the internal state changes. It can be used to detect when a connection has been
+ * established or if an existing one has been terminated.
  */
-bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port_t port);
+bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port_t port,
+                        knx_tunnel_state_callback cb, void* cb_data);
 
 /**
  * Disconnect from the gateway if a connection is active, and free resources.
@@ -93,7 +96,7 @@ void knx_tunnel_disconnect(knx_tunnel_client* client);
 
 /**
  * Send a L_Data request frame through the gateway.
- * Returns `true` if the message has been successfully acknowledged.
+ * Returns `true` if the message has been sent.
  */
 bool knx_tunnel_send(knx_tunnel_client* client, const knx_ldata* ldata);
 
