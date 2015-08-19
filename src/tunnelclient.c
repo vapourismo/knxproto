@@ -269,19 +269,34 @@ bool knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_
 
 			break;
 
+		// Received when the gateway terminates
+		case KNX_DISCONNECT_REQUEST:
+			if (pkg_in->payload.dc_req.channel != client->channel)
+				return false;
+
+			// If connection was previously intact
+			if (client->state != KNX_TUNNEL_DISCONNECTED) {
+				knx_log_info("Disconnected (channel = %i, status = %i)",
+				             pkg_in->payload.dc_req.channel,
+				             pkg_in->payload.dc_req.status);
+
+				knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
+			}
+
+
 		// Result of a disconnect request (duh)
 		case KNX_DISCONNECT_RESPONSE:
 			if (pkg_in->payload.dc_res.channel != client->channel)
 				return false;
 
 			// If connection was previously intact
-			if (client->state != KNX_TUNNEL_DISCONNECTED)
+			if (client->state != KNX_TUNNEL_DISCONNECTED) {
 				knx_log_info("Disconnected (channel = %i, status = %i)",
-				             pkg_in->payload.dc_req.channel,
-				             pkg_in->payload.dc_req.status);
+				             pkg_in->payload.dc_res.channel,
+				             pkg_in->payload.dc_res.status);
 
-			// Entering this state will stop the worker gently
-			knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
+				knx_tunnel_set_state(client, KNX_TUNNEL_DISCONNECTED);
+			}
 
 			break;
 
