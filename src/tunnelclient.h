@@ -54,7 +54,7 @@ typedef void (* knx_tunnel_recv_cb)(knx_tunnel_client*, const knx_ldata*, void*)
 typedef void (* knx_tunnel_state_cb)(knx_tunnel_client*, knx_tunnel_state, void*);
 
 /**
- * Create a new tunnel client. This functions only allocates the necessary resources, it does not
+ * Create a new tunnel client. This function only allocates the necessary resources, it does not
  * perform any tunneling-related actions. On failure `NULL` is returned, otherwise a pointer to the
  * newly created tunnel client.
  */
@@ -88,12 +88,13 @@ bool knx_tunnel_write_group(knx_tunnel_client* client, knx_addr dest,
                             knx_dpt type, const void* value);
 
 /**
- * Process one packet.
+ * Process one packet. By default the tunneling socket is non-blocking mode, therefore this
+ * function may fail if no data is available.
  */
 bool knx_tunnel_process(knx_tunnel_client* client);
 
 /**
- * Process the KNX packet as if it has been received through the router socket.
+ * Process the KNX packet as if it has been received through the socket.
  */
 bool knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_in);
 
