@@ -30,10 +30,6 @@ So far there is no useful documentation other than the docstrings contained with
 Maybe start with [src/routerclient.h](https://github.com/vapourismo/knxclient/blob/master/src/routerclient.h) or
 [src/tunnelclient.h](https://github.com/vapourismo/knxclient/blob/master/src/tunnelclient.h).
 
-Additionally you should look at this
-[example KNXnet/IP relay](https://gist.github.com/vapourismo/26fcbd09148390442969#file-knxrelay-c),
-which has been implemented using the `knxclient` library.
-
 ## Development
 This library is still in pre-release state, you should expect the interface to change without
 notice.
