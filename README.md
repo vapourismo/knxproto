@@ -8,15 +8,11 @@ It works under Arch Linux and Debian Linux on both `amd64` and `armv6l` architec
 
 Obtain the source and navigate to it's location. Run
 
-```
-$ make
-```
+    $ make
 
 to build the library, followed by
 
-```
-# make PREFIX=/path/to/prefix install
-```
+    # make PREFIX=/path/to/prefix install
 
 to install it. You can omit the `PREFIX` variable, it defaults to `/usr/local`.
 
@@ -26,9 +22,9 @@ this library against the devices you own. Furthermore am I interested in how the
 on different operating systems and also different C standard libraries.
 
 ## Documentation
-So far there is no useful documentation other than the docstrings contained within the header files.
-Maybe start with [src/routerclient.h](https://github.com/vapourismo/knxclient/blob/master/src/routerclient.h) or
-[src/tunnelclient.h](https://github.com/vapourismo/knxclient/blob/master/src/tunnelclient.h).
+A Doxygen documentation can be generated.
+
+    $ make docs
 
 ## Development
 This library is still in pre-release state, you should expect the interface to change without
