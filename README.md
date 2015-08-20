@@ -2,9 +2,8 @@
 A library which provides the means to communicate with several KNX-related devices or services.
 
 ## Installation
-First off, you need a compatible C standard library, the `libev` and `pthread` library. These might
+First off, you need a compatible C standard library and the `libev` library. These might
 come with your distribution of choice. So far, the library has been tested against `glibc` only.
-It works under Arch Linux and Debian Linux on both `amd64` and `armv6l` architectures.
 
 Obtain the source and navigate to it's location. Run
 
