@@ -82,6 +82,9 @@ gdb: $(TESTOUTPUT)
 valgrind: $(TESTOUTPUT)
 	$(MEMCHECKER) $(TESTOUTPUT)
 
+docs:
+	doxygen
+
 # Targets
 -include $(SOURCEDEPS)
 -include $(TESTDEPS)
