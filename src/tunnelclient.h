@@ -49,9 +49,6 @@ typedef enum {
 	KNX_TUNNEL_DISCONNECTED
 } knx_tunnel_state;
 
-/**
- * Tunnel Connection
- */
 typedef struct _knx_tunnel_client knx_tunnel_client;
 
 /**
@@ -63,6 +60,30 @@ typedef void (* knx_tunnel_recv_cb)(knx_tunnel_client*, const knx_ldata*, void*)
  * Invoked when the tunnel connection state changes.
  */
 typedef void (* knx_tunnel_state_cb)(knx_tunnel_client*, knx_tunnel_state, void*);
+
+/**
+ * Tunnel Connection
+ */
+struct _knx_tunnel_client {
+	int sock;
+	knx_tunnel_state state;
+
+	// Connection information
+	ip4addr gateway;
+	uint8_t channel;
+	knx_host_info host_info;
+
+	// Packet counter
+	uint8_t seq_number;
+
+	// Receive callback
+	knx_tunnel_recv_cb recv_cb;
+	void* recv_data;
+
+	// State change callback
+	knx_tunnel_state_cb state_cb;
+	void* state_data;
+};
 
 /**
  * Create a new tunnel client. This function only allocates the necessary resources, it does not

@@ -26,27 +26,6 @@
 #include "util/alloc.h"
 #include "util/log.h"
 
-struct _knx_tunnel_client {
-	int sock;
-	knx_tunnel_state state;
-
-	// Connection information
-	ip4addr gateway;
-	uint8_t channel;
-	knx_host_info host_info;
-
-	// Packet counter
-	uint8_t seq_number;
-
-	// Receive callback
-	knx_tunnel_recv_cb recv_cb;
-	void* recv_data;
-
-	// State change callback
-	knx_tunnel_state_cb state_cb;
-	void* state_data;
-};
-
 static
 void knx_tunnel_set_state(knx_tunnel_client* client, knx_tunnel_state state) {
 	client->state = state;
