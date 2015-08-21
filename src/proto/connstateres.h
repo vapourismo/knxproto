@@ -30,19 +30,35 @@
  * Connection State Response
  */
 typedef struct {
+	/**
+	 * Communication channel
+	 */
 	uint8_t channel;
+
+	/**
+	 * Connection state (`0` is good)
+	 */
 	uint8_t status;
 } knx_connection_state_response;
 
 /**
- * Generate the message for a connection response.
+ * Generate a raw connection response.
+ *
+ * \see KNX_CONNECTION_STATE_RESPONSE_SIZE
+ * \param buffer Output buffer, you have to make sure there is enough space
+ * \param res Input connection state response
  */
 void knx_connection_state_response_generate(uint8_t* buffer, const knx_connection_state_response* res);
 
 /**
- * Parse a message (excluding header) which contains a connection response.
+ * Parse a raw connection response.
+ *
+ * \param buffer Raw connection response
+ * \param length Number of bytes in `buffer`
+ * \param res Output connection state response
  */
-bool knx_connection_state_response_parse(const uint8_t* message, size_t length, knx_connection_state_response* res);
+bool knx_connection_state_response_parse(const uint8_t* buffer, size_t length,
+                                         knx_connection_state_response* res);
 
 /**
  * Connection state response size
