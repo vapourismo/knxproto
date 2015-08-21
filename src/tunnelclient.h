@@ -33,8 +33,19 @@
  * Tunnel Connection State
  */
 typedef enum {
+	/**
+	 * Trying to connect
+	 */
 	KNX_TUNNEL_CONNECTING,
+
+	/**
+	 * Connection has been established
+	 */
 	KNX_TUNNEL_CONNECTED,
+
+	/**
+	 * No connection is active
+	 */
 	KNX_TUNNEL_DISCONNECTED
 } knx_tunnel_state;
 
