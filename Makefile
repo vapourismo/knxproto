@@ -123,4 +123,4 @@ $(INCLUDEDIR)/%: $(SOURCEDIR)/%
 	$(INSTALL) -m644 -D $< $@
 
 # Phony
-.PHONY: all clean test install
+.PHONY: all clean test install docs
