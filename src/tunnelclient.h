@@ -65,23 +65,54 @@ typedef void (* knx_tunnel_state_cb)(knx_tunnel_client*, knx_tunnel_state, void*
  * Tunnel Connection
  */
 struct _knx_tunnel_client {
+	/**
+	 * Socket used for communication
+	 */
 	int sock;
+
+	/**
+	 * Current connection state
+	 */
 	knx_tunnel_state state;
 
-	// Connection information
+	/**
+	 * Targeted KNXnet/IP gateway
+	 */
 	ip4addr gateway;
+
+	/**
+	 * Communication channel
+	 */
 	uint8_t channel;
+
+	/**
+	 * Host information (as seen from the gateway)
+	 */
 	knx_host_info host_info;
 
-	// Packet counter
+	/**
+	 * Local package sequence counter
+	 */
 	uint8_t seq_number;
 
-	// Receive callback
+	/**
+	 * Invoked when receiving a tunnel request
+	 */
 	knx_tunnel_recv_cb recv_cb;
+
+	/**
+	 * Data for the receive callback
+	 */
 	void* recv_data;
 
-	// State change callback
+	/**
+	 * Invoked when the connection state changes
+	 */
 	knx_tunnel_state_cb state_cb;
+
+	/**
+	 * Data for the state-change callback
+	 */
 	void* state_data;
 };
 
