@@ -95,10 +95,6 @@ bool knx_tunnel_disconnect(knx_tunnel_client* client) {
 	}
 }
 
-int knx_tunnel_get_socket(const knx_tunnel_client* client) {
-	return client->sock;
-}
-
 bool knx_tunnel_send(knx_tunnel_client* client, const knx_ldata* ldata) {
 	if (client->state == KNX_TUNNEL_DISCONNECTED)
 		return false;

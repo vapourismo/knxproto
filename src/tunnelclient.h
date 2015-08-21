@@ -53,11 +53,19 @@ typedef struct _knx_tunnel_client knx_tunnel_client;
 
 /**
  * Invoked when receiving an L_Data frame.
+ *
+ * \param client Tunnel client
+ * \param ldata L_Data frame which has been received
+ * \param user Callback-associated user data
  */
 typedef void (* knx_tunnel_recv_cb)(knx_tunnel_client*, const knx_ldata*, void*);
 
 /**
  * Invoked when the tunnel connection state changes.
+ *
+ * \param client Tunnel client
+ * \param state New connection state
+ * \param user Callback-associated user data
  */
 typedef void (* knx_tunnel_state_cb)(knx_tunnel_client*, knx_tunnel_state, void*);
 
@@ -117,7 +125,13 @@ struct _knx_tunnel_client {
 };
 
 /**
- * Initialise a tunnel client.
+ * Initialize a tunnel client structure.
+ *
+ * \param sock Datagram socket to be used for communication
+ * \param on_state State-change callback  (see `knx_tunnel_state_cb`)
+ * \param state_data Data for state-change callback
+ * \param on_recv Receive callback (see `knx_tunnel_recv_cb`)
+ * \param recv_data Data for receive callback
  */
 void knx_tunnel_init(knx_tunnel_client* client, int sock,
                      knx_tunnel_state_cb on_state, void* state_data,
@@ -125,8 +139,11 @@ void knx_tunnel_init(knx_tunnel_client* client, int sock,
 
 /**
  * Send a connection request to the gateway.
+ *
+ * \param address Address or hostname of the gateway
+ * \param port Gateway port (default is 3671)
  */
-bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port_t port);
+bool knx_tunnel_connect(knx_tunnel_client* client, const char* address, in_port_t port);
 
 /**
  * Send a disconnect request.
@@ -134,17 +151,20 @@ bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port
 bool knx_tunnel_disconnect(knx_tunnel_client* client);
 
 /**
- * Get the internal socket file descriptor.
- */
-int knx_tunnel_get_socket(const knx_tunnel_client* client);
-
-/**
  * Send a L_Data request.
+ *
+ * \see knx_ldata
+ * \param ldata L_Data frame which shall be sent to the gateway
  */
 bool knx_tunnel_send(knx_tunnel_client* client, const knx_ldata* ldata);
 
 /**
  * Send `Group Value Write` command.
+ *
+ * \see proto/data.h
+ * \param dest Group address
+ * \param type Datapoint type
+ * \param value Pointer to the associated value
  */
 bool knx_tunnel_write_group(knx_tunnel_client* client, knx_addr dest,
                             knx_dpt type, const void* value);
@@ -155,13 +175,15 @@ bool knx_tunnel_write_group(knx_tunnel_client* client, knx_addr dest,
 bool knx_tunnel_send_heartbeat(knx_tunnel_client* client);
 
 /**
- * Process one packet. If you are not using `knx_tunnel_start` to process packets, you must
- * invoke this function continuously in order to make the tunnel protocol logic work.
+ * Receive a packet and process it.
  */
 bool knx_tunnel_process(knx_tunnel_client* client);
 
 /**
- * Process the KNX packet as if it has been received through the socket.
+ * Process the packet as if it has been received through the socket.
+ *
+ * \see knx_packet
+ * \param pkg_in Packet to be processed
  */
 bool knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_in);
 
