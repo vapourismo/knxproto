@@ -82,8 +82,7 @@ knx_tunnel_client* knx_tunnel_new(knx_tunnel_state_cb on_state, void* state_data
 
 	bool is_nonblocking = false;
 	if (sock >= 0)
-		is_nonblocking =
-			fcntl(client->sock, F_SETFL, fcntl(client->sock, F_GETFL, 0) | O_NONBLOCK) == 0;
+		is_nonblocking = knx_tunnel_make_nonblocking(client);
 
 	if (client != NULL && sock >= 0 && is_nonblocking) {
 		client->sock = sock;
@@ -160,6 +159,18 @@ bool knx_tunnel_disconnect(knx_tunnel_client* client) {
 	} else {
 		return true;
 	}
+}
+
+bool knx_tunnel_make_nonblocking(const knx_tunnel_client* client) {
+	return fcntl(client->sock, F_SETFL, fcntl(client->sock, F_GETFL, 0) | O_NONBLOCK) == 0;
+}
+
+bool knx_tunnel_make_blocking(const knx_tunnel_client* client) {
+	return fcntl(client->sock, F_SETFL, fcntl(client->sock, F_GETFL, 0) & ~O_NONBLOCK) == 0;
+}
+
+bool knx_tunnel_is_nonblocking(const knx_tunnel_client* client) {
+	return (fcntl(client->sock, F_GETFL, 0) & O_NONBLOCK) == O_NONBLOCK;
 }
 
 bool knx_tunnel_send(knx_tunnel_client* client, const knx_ldata* ldata) {
@@ -352,6 +363,7 @@ bool knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_
 }
 
 void knx_tunnel_start(knx_tunnel_client* client, struct ev_loop* loop) {
+	knx_tunnel_is_nonblocking(client);
 	ev_io_start(loop, &client->ev_read);
 	ev_timer_start(loop, &client->ev_heartbeat);
 }

@@ -88,6 +88,21 @@ bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port
 bool knx_tunnel_disconnect(knx_tunnel_client* client);
 
 /**
+ * Make the internal socket non-blocking.
+ */
+bool knx_tunnel_make_nonblocking(const knx_tunnel_client* client);
+
+/**
+ * Make the internal socket blocking.
+ */
+bool knx_tunnel_make_blocking(const knx_tunnel_client* client);
+
+/**
+ * Check if the internal socket is non-blocking.
+ */
+bool knx_tunnel_is_nonblocking(const knx_tunnel_client* client);
+
+/**
  * Send a L_Data request.
  */
 bool knx_tunnel_send(knx_tunnel_client* client, const knx_ldata* ldata);
@@ -99,8 +114,8 @@ bool knx_tunnel_write_group(knx_tunnel_client* client, knx_addr dest,
                             knx_dpt type, const void* value);
 
 /**
- * Process one packet. By default the tunneling socket is non-blocking mode, therefore this
- * function may fail if no data is available.
+ * Process one packet. If you are not using `knx_tunnel_start` to process packets, you must
+ * invoke this function continuously in order to make the tunnel protocol logic work.
  */
 bool knx_tunnel_process(knx_tunnel_client* client);
 
@@ -110,7 +125,7 @@ bool knx_tunnel_process(knx_tunnel_client* client);
 bool knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_in);
 
 /**
- * Start processing packets within the event loop.
+ * Start processing packets within the event loop. Note, this make the internal socket non-blocking.
  */
 void knx_tunnel_start(knx_tunnel_client* client, struct ev_loop* loop);
 
