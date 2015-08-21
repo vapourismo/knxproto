@@ -71,17 +71,22 @@ typedef struct {
 } knx_connection_request;
 
 /**
- * Generate the message for a connection request.
+ * Generate a raw connection request.
  *
  * \see KNX_CONNECTION_REQUEST_SIZE
  * \param buffer Output buffer, you have to make sure there is enough space
+ * \param conn_req Input connection request
  */
 void knx_connection_request_generate(uint8_t* buffer, const knx_connection_request* conn_req);
 
 /**
- * Parse a message (excluding header) which contains a connection request.
+ * Parse a raw connection request.
+ *
+ * \param buffer Raw connection request frame
+ * \param length Number of bytes in `buffer`
+ * \param req Output connection request
  */
-bool knx_connection_request_parse(const uint8_t* message, size_t length, knx_connection_request* req);
+bool knx_connection_request_parse(const uint8_t* buffer, size_t length, knx_connection_request* req);
 
 /**
  * Connection request size
