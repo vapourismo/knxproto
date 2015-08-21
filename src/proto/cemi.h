@@ -32,8 +32,21 @@
  * KNX CEMI Service Types
  */
 typedef enum {
+	/**
+	 * L_Data.req
+	 * \see knx_tunnel_request
+	 */
 	KNX_CEMI_LDATA_REQ = 0x11,
+
+	/**
+	 * L_Data.ind
+	 * \see knx_routing_indication
+	 */
 	KNX_CEMI_LDATA_IND = 0x29,
+
+	/**
+	 * L_Data.con
+	 */
 	KNX_CEMI_LDATA_CON = 0x2E
 } knx_cemi_service;
 
@@ -70,20 +83,31 @@ typedef struct {
 #define KNX_CEMI_HEADER_SIZE 2
 
 /**
- * Unpack a CEMI header.
- * Note: No checks are performed whether the contained service is supported.
+ * Unpack a CEMI header. No checks are performed whether the contained service is supported or
+ * even valid.
+ *
+ * \param service CEMI service (may be `NULL`)
+ * \param info_length Additional information length (may be `NULL`)
  */
 void knx_cemi_unpack_header(const uint8_t* buffer, knx_cemi_service* service, uint8_t* info_length);
 
 /**
  * Parse a message which contains a CEMI frame.
+ *
+ * \param message Raw CEMI frame
+ * \param length Number of bytes contained in `message`
+ * \param frame Output frame
+ * \returns `true` if parsing was successful, otherwise `false`
  */
 bool knx_cemi_parse(const uint8_t* message, size_t length, knx_cemi* frame);
 
 /**
  * Generate a CEMI frame.
- * You may set `add_info` to NULL or `add_info_length` to 0. This indicates
- * that there is no additional information.
+ *
+ * \see knx_cemi_size
+ * \param buffer Raw frame output, you have to make sure there is enough space
+ * \param cemi Source frame
+ * \returns `true` if the frame has been generated successfully, otherwise `false`
  */
 bool knx_cemi_generate(uint8_t* buffer, const knx_cemi* cemi);
 
