@@ -55,12 +55,12 @@ typedef enum {
 typedef struct _knx_tunnel_client knx_tunnel_client;
 
 /**
- * Receive callback
+ * Invoked when receiving an L_Data frame.
  */
 typedef void (* knx_tunnel_recv_cb)(knx_tunnel_client*, const knx_ldata*, void*);
 
 /**
- * State change callback
+ * Invoked when the tunnel connection state changes.
  */
 typedef void (* knx_tunnel_state_cb)(knx_tunnel_client*, knx_tunnel_state, void*);
 
