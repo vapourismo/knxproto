@@ -35,33 +35,20 @@ void knx_tunnel_set_state(knx_tunnel_client* client, knx_tunnel_state state) {
 	}
 }
 
-knx_tunnel_client* knx_tunnel_new(knx_tunnel_state_cb on_state, void* state_data,
-                                  knx_tunnel_recv_cb on_recv, void* recv_data) {
-	knx_tunnel_client* client = new(knx_tunnel_client);
-	int sock = knx_dgramsock_create(NULL, false);
+void knx_tunnel_init(knx_tunnel_client* client, int sock,
+                     knx_tunnel_state_cb on_state, void* state_data,
+                     knx_tunnel_recv_cb on_recv, void* recv_data) {
+	client->sock = sock;
+	client->state = KNX_TUNNEL_DISCONNECTED;
 
-	if (client != NULL && sock >= 0) {
-		client->sock = sock;
-		client->state = KNX_TUNNEL_DISCONNECTED;
+	client->seq_number = 0;
+	client->channel = UINT8_MAX;
 
-		// Callback information
-		client->recv_cb = on_recv;
-		client->recv_data = recv_data;
-		client->state_cb = on_state;
-		client->state_data = state_data;
-
-		return client;
-	} else {
-		if (client) free(client);
-		if (sock >= 0) close(sock);
-
-		return NULL;
-	}
-}
-
-void knx_tunnel_destroy(knx_tunnel_client* client) {
-	if (client->sock >= 0) close(client->sock);
-	free(client);
+	// Callback information
+	client->recv_cb = on_recv;
+	client->recv_data = recv_data;
+	client->state_cb = on_state;
+	client->state_data = state_data;
 }
 
 bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port_t port) {

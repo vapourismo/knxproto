@@ -117,17 +117,11 @@ struct _knx_tunnel_client {
 };
 
 /**
- * Create a new tunnel client. This function only allocates the necessary resources, it does not
- * perform any tunneling-related actions. On failure `NULL` is returned, otherwise a pointer to the
- * newly created tunnel client.
+ * Initialise a tunnel client.
  */
-knx_tunnel_client* knx_tunnel_new(knx_tunnel_state_cb on_state, void* state_data,
-                                  knx_tunnel_recv_cb on_recv, void* recv_data);
-
-/**
- * Destroys a tunnel client. You must not destroy the instance if the client is connected.
- */
-void knx_tunnel_destroy(knx_tunnel_client* client);
+void knx_tunnel_init(knx_tunnel_client* client, int sock,
+                     knx_tunnel_state_cb on_state, void* state_data,
+                     knx_tunnel_recv_cb on_recv, void* recv_data);
 
 /**
  * Send a connection request to the gateway.
