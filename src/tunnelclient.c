@@ -26,8 +26,6 @@
 #include "util/alloc.h"
 #include "util/log.h"
 
-#include <fcntl.h>
-
 struct _knx_tunnel_client {
 	int sock;
 	knx_tunnel_state state;
@@ -79,11 +77,7 @@ knx_tunnel_client* knx_tunnel_new(knx_tunnel_state_cb on_state, void* state_data
 	knx_tunnel_client* client = new(knx_tunnel_client);
 	int sock = knx_dgramsock_create(NULL, false);
 
-	bool is_nonblocking = false;
-	if (sock >= 0)
-		is_nonblocking = knx_tunnel_make_nonblocking(client);
-
-	if (client != NULL && sock >= 0 && is_nonblocking) {
+	if (client != NULL && sock >= 0) {
 		client->sock = sock;
 		client->state = KNX_TUNNEL_DISCONNECTED;
 
@@ -92,14 +86,6 @@ knx_tunnel_client* knx_tunnel_new(knx_tunnel_state_cb on_state, void* state_data
 		client->recv_data = recv_data;
 		client->state_cb = on_state;
 		client->state_data = state_data;
-
-		// Packet processor
-		ev_io_init(&client->ev_read, knx_tunnel_worker_cb_read, client->sock, EV_READ);
-		client->ev_read.data = client;
-
-		// Heartbeat timer
-		ev_timer_init(&client->ev_heartbeat, knx_tunnel_worker_cb_heartbeat, 25, 25);
-		client->ev_heartbeat.data = client;
 
 		return client;
 	} else {
@@ -114,7 +100,6 @@ void knx_tunnel_destroy(knx_tunnel_client* client) {
 	if (client->sock >= 0) close(client->sock);
 	free(client);
 }
-
 
 bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port_t port) {
 	if (!ip4addr_resolve(&client->gateway, hostname, port)) {
@@ -162,18 +147,6 @@ bool knx_tunnel_disconnect(knx_tunnel_client* client) {
 
 int knx_tunnel_get_socket(const knx_tunnel_client* client) {
 	return client->sock;
-}
-
-bool knx_tunnel_make_nonblocking(const knx_tunnel_client* client) {
-	return fcntl(client->sock, F_SETFL, fcntl(client->sock, F_GETFL, 0) | O_NONBLOCK) == 0;
-}
-
-bool knx_tunnel_make_blocking(const knx_tunnel_client* client) {
-	return fcntl(client->sock, F_SETFL, fcntl(client->sock, F_GETFL, 0) & ~O_NONBLOCK) == 0;
-}
-
-bool knx_tunnel_is_nonblocking(const knx_tunnel_client* client) {
-	return (fcntl(client->sock, F_GETFL, 0) & O_NONBLOCK) == O_NONBLOCK;
 }
 
 bool knx_tunnel_send(knx_tunnel_client* client, const knx_ldata* ldata) {
@@ -371,8 +344,16 @@ bool knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_
 }
 
 void knx_tunnel_start(knx_tunnel_client* client, struct ev_loop* loop) {
-	knx_tunnel_is_nonblocking(client);
+	knx_socket_make_nonblocking(client->sock);
+
+	// Packet processor
+	ev_io_init(&client->ev_read, knx_tunnel_worker_cb_read, client->sock, EV_READ);
+	client->ev_read.data = client;
 	ev_io_start(loop, &client->ev_read);
+
+	// Heartbeat timer
+	ev_timer_init(&client->ev_heartbeat, knx_tunnel_worker_cb_heartbeat, 25, 25);
+	client->ev_heartbeat.data = client;
 	ev_timer_start(loop, &client->ev_heartbeat);
 }
 

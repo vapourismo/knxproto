@@ -93,21 +93,6 @@ bool knx_tunnel_disconnect(knx_tunnel_client* client);
 int knx_tunnel_get_socket(const knx_tunnel_client* client);
 
 /**
- * Make the internal socket non-blocking.
- */
-bool knx_tunnel_make_nonblocking(const knx_tunnel_client* client);
-
-/**
- * Make the internal socket blocking.
- */
-bool knx_tunnel_make_blocking(const knx_tunnel_client* client);
-
-/**
- * Check if the internal socket is non-blocking.
- */
-bool knx_tunnel_is_nonblocking(const knx_tunnel_client* client);
-
-/**
  * Send a L_Data request.
  */
 bool knx_tunnel_send(knx_tunnel_client* client, const knx_ldata* ldata);

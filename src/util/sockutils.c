@@ -23,6 +23,7 @@
 #include "alloc.h"
 
 #include <stdarg.h>
+#include <fcntl.h>
 #include <sys/socket.h>
 #include <sys/select.h>
 
@@ -128,4 +129,16 @@ ssize_t knx_dgramsock_peek_knx(int sock) {
 	}
 
 	return -1;
+}
+
+bool knx_socket_make_nonblocking(int fd) {
+	return fcntl(fd, F_SETFL, fcntl(fd, F_GETFL, 0) | O_NONBLOCK) == 0;
+}
+
+bool knx_socket_make_blocking(int fd) {
+	return fcntl(fd, F_SETFL, fcntl(fd, F_GETFL, 0) & ~O_NONBLOCK) == 0;
+}
+
+bool knx_socket_is_nonblocking(int fd) {
+	return (fcntl(fd, F_GETFL, 0) & O_NONBLOCK) == O_NONBLOCK;
 }

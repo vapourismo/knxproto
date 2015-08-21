@@ -62,4 +62,20 @@ bool knx_dgramsock_recv(int sock, uint8_t* buffer, size_t size,
  */
 ssize_t knx_dgramsock_peek_knx(int sock);
 
+/**
+ * Make the file descriptor non-blocking.
+ */
+bool knx_socket_make_nonblocking(int fd);
+
+/**
+ * Make the file descriptor blocking.
+ */
+bool knx_socket_make_blocking(int fd);
+
+/**
+ * Check if the file descriptor is non-blocking.
+ */
+bool knx_socket_is_nonblocking(int fd);
+
+
 #endif
