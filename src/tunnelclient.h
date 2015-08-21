@@ -119,6 +119,11 @@ bool knx_tunnel_write_group(knx_tunnel_client* client, knx_addr dest,
                             knx_dpt type, const void* value);
 
 /**
+ * Send a heartbeat.
+ */
+bool knx_tunnel_send_heartbeat(knx_tunnel_client* client);
+
+/**
  * Process one packet. If you are not using `knx_tunnel_start` to process packets, you must
  * invoke this function continuously in order to make the tunnel protocol logic work.
  */

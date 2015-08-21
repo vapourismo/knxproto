@@ -71,8 +71,7 @@ void knx_tunnel_worker_cb_read(struct ev_loop* loop, struct ev_io* watcher, int 
 static
 void knx_tunnel_worker_cb_heartbeat(struct ev_loop* loop, struct ev_timer* watcher, int revents) {
 	knx_tunnel_client* client = watcher->data;
-	knx_connection_state_request req = {client->channel, 0, client->host_info};
-	knx_dgramsock_send(client->sock, KNX_CONNECTION_STATE_REQUEST, &req, &client->gateway);
+	knx_tunnel_send_heartbeat(client);
 }
 
 knx_tunnel_client* knx_tunnel_new(knx_tunnel_state_cb on_state, void* state_data,
@@ -218,6 +217,11 @@ bool knx_tunnel_write_group(knx_tunnel_client* client, knx_addr dest,
 	};
 
 	return knx_tunnel_send(client, &frame);
+}
+
+bool knx_tunnel_send_heartbeat(knx_tunnel_client* client) {
+	knx_connection_state_request req = {client->channel, 0, client->host_info};
+	return knx_dgramsock_send(client->sock, KNX_CONNECTION_STATE_REQUEST, &req, &client->gateway);
 }
 
 bool knx_tunnel_process(knx_tunnel_client* client) {
