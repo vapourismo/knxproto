@@ -88,6 +88,11 @@ bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port
 bool knx_tunnel_disconnect(knx_tunnel_client* client);
 
 /**
+ * Get the internal socket file descriptor.
+ */
+int knx_tunnel_get_socket(const knx_tunnel_client* client);
+
+/**
  * Make the internal socket non-blocking.
  */
 bool knx_tunnel_make_nonblocking(const knx_tunnel_client* client);

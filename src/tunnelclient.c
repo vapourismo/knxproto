@@ -161,6 +161,10 @@ bool knx_tunnel_disconnect(knx_tunnel_client* client) {
 	}
 }
 
+int knx_tunnel_get_socket(const knx_tunnel_client* client) {
+	return client->sock;
+}
+
 bool knx_tunnel_make_nonblocking(const knx_tunnel_client* client) {
 	return fcntl(client->sock, F_SETFL, fcntl(client->sock, F_GETFL, 0) | O_NONBLOCK) == 0;
 }
