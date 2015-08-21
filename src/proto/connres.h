@@ -32,26 +32,51 @@
  * Connection Response
  */
 typedef struct {
+	/**
+	 * Communication channel
+	 */
 	uint8_t channel;
+
+	/**
+	 * Connection status (`0` is good)
+	 */
 	uint8_t status;
+
+	/**
+	 * Control host information as seen by the gateway
+	 */
 	knx_host_info host;
+
+	/**
+	 * ???
+	 */
 	uint8_t extended[3];
 } knx_connection_response;
 
 /**
- * Generate the message for a connection response.
+ * Generate a raw connection response.
+ *
+ * \see knx_connection_response_size
+ * \param buffer Output buffer
+ * \param res Input connection response
  */
 void knx_connection_response_generate(uint8_t* buffer, const knx_connection_response* res);
 
 /**
- * Parse a message (excluding header) which contains a connection response.
+ * Parse a raw connection response.
+ *
+ * \param buffer Raw connection response
+ * \param length Number of bytes in `buffer`
+ * \param res Output connection response
  */
-bool knx_connection_response_parse(const uint8_t* message, size_t length, knx_connection_response* res);
+bool knx_connection_response_parse(const uint8_t* buffer, size_t length,
+                                   knx_connection_response* res);
 
 /**
- * Connection response size
+ * Calculate the size of a raw connection response.
  */
-inline static size_t knx_connection_response_size(const knx_connection_response* res) {
+inline static
+size_t knx_connection_response_size(const knx_connection_response* res) {
 	return (res->status == 0 ? KNX_HOST_INFO_SIZE + 6 : 2);
 }
 
