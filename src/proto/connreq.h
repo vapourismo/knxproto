@@ -85,6 +85,7 @@ void knx_connection_request_generate(uint8_t* buffer, const knx_connection_reque
  * \param buffer Raw connection request frame
  * \param length Number of bytes in `buffer`
  * \param req Output connection request
+ * \returns `true` if parsing was successful, otherwise `false`
  */
 bool knx_connection_request_parse(const uint8_t* buffer, size_t length, knx_connection_request* req);
 

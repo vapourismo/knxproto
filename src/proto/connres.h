@@ -68,6 +68,7 @@ void knx_connection_response_generate(uint8_t* buffer, const knx_connection_resp
  * \param buffer Raw connection response
  * \param length Number of bytes in `buffer`
  * \param res Output connection response
+ * \returns `true` if parsing was successful, otherwise `false`
  */
 bool knx_connection_response_parse(const uint8_t* buffer, size_t length,
                                    knx_connection_response* res);
