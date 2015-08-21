@@ -63,10 +63,13 @@ bool knx_cemi_parse(const uint8_t* message, size_t length, knx_cemi* frame) {
 
 bool knx_cemi_generate(uint8_t* buffer, const knx_cemi* frame) {
 	buffer[0] = frame->service;
-	buffer[1] = frame->add_info_length;
 
-	if (frame->add_info_length > 0 && frame->add_info)
+	if (frame->add_info_length > 0 && frame->add_info) {
+		buffer[1] = frame->add_info_length;
 		memcpy(buffer + KNX_CEMI_HEADER_SIZE, frame->add_info, frame->add_info_length);
+	} else {
+		buffer[1] = 0;
+	}
 
 	// Calculate buffer offset
 	buffer += KNX_CEMI_HEADER_SIZE + frame->add_info_length;
