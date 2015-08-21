@@ -45,10 +45,6 @@ struct _knx_tunnel_client {
 	// State change callback
 	knx_tunnel_state_cb state_cb;
 	void* state_data;
-
-	// Events
-	struct ev_io ev_read;
-	struct ev_timer ev_heartbeat;
 };
 
 static
@@ -58,18 +54,6 @@ void knx_tunnel_set_state(knx_tunnel_client* client, knx_tunnel_state state) {
 	if (client->state_cb) {
 		client->state_cb(client, state, client->state_data);
 	}
-}
-
-static
-void knx_tunnel_worker_cb_read(struct ev_loop* loop, struct ev_io* watcher, int revents) {
-	knx_tunnel_client* client = watcher->data;
-	knx_tunnel_process(client);
-}
-
-static
-void knx_tunnel_worker_cb_heartbeat(struct ev_loop* loop, struct ev_timer* watcher, int revents) {
-	knx_tunnel_client* client = watcher->data;
-	knx_tunnel_send_heartbeat(client);
 }
 
 knx_tunnel_client* knx_tunnel_new(knx_tunnel_state_cb on_state, void* state_data,
@@ -343,21 +327,33 @@ bool knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_
 	return true;
 }
 
-void knx_tunnel_start(knx_tunnel_client* client, struct ev_loop* loop) {
-	knx_socket_make_nonblocking(client->sock);
+// static
+// void knx_tunnel_worker_cb_read(struct ev_loop* loop, struct ev_io* watcher, int revents) {
+// 	knx_tunnel_client* client = watcher->data;
+// 	knx_tunnel_process(client);
+// }
 
-	// Packet processor
-	ev_io_init(&client->ev_read, knx_tunnel_worker_cb_read, client->sock, EV_READ);
-	client->ev_read.data = client;
-	ev_io_start(loop, &client->ev_read);
+// static
+// void knx_tunnel_worker_cb_heartbeat(struct ev_loop* loop, struct ev_timer* watcher, int revents) {
+// 	knx_tunnel_client* client = watcher->data;
+// 	knx_tunnel_send_heartbeat(client);
+// }
 
-	// Heartbeat timer
-	ev_timer_init(&client->ev_heartbeat, knx_tunnel_worker_cb_heartbeat, 25, 25);
-	client->ev_heartbeat.data = client;
-	ev_timer_start(loop, &client->ev_heartbeat);
-}
+// void knx_tunnel_start(knx_tunnel_client* client, struct ev_loop* loop) {
+// 	knx_socket_make_nonblocking(client->sock);
 
-void knx_tunnel_stop(knx_tunnel_client* client, struct ev_loop* loop) {
-	ev_io_stop(loop, &client->ev_read);
-	ev_timer_stop(loop, &client->ev_heartbeat);
-}
+// 	// Packet processor
+// 	ev_io_init(&client->ev_read, knx_tunnel_worker_cb_read, client->sock, EV_READ);
+// 	client->ev_read.data = client;
+// 	ev_io_start(loop, &client->ev_read);
+
+// 	// Heartbeat timer
+// 	ev_timer_init(&client->ev_heartbeat, knx_tunnel_worker_cb_heartbeat, 25, 25);
+// 	client->ev_heartbeat.data = client;
+// 	ev_timer_start(loop, &client->ev_heartbeat);
+// }
+
+// void knx_tunnel_stop(knx_tunnel_client* client, struct ev_loop* loop) {
+// 	ev_io_stop(loop, &client->ev_read);
+// 	ev_timer_stop(loop, &client->ev_heartbeat);
+// }

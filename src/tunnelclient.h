@@ -119,14 +119,4 @@ bool knx_tunnel_process(knx_tunnel_client* client);
  */
 bool knx_tunnel_process_packet(knx_tunnel_client* client, const knx_packet* pkg_in);
 
-/**
- * Start processing packets within the event loop. Note, this make the internal socket non-blocking.
- */
-void knx_tunnel_start(knx_tunnel_client* client, struct ev_loop* loop);
-
-/**
- * Stop processing packets.
- */
-void knx_tunnel_stop(knx_tunnel_client* client, struct ev_loop* loop);
-
 #endif
