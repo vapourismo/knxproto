@@ -52,11 +52,10 @@ bool knx_connection_request_parse(const uint8_t* message, size_t length, knx_con
 	if (length < KNX_CONNECTION_REQUEST_SIZE || message[16] != 4)
 		return false;
 
-	// This seems redundant, but is required for the
-	// purposes of extensibility.
+	// This seems redundant, but is required for the purposes of extensibility.
 	switch (message[17]) {
 		case KNX_CONNECTION_REQUEST_TUNNEL:
-			req->type = KNX_CONNECTION_REQUEST_TUNNEL;
+			req->type = message[17];
 			break;
 
 		default:
@@ -65,8 +64,8 @@ bool knx_connection_request_parse(const uint8_t* message, size_t length, knx_con
 
 	// This looks redundant aswell. Same purpose here.
 	switch (message[18]) {
-		case KNX_LAYER_TUNNEL:
-			req->layer = KNX_LAYER_TUNNEL;
+		case KNX_CONNECTION_LAYER_TUNNEL:
+			req->layer = message[18];
 			break;
 
 		default:

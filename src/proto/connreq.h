@@ -32,6 +32,9 @@
  * KNX Connection Type
  */
 typedef enum {
+	/**
+	 * Request a tunnel connection
+	 */
 	KNX_CONNECTION_REQUEST_TUNNEL = 4
 } knx_conn_type;
 
@@ -39,21 +42,39 @@ typedef enum {
  * KNX Layer
  */
 typedef enum {
-	KNX_LAYER_TUNNEL = 2
-} knx_layer;
+	KNX_CONNECTION_LAYER_TUNNEL = 2
+} knx_conn_layer;
 
 /**
  * Connection Request
  */
 typedef struct {
+	/**
+	 * Connection type
+	 */
 	knx_conn_type type;
-	knx_layer layer;
+
+	/**
+	 * Connection layer
+	 */
+	knx_conn_layer layer;
+
+	/**
+	 * Where to send control messages
+	 */
 	knx_host_info control_host;
+
+	/**
+	 * Where to send tunnel requests
+	 */
 	knx_host_info tunnel_host;
 } knx_connection_request;
 
 /**
  * Generate the message for a connection request.
+ *
+ * \see KNX_CONNECTION_REQUEST_SIZE
+ * \param buffer Output buffer, you have to make sure there is enough space
  */
 void knx_connection_request_generate(uint8_t* buffer, const knx_connection_request* conn_req);
 

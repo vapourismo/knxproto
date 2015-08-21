@@ -59,7 +59,7 @@ bool knx_tunnel_connect(knx_tunnel_client* client, const char* hostname, in_port
 
 	knx_connection_request req = {
 		KNX_CONNECTION_REQUEST_TUNNEL,
-		KNX_LAYER_TUNNEL,
+		KNX_CONNECTION_LAYER_TUNNEL,
 		KNX_HOST_INFO_NAT(KNX_PROTO_UDP),
 		KNX_HOST_INFO_NAT(KNX_PROTO_UDP)
 	};
