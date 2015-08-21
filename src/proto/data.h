@@ -30,29 +30,100 @@
  * Datapoint Types
  */
 typedef enum {
+	/**
+	 * DPT 1.xxx
+	 * \see knx_bool
+	 */
 	KNX_DPT_BOOL,
+
+	/**
+	 * DPT 2.xxx
+	 * \see knx_cvalue
+	 */
 	KNX_DPT_CVALUE,
+
+	/**
+	 * DPT 3.xxx
+	 * \see knx_cstep
+	 */
 	KNX_DPT_CSTEP,
+
+	/**
+	 * DPT 4.xxx
+	 * \see knx_char
+	 */
 	KNX_DPT_CHAR,
+
+	/**
+	 * DPT 5.xxx
+	 * \see knx_unsigned8
+	 */
 	KNX_DPT_UNSIGNED8,
+
+	/**
+	 * DPT 6.xxx
+	 * \see knx_signed8
+	 */
 	KNX_DPT_SIGNED8,
+
+	/**
+	 * DPT 7.xxx
+	 * \see knx_unsigned16
+	 */
 	KNX_DPT_UNSIGNED16,
+
+	/**
+	 * DPT 8.xxx
+	 * \see knx_signed16
+	 */
 	KNX_DPT_SIGNED16,
+
+	/**
+	 * DPT 9.xxx
+	 * \see knx_float16
+	 */
 	KNX_DPT_FLOAT16,
+
+	/**
+	 * DPT 10.xxx
+	 * \see knx_timeofday
+	 */
 	KNX_DPT_TIMEOFDAY,
+
+	/**
+	 * DPT 11.xxx
+	 * \see knx_date
+	 */
 	KNX_DPT_DATE,
+
+	/**
+	 * DPT 12.xxx
+	 * \see knx_unsigned32
+	 */
 	KNX_DPT_UNSIGNED32,
+
+	/**
+	 * DPT 13.xxx
+	 * \see knx_signed32
+	 */
 	KNX_DPT_SIGNED32,
+
+	/**
+	 * DPT 14.xxx
+	 * \see knx_float32
+	 */
 	KNX_DPT_FLOAT32,
 } knx_dpt;
 
 /**
  * DPT 1.xxx
+ * \see KNX_DPT_BOOL
  */
 typedef bool knx_bool;
 
 /**
  * DPT 2.xxx
+ * \see KNX_DPT_CVALUE
  */
 typedef struct {
 	bool control, value;
@@ -60,6 +131,7 @@ typedef struct {
 
 /**
  * DPT 3.xxx
+ * \see KNX_DPT_CSTEP
  */
 typedef struct {
 	bool control;
@@ -68,31 +140,37 @@ typedef struct {
 
 /**
  * DPT 4.xxx
+ * \see KNX_DPT_CHAR
  */
 typedef char knx_char;
 
 /**
  * DPT 5.xxx
+ * \see KNX_DPT_UNSIGNED8
  */
 typedef uint8_t knx_unsigned8;
 
 /**
  * DPT 6.xxx
+ * \see KNX_DPT_SIGNED8
  */
 typedef int8_t knx_signed8;
 
 /**
  * DPT 7.xxx
+ * \see KNX_DPT_UNSIGNED16
  */
 typedef uint16_t knx_unsigned16;
 
 /**
  * DPT 8.xxx
+ * \see KNX_DPT_SIGNED16
  */
 typedef int16_t knx_signed16;
 
 /**
  * DPT 9.xxx
+ * \see KNX_DPT_FLOAT16
  */
 typedef float knx_float16;
 
@@ -112,6 +190,7 @@ typedef enum {
 
 /**
  * DPT 10.xxx
+ * \see KNX_DPT_TIMEOFDAY
  */
 typedef struct {
 	knx_dayofweek day;
@@ -120,6 +199,7 @@ typedef struct {
 
 /**
  * DPT 11.xxx
+ * \see KNX_DPT_DATE
  */
 typedef struct {
 	uint8_t day, month, year;
@@ -127,16 +207,19 @@ typedef struct {
 
 /**
  * DPT 12.xxx
+ * \see KNX_DPT_UNSIGNED32
  */
 typedef uint32_t knx_unsigned32;
 
 /**
  * DPT 13.xxx
+ * \see KNX_DPT_SIGNED32
  */
 typedef int32_t knx_signed32;
 
 /**
  * DPT 14.xxx
+ * \see KNX_DPT_FLOAT32
  */
 typedef float knx_float32;
 
@@ -221,9 +304,10 @@ void knx_dpt_to_apdu(uint8_t* apdu, knx_dpt type, const void* value);
 #define KNX_DPT_FLOAT32_SIZE    5
 
 /**
- * APDU size for a Datapoint Type
+ * APDU size needed to fit an instance of the given datapoint type.
  */
-inline static size_t knx_dpt_size(knx_dpt type) {
+inline static
+size_t knx_dpt_size(knx_dpt type) {
 	switch (type) {
 		case KNX_DPT_BOOL:
 			return KNX_DPT_BOOL_SIZE;
