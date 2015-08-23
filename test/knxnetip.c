@@ -58,7 +58,7 @@ inline static bool host_info_equal(const knx_host_info* a,
 deftest(knx_connection_request, {
 	const knx_connection_request packet_in = {
 		KNX_CONNECTION_REQUEST_TUNNEL,
-		KNX_LAYER_TUNNEL,
+		KNX_CONNECTION_LAYER_TUNNEL,
 		{KNX_PROTO_UDP, htonl(INADDR_LOOPBACK), 12345},
 		{KNX_PROTO_UDP, htonl(INADDR_LOOPBACK), 54321}
 	};
