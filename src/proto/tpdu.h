@@ -74,33 +74,65 @@ typedef enum {
  * Transport Protocol Data Unit
  */
 typedef struct {
+	/**
+	 * Transport protocol control information
+	 */
 	knx_tpci tpci;
+
+	/**
+	 * Sequence number
+	 */
 	uint8_t seq_number;
 
+	/**
+	 * Frame payload: Control information or application protocol data unit
+	 */
 	union {
 		knx_tpci_control control;
 		struct {
+			/**
+			 * Application protocol control information
+			 */
 			knx_apci apci;
+
+			/**
+			 * Payload pointer
+			 * \note The two most significant bits of `payload[0]` are part of the APCI
+			 */
 			const uint8_t* payload;
+
+			/**
+			 * Number of bytes in `payload`
+			 */
 			size_t length;
 		} data;
 	} info;
 } knx_tpdu;
 
 /**
- * Unpack the TPDU fields.
+ * Parse a raw transport protocol data unit.
+ *
+ * \param buffer Raw TPDU
+ * \param length Number of bytes in `buffer`
+ * \param info Ouput TPDU
+ * \returns `true` if parsing was successful, otherwise `false`
  */
-bool knx_tpdu_parse(const uint8_t* tpdu, size_t length, knx_tpdu* info);
+bool knx_tpdu_parse(const uint8_t* buffer, size_t length, knx_tpdu* info);
 
 /**
- * Generate the TPDU.
+ * Generate a raw transport protocol data unit.
+ *
+ * \see knx_tpdu_size
+ * \param buffer Output buffer, you have to make sure there is enough space
+ * \param info Input TPDU
  */
-void knx_tpdu_generate(uint8_t* tpdu, const knx_tpdu* info);
+void knx_tpdu_generate(uint8_t* buffer, const knx_tpdu* info);
 
 /**
  * Space required to fit the given TPDU.
  */
-inline static size_t knx_tpdu_size(const knx_tpdu* info) {
+inline static
+size_t knx_tpdu_size(const knx_tpdu* info) {
 	switch (info->tpci) {
 		case KNX_TPCI_UNNUMBERED_DATA:
 		case KNX_TPCI_NUMBERED_DATA: {
