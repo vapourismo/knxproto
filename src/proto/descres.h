@@ -45,34 +45,54 @@ typedef struct {
  */
 typedef struct {
 	/**
-	 *
+	 * KNX medium
 	 */
 	uint8_t medium;
 
 	/**
-	 *
+	 * Connection status
 	 */
 	uint8_t status;
 
 	/**
-	 *
+	 * Individual address
 	 */
 	knx_addr address;
 
 	/**
-	 *
+	 * Installation ID
 	 */
 	uint16_t id;
 
 	/**
-	 *
+	 * Serial number
 	 */
-	knx_description_service* services;
+	uint8_t serial[6];
 
 	/**
-	 *
+	 * Multicast address
+	 */
+	in_addr_t multicast_address;
+
+	/**
+	 * MAC address
+	 */
+	uint8_t mac_address[6];
+
+	/**
+	 * Name
+	 */
+	char name[30];
+
+	/**
+	 * Number of services
 	 */
 	size_t num_services;
+
+	/**
+	 * Services array
+	 */
+	knx_description_service* services;
 } knx_description_response;
 
 // /**
@@ -80,18 +100,28 @@ typedef struct {
 //  */
 // void knx_description_response_generate(uint8_t* buffer, const knx_description_response* res);
 
-// /**
-//  * Parse a message (excluding header) which contains a description response.
-//  * Note: You have to free the `services` array manually.
-//  */
-// bool knx_description_response_parse(const uint8_t* message, size_t length, knx_description_response* res);
+/**
+ * Parse a raw description response.
+ *
+ * \note You have to free the `services` array using `knx_description_response_free_services`.
+ * \param buffer Raw description response
+ * \param length Number of bytes in `buffer`
+ * \param res Output description response
+ */
+bool knx_description_response_parse(const uint8_t* buffer, size_t length,
+                                    knx_description_response* res);
 
-// /**
-//  * Description response size
-//  */
-// inline static
-// size_t knx_description_response_size(const knx_description_response* res) {
-// 	return 0;
-// }
+/**
+ * Free the dynamically allocated `services` array.
+ */
+void knx_description_response_free_services(knx_description_response* res);
+
+/**
+ * Description response size
+ */
+inline static
+size_t knx_description_response_size(const knx_description_response* res) {
+	return 56 + 2 * res->num_services;
+}
 
 #endif

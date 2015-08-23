@@ -20,10 +20,52 @@
  */
 
 #include "descres.h"
+#include "../util/alloc.h"
 
 // void knx_description_response_generate(uint8_t* buffer, const knx_description_response* res) {
+
 // }
 
-// bool knx_description_response_parse(const uint8_t* message, size_t length, knx_description_response* res) {
-// 	return false;
-// }
+bool knx_description_response_parse(const uint8_t* buffer, size_t length,
+                                    knx_description_response* res) {
+	if (length < 56 || buffer[0] != 54 || buffer[1] != 1 || buffer[54] % 2 != 0 || buffer[55] != 2)
+		return false;
+
+	res->medium = buffer[2];
+	res->status = buffer[3];
+	res->address = buffer[4] << 8 | buffer[5];
+	res->id = buffer[6] << 8 | buffer[7];
+
+	memcpy(&res->serial, buffer + 8, 6);
+	memcpy(&res->multicast_address, buffer + 14, 4);
+	memcpy(&res->mac_address, buffer + 18, 6);
+
+	memcpy(&res->name, buffer + 24, 29);
+	res->name[29] = 0;
+
+	res->num_services = buffer[54] / 2;
+
+	if (res->num_services == 0) {
+		res->services = NULL;
+		return true;
+	}
+
+	buffer += 56;
+	length -= 56;
+
+	res->services = newa(knx_description_service, res->num_services);
+
+	for (size_t i = 0; i < res->num_services && length >= 2; length -= 2, buffer += 2, i++) {
+		res->services[i] = {buffer[0], buffer[1]};
+	}
+
+	return true;
+}
+
+void knx_description_response_free_services(knx_description_response* res) {
+	if (res->services == NULL || res->num_services == 0)
+		return;
+
+	free(res->services);
+	res->num_services = 0;
+}
