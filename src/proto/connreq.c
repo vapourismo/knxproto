@@ -24,10 +24,9 @@
 #include "../util/alloc.h"
 
 // Connection Request:
-//   Octet 0-5:   Header
-//   Octet 6-13:  Control host information
-//   Octet 14-21: Tunnelling host information
-//   Octet 22-25: Connection request information
+//   Octet 0-7:  Control host information
+//   Octet 8-15: Tunnelling host information
+//   Octet 16-19: Connection request information
 
 // Connection Request Information:
 //   Octet 0: Structure length
@@ -73,6 +72,7 @@ bool knx_connection_request_parse(const uint8_t* message, size_t length, knx_con
 	}
 
 	return
-		knx_host_info_parse(message, &req->control_host) &&
-		knx_host_info_parse(message + 8, &req->tunnel_host);
+		knx_host_info_parse(message, length, &req->control_host) &&
+		knx_host_info_parse(message + KNX_HOST_INFO_SIZE, length - KNX_HOST_INFO_SIZE,
+		                    &req->tunnel_host);
 }

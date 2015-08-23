@@ -57,7 +57,7 @@ bool knx_connection_response_parse(const uint8_t* message, size_t length,
 	res->status = message[1];
 
 	if (length >= KNX_HOST_INFO_SIZE + 6) {
-		if (!knx_host_info_parse(message + 2, &res->host))
+		if (!knx_host_info_parse(message + 2, length - 2, &res->host))
 			return false;
 
 		memcpy(res->extended, message + 11, 3);

@@ -31,6 +31,10 @@
  */
 typedef enum {
 	KNX_PROTO_UDP = 1,
+
+	/**
+	 * \note For reference only
+	 */
 	KNX_PROTO_TCP = 2
 } knx_proto;
 
@@ -44,19 +48,28 @@ typedef struct {
 } knx_host_info;
 
 /**
- *
+ * Initialize for `knx_host_info` in NAT mode
  */
 #define KNX_HOST_INFO_NAT(prot) {prot, 0, 0}
 
 /**
- * Append host information.
+ * Generate raw host information.
+ *
+ * \see KNX_HOST_INFO_SIZE
+ * \param buffer Output buffer, you have to make sure there is enough space
+ * \param host Input host information
  */
 void knx_host_info_generate(uint8_t* buffer, const knx_host_info* host);
 
 /**
  * Retrieve host information.
+ *
+ * \param buffer Raw host information
+ * \param length Number of bytes in `buffer`
+ * \param host Output host information
+ * \returns `true` if parsing was successful, otherwise `false`
  */
-bool knx_host_info_parse(const uint8_t* message, knx_host_info* host);
+bool knx_host_info_parse(const uint8_t* buffer, size_t length, knx_host_info* host);
 
 /**
  * Size of a host info segment

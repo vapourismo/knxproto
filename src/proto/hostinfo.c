@@ -39,8 +39,8 @@ void knx_host_info_generate(uint8_t* buffer, const knx_host_info* host) {
 	memcpy(buffer + 6, &host->port, 2);
 }
 
-bool knx_host_info_parse(const uint8_t* message, knx_host_info* host) {
-	if (message[0] != KNX_HOST_INFO_SIZE)
+bool knx_host_info_parse(const uint8_t* message, size_t length, knx_host_info* host) {
+	if (length < KNX_HOST_INFO_SIZE || message[0] != KNX_HOST_INFO_SIZE)
 		return false;
 
 	switch (message[1]) {

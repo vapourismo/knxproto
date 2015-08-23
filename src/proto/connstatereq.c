@@ -43,5 +43,5 @@ bool knx_connection_state_request_parse(const uint8_t* message, size_t length,
 	req->channel = message[0];
 	req->status = message[1];
 
-	return knx_host_info_parse(message + 2, &req->host);
+	return knx_host_info_parse(message + 2, length - 2, &req->host);
 }
