@@ -30,18 +30,38 @@
  * Tunnel Response
  */
 typedef struct {
+	/**
+	 * Communication channel
+	 */
 	uint8_t channel;
+
+	/**
+	 * Sequence number
+	 */
 	uint8_t seq_number;
+
+	/**
+	 * Connection state (`0` is good)
+	 */
 	uint8_t status;
 } knx_tunnel_response;
 
 /**
- * Generate the message for a tunnel response.
+ * Generate a raw tunnel response.
+ *
+ * \see KNX_TUNNEL_RESPONSE_SIZE
+ * \param buffer Output buffer, you have to make sure there is enough space
+ * \param conn_req Input tunnel response
  */
 void knx_tunnel_response_generate(uint8_t* buffer, const knx_tunnel_response* res);
 
 /**
- * Parse a message (excluding header) which contains a tunnel response.
+ * Parse a raw tunnel response.
+ *
+ * \param buffer Raw tunnel response frame
+ * \param length Number of bytes in `buffer`
+ * \param req Output tunnel response
+ * \returns `true` if parsing was successful, otherwise `false`
  */
 bool knx_tunnel_response_parse(const uint8_t* message, size_t length, knx_tunnel_response* res);
 
