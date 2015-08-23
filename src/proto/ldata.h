@@ -112,12 +112,21 @@ typedef struct {
 } knx_ldata;
 
 /**
- * Generate an L_Data frame.
+ * Generate a raw L_Data frame.
+ *
+ * \see knx_ldata_size
+ * \param buffer Output buffer, you have to make sure there is enough space
+ * \param ldata Input L_Data frame
  */
-bool knx_ldata_generate(uint8_t* buffer, const knx_ldata* req);
+bool knx_ldata_generate(uint8_t* buffer, const knx_ldata* ldata);
 
 /**
- * Parse a message containing a L_Data frame.
+ * Parse a raw L_Data frame.
+ *
+ * \param buffer Raw frame
+ * \param length Number of bytes in `buffer`
+ * \param output Ouput frame
+ * \returns `true` if parsing was successful, otherwise `false`
  */
 bool knx_ldata_parse(const uint8_t* buffer, size_t length, knx_ldata* output);
 
