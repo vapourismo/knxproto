@@ -30,19 +30,36 @@
  * Disconnect Response
  */
 typedef struct {
+	/**
+	 * Communication channel
+	 */
 	uint8_t channel;
+
+	/**
+	 * Connection state (`0` is good)
+	 */
 	uint8_t status;
 } knx_disconnect_response;
 
 /**
- * Generate the message for a disconnect response.
+ * Generate a raw disconnect response.
+ *
+ * \see KNX_DISCONNECT_RESPONSE_SIZE
+ * \param buffer Output buffer, you have to make sure there is enough space
+ * \param res Input disconnect response
  */
 void knx_disconnect_response_generate(uint8_t* buffer, const knx_disconnect_response* res);
 
 /**
- * Parse a message (excluding header) which contains a disconnect response.
+ * Parse a raw disconnect response.
+ *
+ * \param buffer Raw disconnect response
+ * \param length Number of bytes in `buffer`
+ * \param res Output disconnect response
+ * \returns `true` if parsing was successful, otherwise `false`
  */
-bool knx_disconnect_response_parse(const uint8_t* message, size_t length, knx_disconnect_response* res);
+bool knx_disconnect_response_parse(const uint8_t* buffer, size_t length,
+                                   knx_disconnect_response* res);
 
 /**
  * Disconnect response size
