@@ -32,18 +32,31 @@
  * Description Request
  */
 typedef struct {
+	/**
+	 * Control host information
+	 */
 	knx_host_info control_host;
 } knx_description_request;
 
 /**
- * Generate the message for a description request.
+ * Generate a raw description request.
+ *
+ * \see KNX_DESCRIPTION_REQUEST_SIZE
+ * \param buffer Output buffer, you have to make sure there is enough space
+ * \param req Input description request
  */
 void knx_description_request_generate(uint8_t* buffer, const knx_description_request* req);
 
 /**
- * Parse a message (excluding header) which contains a description request.
+ * Parse a raw description request.
+ *
+ * \param buffer Raw description request
+ * \param length Number of bytes in `buffer`
+ * \param req Output description request
+ * \returns `true` if parsing was successful, otherwise `false`
  */
-bool knx_description_request_parse(const uint8_t* message, size_t length, knx_description_request* req);
+bool knx_description_request_parse(const uint8_t* buffer, size_t length,
+                                   knx_description_request* req);
 
 /**
  * Description request size
