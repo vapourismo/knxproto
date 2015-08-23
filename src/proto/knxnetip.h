@@ -59,7 +59,11 @@ typedef enum {
 } knx_service;
 
 /**
- * Unpack a header
+ * Unpack a KNXnet/IP header.
+ *
+ * \param buffer Raw header
+ * \param service Output service (may be `NULL`)
+ * \param length Output packet length (may be `NULL`)
  */
 bool knx_unpack_header(const uint8_t* buffer, knx_service* service, uint16_t* length);
 
@@ -72,7 +76,14 @@ bool knx_unpack_header(const uint8_t* buffer, knx_service* service, uint16_t* le
  * KNXnet/IP Packet
  */
 typedef struct {
+	/**
+	 * Service identifier
+	 */
 	knx_service service;
+
+	/**
+	 * Packet payload
+	 */
 	union {
 		knx_connection_request conn_req;
 		knx_connection_response conn_res;
@@ -89,24 +100,37 @@ typedef struct {
 
 /**
  * Parse a given message into a packet.
+ *
+ * \param buffer Raw packet
+ * \param length Number of bytes in `buffer`
+ * \param packet Output packet
+ * \returns `true` if parsing was successful, otherwise `false`
  */
-bool knx_parse(const uint8_t* msg, size_t length, knx_packet* packet);
+bool knx_parse(const uint8_t* buffer, size_t length, knx_packet* packet);
 
 /**
  * Generate a message.
+ *
+ * \param buffer Output buffer, you have to make sure there is enough space
+ * \param service Service identifier
+ * \param payload Pointer to a payload structure
+ * \returns `true` if the packet has been generated sucessfully
  */
 bool knx_generate(uint8_t* buffer, knx_service service, const void* payload);
 
 /**
- * Calculate the space needed to generate a message.
- * This excludes the space needed for a header.
+ * Calculate the space needed to generate a message. This excludes the space needed for a header.
+ *
+ * \param service Service identifier
+ * \param payload Pointer to a payload structure
  */
 size_t knx_payload_size(knx_service service, const void* payload);
 
 /**
  * Size of an entire KNXnet/IP frame.
  */
-inline static size_t knx_size(knx_service service, const void* payload) {
+inline static
+size_t knx_size(knx_service service, const void* payload) {
 	return knx_payload_size(service, payload) + KNX_HEADER_SIZE;
 }
 

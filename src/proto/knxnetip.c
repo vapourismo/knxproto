@@ -31,15 +31,12 @@
 //   Octet 4-5: Packet length including header size
 
 bool knx_header_generate(uint8_t* buffer, knx_service srv, uint16_t length) {
-	// Since the protocol specifies the payload length
-	// to be a 16-bit unsigned integer, we have to make
-	// sure the given length + header size do not exceed
-	// the uint16_t bounds.
+	// Since the protocol specifies the payload length to be a 16-bit unsigned integer, we have to
+	// make sure the given length + header size do not exceed the uint16_t bounds.
 	if (length > UINT16_MAX - KNX_HEADER_SIZE)
 		return false;
 
-	// This preamble will always be there,
-	// unless the underlying KNXnet/IP version changes.
+	// This preamble will always be there, unless the underlying KNXnet/IP version changes.
 	buffer[0] = KNX_HEADER_SIZE;
 	buffer[1] = 16;
 
