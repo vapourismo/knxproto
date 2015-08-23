@@ -29,36 +29,69 @@
 #include <stdbool.h>
 
 typedef struct {
-	uint8_t family, version;
+	/**
+	 * Service type/family
+	 */
+	uint8_t family;
+
+	/**
+	 * Service version
+	 */
+	uint8_t version;
 } knx_description_service;
 
 /**
  * Description Response
  */
 typedef struct {
-	uint8_t medium, status;
+	/**
+	 *
+	 */
+	uint8_t medium;
+
+	/**
+	 *
+	 */
+	uint8_t status;
+
+	/**
+	 *
+	 */
 	knx_addr address;
+
+	/**
+	 *
+	 */
 	uint16_t id;
+
+	/**
+	 *
+	 */
 	knx_description_service* services;
+
+	/**
+	 *
+	 */
 	size_t num_services;
 } knx_description_response;
 
-/**
- * Generate the message for a description response.
- */
-void knx_description_response_generate(uint8_t* buffer, const knx_description_response* res);
+// /**
+//  * Generate the message for a description response.
+//  */
+// void knx_description_response_generate(uint8_t* buffer, const knx_description_response* res);
 
-/**
- * Parse a message (excluding header) which contains a description response.
- * Note: You have to free the `services` array manually.
- */
-bool knx_description_response_parse(const uint8_t* message, size_t length, knx_description_response* res);
+// /**
+//  * Parse a message (excluding header) which contains a description response.
+//  * Note: You have to free the `services` array manually.
+//  */
+// bool knx_description_response_parse(const uint8_t* message, size_t length, knx_description_response* res);
 
-/**
- * Description response size
- */
-inline static size_t knx_description_response_size(const knx_description_response* res) {
-	return 0;
-}
+// /**
+//  * Description response size
+//  */
+// inline static
+// size_t knx_description_response_size(const knx_description_response* res) {
+// 	return 0;
+// }
 
 #endif

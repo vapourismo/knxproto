@@ -21,11 +21,9 @@
 
 #include "descres.h"
 
-void knx_description_response_generate(uint8_t* buffer, const knx_description_response* res) {
-	// TODO: Implement me
-}
+// void knx_description_response_generate(uint8_t* buffer, const knx_description_response* res) {
+// }
 
-bool knx_description_response_parse(const uint8_t* message, size_t length, knx_description_response* res) {
-	// TODO: Implement me
-	return false;
-}
+// bool knx_description_response_parse(const uint8_t* message, size_t length, knx_description_response* res) {
+// 	return false;
+// }
