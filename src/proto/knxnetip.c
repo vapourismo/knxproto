@@ -30,7 +30,7 @@
 //   Octet 2-3: Service number
 //   Octet 4-5: Packet length including header size
 
-bool knx_header_generate(uint8_t* buffer, knx_service srv, uint16_t length) {
+bool knx_header_generate(uint8_t* buffer, knx_service srv, size_t length) {
 	// Since the protocol specifies the payload length to be a 16-bit unsigned integer, we have to
 	// make sure the given length + header size do not exceed the uint16_t bounds.
 	if (length > UINT16_MAX - KNX_HEADER_SIZE)
@@ -52,7 +52,7 @@ bool knx_header_generate(uint8_t* buffer, knx_service srv, uint16_t length) {
 	return true;
 }
 
-bool knx_unpack_header(const uint8_t* buffer, knx_service* service, uint16_t* length) {
+bool knx_unpack_header(const uint8_t* buffer, knx_service* service, size_t* length) {
 	if (buffer[0] != KNX_HEADER_SIZE || buffer[1] != 16)
 		return false;
 
@@ -65,8 +65,7 @@ bool knx_unpack_header(const uint8_t* buffer, knx_service* service, uint16_t* le
 	return true;
 }
 
-bool knx_parse(const uint8_t* message, size_t length,
-               knx_packet* packet) {
+bool knx_parse(const uint8_t* message, size_t length, knx_packet* packet) {
 	if (length < KNX_HEADER_SIZE || message[0] != KNX_HEADER_SIZE || message[1] != 16)
 		return false;
 

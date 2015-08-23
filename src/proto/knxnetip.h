@@ -65,7 +65,7 @@ typedef enum {
  * \param service Output service (may be `NULL`)
  * \param length Output packet length (may be `NULL`)
  */
-bool knx_unpack_header(const uint8_t* buffer, knx_service* service, uint16_t* length);
+bool knx_unpack_header(const uint8_t* buffer, knx_service* service, size_t* length);
 
 /**
  * KNXnet/IP Header Size
