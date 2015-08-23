@@ -32,25 +32,46 @@
  * Tunnel Request
  */
 typedef struct {
+	/**
+	 * Communication channel
+	 */
 	uint8_t channel;
+
+	/**
+	 * Sequence number
+	 */
 	uint8_t seq_number;
+
+	/**
+	 * CEMI payload
+	 */
 	knx_cemi data;
 } knx_tunnel_request;
 
 /**
- * Generate the message for a tunnel request.
+ * Generate a raw tunnel request.
+ *
+ * \see knx_tunnel_request_size
+ * \param buffer Output buffer, you have to make sure there is enough space
+ * \param conn_req Input tunnel request
  */
 void knx_tunnel_request_generate(uint8_t* buffer, const knx_tunnel_request* req);
 
 /**
- * Parse a message (excluding header) which contains a tunnel request.
+ * Parse a raw tunnel request.
+ *
+ * \param buffer Raw tunnel request
+ * \param length Number of bytes in `buffer`
+ * \param req Output tunnel request
+ * \returns `true` if parsing was successful, otherwise `false`
  */
 bool knx_tunnel_request_parse(const uint8_t* message, size_t length, knx_tunnel_request* req);
 
 /**
  * Tunnel request size
  */
-inline static size_t knx_tunnel_request_size(const knx_tunnel_request* req) {
+inline static
+size_t knx_tunnel_request_size(const knx_tunnel_request* req) {
 	return 4 + knx_cemi_size(&req->data);
 }
 
