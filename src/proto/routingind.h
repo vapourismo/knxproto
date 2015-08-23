@@ -32,23 +32,36 @@
  * Routing Indication
  */
 typedef struct {
+	/**
+	 * CEMI payload
+	 */
 	knx_cemi data;
 } knx_routing_indication;
 
 /**
- * Generate the message for a routing indication.
+ * Generate a rawrouting indication.
+ *
+ * \see knx_routing_indication_size
+ * \param buffer Output buffer, you have to make sure there is enough space
+ * \param ind Input routing indication
  */
 bool knx_routing_indication_generate(uint8_t* buffer, const knx_routing_indication* ind);
 
 /**
- * Parse a message (excluding header) which contains a routing indication.
+ * Parse a raw routing indication.
+ *
+ * \param buffer Raw routing indication
+ * \param length Number of bytes in `buffer`
+ * \param ind Output routing indication
+ * \returns `true` if parsing was successful, otherwise `false`
  */
-bool knx_routing_indication_parse(const uint8_t* message, size_t length, knx_routing_indication* ind);
+bool knx_routing_indication_parse(const uint8_t* buffer, size_t length, knx_routing_indication* ind);
 
 /**
  * Routing indication size
  */
-inline static size_t knx_routing_indication_size(const knx_routing_indication* ind) {
+inline static
+size_t knx_routing_indication_size(const knx_routing_indication* ind) {
 	return knx_cemi_size(&ind->data);
 }
 
