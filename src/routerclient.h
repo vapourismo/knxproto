@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_NET_ROUTERCLIENT_H
-#define KNXCLIENT_NET_ROUTERCLIENT_H
+#ifndef KNXPROTO_NET_ROUTERCLIENT_H_
+#define KNXPROTO_NET_ROUTERCLIENT_H_
 
 #include "proto/cemi.h"
 

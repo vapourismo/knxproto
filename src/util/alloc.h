@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_UTIL_ALLOC_H
-#define KNXCLIENT_UTIL_ALLOC_H
+#ifndef KNXPROTO_UTIL_ALLOC_H_
+#define KNXPROTO_UTIL_ALLOC_H_
 
 #include <malloc.h>
 

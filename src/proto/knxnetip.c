@@ -118,6 +118,10 @@ bool knx_parse(const uint8_t* message, size_t length, knx_packet* packet) {
 			return knx_description_request_parse(payload_ptr, payload_length,
 			                                     &packet->payload.description_req);
 
+		case KNX_DESCRIPTION_RESPONSE:
+			return knx_description_response_parse(payload_ptr, payload_length,
+			                                      &packet->payload.description_res);
+
 		default:
 			return false;
 	}

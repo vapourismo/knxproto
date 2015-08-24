@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_PROTO_CEMI_CEMI_H
-#define KNXCLIENT_PROTO_CEMI_CEMI_H
+#ifndef KNXPROTO_PROTO_CEMI_H_
+#define KNXPROTO_PROTO_CEMI_H_
 
 #include "ldata.h"
 

@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_PROTO_KNXNETIP_KNXNETIP_H
-#define KNXCLIENT_PROTO_KNXNETIP_KNXNETIP_H
+#ifndef KNXPROTO_PROTO_KNXNETIP_H_
+#define KNXPROTO_PROTO_KNXNETIP_H_
 
 #include "connreq.h"
 #include "connres.h"
@@ -29,6 +29,7 @@
 #include "dcreq.h"
 #include "dcres.h"
 #include "descreq.h"
+#include "descres.h"
 #include "tunnelreq.h"
 #include "tunnelres.h"
 #include "routingind.h"
@@ -95,6 +96,7 @@ typedef struct {
 		knx_tunnel_response tunnel_res;
 		knx_routing_indication routing_ind;
 		knx_description_request description_req;
+		knx_description_response description_res;
 	} payload;
 } knx_packet;
 

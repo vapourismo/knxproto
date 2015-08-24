@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_PROTO_CEMI_TPDU_H
-#define KNXCLIENT_PROTO_CEMI_TPDU_H
+#ifndef KNXPROTO_PROTO_TPDU_H_
+#define KNXPROTO_PROTO_TPDU_H_
 
 #include "data.h"
 

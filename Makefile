@@ -8,7 +8,7 @@ DEBUGGER        = gdb -ex run
 MEMCHECKER      = valgrind -v --leak-check=full
 
 # Install Directories
-BASENAME        := knxclient
+BASENAME        := knxproto
 PREFIX          ?= /usr/local
 INCLUDEDIR      ?= $(PREFIX)/include/$(BASENAME)
 LIBDIR          ?= $(PREFIX)/lib
@@ -55,7 +55,7 @@ BASECFLAGS      := -std=c99 -O2 -D_POSIX_SOURCE -D_GNU_SOURCE $(DEBUGCFLAGS) \
                    -fmessage-length=0 -Wall -Wextra -pedantic -Wno-unused-parameter
 CFLAGS          += $(BASECFLAGS) -fPIC
 LDFLAGS         += -shared -Wl,-soname,$(SONAME)
-LDLIBS          := -lm -lev
+LDLIBS          := -lm
 
 TESTCFLAGS      = $(BASECFLAGS)
 TESTLDFLAGS     =

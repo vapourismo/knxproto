@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXCLIENT_TEST_TESTFW_H
-#define KNXCLIENT_TEST_TESTFW_H
+#ifndef KNXPROTO_TEST_TESTFW_H_
+#define KNXPROTO_TEST_TESTFW_H_
 
 #include "../src/util/alloc.h"
 

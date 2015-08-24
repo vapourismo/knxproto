@@ -1,4 +1,4 @@
-# knxclient
+# knxproto
 A library which provides the means to communicate with several KNX-related devices or services.
 
 ## Installation
