@@ -1,19 +1,19 @@
 # Author: vapourismo <ole@vprsm.de>
 
-pkgname='knxclient-git'
+pkgname='knxproto-git'
 pkgrel='4'
-pkgver='r461.2e18868'
+pkgver='r531.debb737'
 pkgdesc='A library which provides the means to communicate with several KNX-related devices or services.'
-url='https://github.com/vapourismo/knxclient'
+url='https://github.com/vapourismo/knxproto'
 license='GPL2'
 
 arch=('i686' 'x86_64' 'arm' 'armv6h' 'armv7h')
-conflicts=('knxclient')
-provides=('knxclient')
+conflicts=('knxproto')
+provides=('knxproto')
 depends=('glibc')
 makedepends=('git' 'make' 'coreutils' 'findutils')
 
-source=("$pkgname::git+https://github.com/vapourismo/knxclient.git")
+source=("$pkgname::git+https://github.com/vapourismo/knxproto.git")
 sha512sums=('SKIP')
 
 pkgver() {
