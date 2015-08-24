@@ -56,7 +56,8 @@ bool knx_description_response_parse(const uint8_t* buffer, size_t length,
 	res->services = newa(knx_description_service, res->num_services);
 
 	for (size_t i = 0; i < res->num_services && length >= 2; length -= 2, buffer += 2, i++) {
-		res->services[i] = {buffer[0], buffer[1]};
+		res->services[i].family = buffer[0];
+		res->services[i].version = buffer[1];
 	}
 
 	return true;
