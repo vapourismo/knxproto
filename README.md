@@ -1,11 +1,9 @@
-# knxproto
-A library which provides the means to communicate with several KNX-related devices or services.
+## Usage
+The simplest way to get started is to clone the repository, generate the documentation and start
+reading.
 
 ## Installation
-First off, you need a compatible C standard library and the `libev` library. These might
-come with your distribution of choice. So far, the library has been tested against `glibc` only.
-
-Obtain the source and navigate to it's location. Run
+Obtain the source and navigate to its location. Run
 
     $ make
 
