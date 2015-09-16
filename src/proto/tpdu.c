@@ -28,8 +28,8 @@ bool knx_tpdu_parse(const uint8_t* tpdu, size_t length, knx_tpdu* info) {
 	if (length == 0)
 		return false;
 
-	info->tpci = tpdu[0] >> 6 & 3;
-	info->seq_number = tpdu[0] >> 2 & 15;
+	info->tpci = (tpdu[0] >> 6) & 3;
+	info->seq_number = (tpdu[0] >> 2) & 15;
 
 	if (info->tpci == KNX_TPCI_UNNUMBERED_CONTROL || info->tpci == KNX_TPCI_NUMBERED_CONTROL) {
 		info->info.control = tpdu[0] & 3;
@@ -51,13 +51,14 @@ void knx_tpdu_generate(uint8_t* tpdu, const knx_tpdu* info) {
 		case KNX_TPCI_UNNUMBERED_DATA:
 		case KNX_TPCI_NUMBERED_DATA:
 			memcpy(tpdu + 1, info->info.data.payload, info->info.data.length);
+			tpdu[0] |= (info->info.data.apci >> 2) & 3;
 			tpdu[1] &= 63;
-			tpdu[1] |= (info->info.data.apci & 15) << 6;
+			tpdu[1] |= (info->info.data.apci & 3) << 6;
 			break;
 
 		case KNX_TPCI_UNNUMBERED_CONTROL:
 		case KNX_TPCI_NUMBERED_CONTROL:
-			tpdu[1] |= info->info.control & 3;
+			tpdu[0] |= info->info.control & 3;
 			break;
 	}
 }
