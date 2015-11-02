@@ -2,9 +2,6 @@ language: c
 compiler:
   - gcc
   - clang
-install:
-  - sudo apt-get update -qq
-  - sudo apt-get install libev-dev
 script:
   - make all
   - make test
