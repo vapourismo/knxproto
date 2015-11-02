@@ -1,3 +1,6 @@
+[![Travis CI](https://travis-ci.org/vapourismo/knxproto.svg)]
+(https://travis-ci.org/vapourismo/knxproto)
+
 ## Usage
 The simplest way to get started is to clone the repository, generate the documentation and start
 reading.
