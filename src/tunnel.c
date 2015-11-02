@@ -167,10 +167,10 @@ void knx_tunnel_connect(knx_tunnel* tunnel) {
 	// Request disconnect response to be transmitted
 	if (tunnel->send_message) {
 		knx_connection_request request = {
-			KNX_CONNECTION_REQUEST_TUNNEL,
-			KNX_CONNECTION_LAYER_TUNNEL,
-			KNX_HOST_INFO_NAT(KNX_PROTO_UDP),
-			KNX_HOST_INFO_NAT(KNX_PROTO_UDP)
+			.type         = KNX_CONNECTION_REQUEST_TUNNEL,
+			.layer        = KNX_CONNECTION_LAYER_TUNNEL,
+			.control_host = KNX_HOST_INFO_NAT(KNX_PROTO_UDP),
+			.tunnel_host  = KNX_HOST_INFO_NAT(KNX_PROTO_UDP)
 		};
 
 		size_t message_size = knx_size(KNX_CONNECTION_REQUEST, &request);
