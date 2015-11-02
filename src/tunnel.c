@@ -215,3 +215,23 @@ bool knx_tunnel_process(
 			return true;
 	}
 }
+
+void knx_tunnel_send(
+	knx_tunnel*     tunnel,
+	const knx_cemi* frame
+) {
+	if (!tunnel->send_message || tunnel->state != KNX_TUNNEL_CONNECTED)
+		return;
+
+	knx_tunnel_request request = {
+		.channel    = tunnel->channel,
+		.seq_number = tunnel->seq_number++,
+		.data       = *frame
+	};
+
+	size_t message_size = knx_size(KNX_TUNNEL_REQUEST, &request);
+	uint8_t message[message_size];
+	knx_generate(message, KNX_TUNNEL_REQUEST, &request);
+
+	tunnel->send_message(tunnel, tunnel->send_message_data, message, message_size);
+}

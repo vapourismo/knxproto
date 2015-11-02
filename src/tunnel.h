@@ -119,4 +119,12 @@ bool knx_tunnel_process(
 	size_t         message_size
 );
 
+/**
+ * Send a CEMI frame to the gateway.
+ */
+void knx_tunnel_send(
+	knx_tunnel*     tunnel,
+	const knx_cemi* frame
+);
+
 #endif
