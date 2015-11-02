@@ -86,6 +86,23 @@ bool knx_tunnel_process_disconnect_request(
 }
 
 static inline
+bool knx_tunnel_process_disconnect_response(
+	knx_tunnel*                    tunnel,
+	const knx_disconnect_response* response
+) {
+	if (tunnel->state == KNX_TUNNEL_DISCONNECTED || response->channel != tunnel->channel)
+		return false;
+
+	// Commit state change
+	tunnel->state = KNX_TUNNEL_DISCONNECTED;
+
+	if (tunnel->state_change)
+		tunnel->state_change(tunnel, tunnel->state_change_data);
+
+	return true;
+}
+
+static inline
 bool knx_tunnel_process_tunnel_request(
 	knx_tunnel*               tunnel,
 	const knx_tunnel_request* request
@@ -208,6 +225,9 @@ bool knx_tunnel_process(
 		case KNX_DISCONNECT_REQUEST:
 			return knx_tunnel_process_disconnect_request(tunnel, &packet.payload.dc_req);
 
+		case KNX_DISCONNECT_RESPONSE:
+			return knx_tunnel_process_disconnect_response(tunnel, &packet.payload.dc_res);
+
 		case KNX_TUNNEL_REQUEST:
 			return knx_tunnel_process_tunnel_request(tunnel, &packet.payload.tunnel_req);
 
@@ -234,4 +254,30 @@ void knx_tunnel_send(
 	knx_generate(message, KNX_TUNNEL_REQUEST, &request);
 
 	tunnel->send_message(tunnel, tunnel->send_message_data, message, message_size);
+}
+
+void knx_tunnel_disconnect(knx_tunnel* tunnel) {
+	if (tunnel->state > KNX_TUNNEL_CONNECTED)
+		return;
+
+	if (tunnel->send_message) {
+		knx_disconnect_request request = {
+			.channel = tunnel->channel,
+			.status  = 0,
+			.host    = KNX_HOST_INFO_NAT(KNX_PROTO_UDP)
+		};
+
+		size_t message_size = knx_size(KNX_DISCONNECT_REQUEST, &request);
+		uint8_t message[message_size];
+		knx_generate(message, KNX_DISCONNECT_REQUEST, &request);
+
+		tunnel->send_message(tunnel, tunnel->send_message_data, message, message_size);
+	}
+
+	// Commit state change
+	tunnel->state = KNX_TUNNEL_DISCONNECTING;
+
+	if (tunnel->state_change)
+		tunnel->state_change(tunnel, tunnel->state_change_data);
+
 }

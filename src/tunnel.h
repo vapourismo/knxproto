@@ -127,4 +127,9 @@ void knx_tunnel_send(
 	const knx_cemi* frame
 );
 
+/**
+ * Disconnect from the gateway.
+ */
+void knx_tunnel_disconnect(knx_tunnel* tunnel);
+
 #endif
