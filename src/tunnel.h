@@ -49,6 +49,12 @@ typedef void (* knx_tunnel_recv_cb)(
 	const knx_cemi*   frame
 );
 
+typedef void (* knx_tunnel_ack_cb)(
+	const knx_tunnel* tunnel,
+	void*             data,
+	uint8_t           seq_number
+);
+
 /**
  * Contains the current state of a tunneling interaction.
  */
@@ -71,6 +77,9 @@ struct _knx_tunnel {
 
 	knx_tunnel_recv_cb handle_cemi;
 	void* handle_cemi_data;
+
+	knx_tunnel_ack_cb handle_ack;
+	void* handle_ack_data;
 };
 
 /**
@@ -103,6 +112,15 @@ void knx_tunnel_set_recv_handler(
 	knx_tunnel*        tunnel,
 	knx_tunnel_recv_cb callback,
 	void*              data
+);
+
+/**
+ * Register a callback which will be invoked when a transmitted CEMI frame has been acknowledged.
+ */
+void knx_tunnel_set_ack_handler(
+	knx_tunnel*       tunnel,
+	knx_tunnel_ack_cb callback,
+	void*             data
 );
 
 /**

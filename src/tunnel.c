@@ -134,6 +134,20 @@ bool knx_tunnel_process_tunnel_request(
 	return true;
 }
 
+static inline
+bool knx_tunnel_process_tunnel_response(
+	knx_tunnel*                tunnel,
+	const knx_tunnel_response* response
+) {
+	if (tunnel->state != KNX_TUNNEL_CONNECTED || response->channel != tunnel->channel)
+		return false;
+
+	if (tunnel->handle_ack && response->status == 0)
+		tunnel->handle_ack(tunnel, tunnel->handle_ack_data, response->seq_number);
+
+	return true;
+}
+
 /*
  * Exports
  */
@@ -151,6 +165,9 @@ void knx_tunnel_init(knx_tunnel* tunnel) {
 
 	tunnel->handle_cemi = NULL;
 	tunnel->handle_cemi_data = NULL;
+
+	tunnel->handle_ack = NULL;
+	tunnel->handle_ack_data = NULL;
 }
 
 void knx_tunnel_set_send_handler(
@@ -178,6 +195,15 @@ void knx_tunnel_set_recv_handler(
 ) {
 	tunnel->handle_cemi = callback;
 	tunnel->handle_cemi_data = data;
+}
+
+void knx_tunnel_set_ack_handler(
+	knx_tunnel*       tunnel,
+	knx_tunnel_ack_cb callback,
+	void*             data
+) {
+	tunnel->handle_ack = callback;
+	tunnel->handle_ack_data = data;
 }
 
 void knx_tunnel_connect(knx_tunnel* tunnel) {
@@ -230,6 +256,9 @@ bool knx_tunnel_process(
 
 		case KNX_TUNNEL_REQUEST:
 			return knx_tunnel_process_tunnel_request(tunnel, &packet.payload.tunnel_req);
+
+		case KNX_TUNNEL_RESPONSE:
+			return knx_tunnel_process_tunnel_response(tunnel, &packet.payload.tunnel_res);
 
 		default:
 			return true;
