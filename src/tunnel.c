@@ -62,19 +62,19 @@ bool knx_tunnel_process_disconnect_request(
 	if (tunnel->state == KNX_TUNNEL_DISCONNECTED || request->channel != tunnel->channel)
 		return false;
 
-	// Generate disconnect confirmation
-	knx_disconnect_response response = {
-		.channel = tunnel->channel,
-		.status  = 0
-	};
-
-	size_t message_size = knx_size(KNX_DISCONNECT_RESPONSE, &response);
-	uint8_t message[message_size];
-	knx_generate(message, KNX_DISCONNECT_RESPONSE, &response);
-
 	// Request disconnect response to be transmitted
-	if (tunnel->send_message)
+	if (tunnel->send_message) {
+		knx_disconnect_response response = {
+			.channel = tunnel->channel,
+			.status  = 0
+		};
+
+		size_t message_size = knx_size(KNX_DISCONNECT_RESPONSE, &response);
+		uint8_t message[message_size];
+		knx_generate(message, KNX_DISCONNECT_RESPONSE, &response);
+
 		tunnel->send_message(tunnel, tunnel->send_message_data, message, message_size);
+	}
 
 	// Commit state change
 	tunnel->state = KNX_TUNNEL_DISCONNECTED;
@@ -95,20 +95,20 @@ bool knx_tunnel_process_tunnel_request(
 
 	// TODO: Check request's sequence number
 
-	// Generate tunnel response
-	knx_tunnel_response response = {
-		.channel    = request->channel,
-		.seq_number = request->seq_number,
-		.status     = 0
-	};
-
-	size_t message_size = knx_size(KNX_TUNNEL_RESPONSE, &response);
-	uint8_t message[message_size];
-	knx_generate(message, KNX_TUNNEL_RESPONSE, &response);
-
 	// Request tunnel response to be transmitted
-	if (tunnel->send_message)
+	if (tunnel->send_message) {
+		knx_tunnel_response response = {
+			.channel    = request->channel,
+			.seq_number = request->seq_number,
+			.status     = 0
+		};
+
+		size_t message_size = knx_size(KNX_TUNNEL_RESPONSE, &response);
+		uint8_t message[message_size];
+		knx_generate(message, KNX_TUNNEL_RESPONSE, &response);
+
 		tunnel->send_message(tunnel, tunnel->send_message_data, message, message_size);
+	}
 
 	// Inform user
 	if (tunnel->handle_cemi)
@@ -164,20 +164,21 @@ void knx_tunnel_set_recv_handler(
 }
 
 void knx_tunnel_connect(knx_tunnel* tunnel) {
-	knx_connection_request request = {
-		KNX_CONNECTION_REQUEST_TUNNEL,
-		KNX_CONNECTION_LAYER_TUNNEL,
-		KNX_HOST_INFO_NAT(KNX_PROTO_UDP),
-		KNX_HOST_INFO_NAT(KNX_PROTO_UDP)
-	};
-
-	size_t message_size = knx_size(KNX_CONNECTION_REQUEST, &request);
-	uint8_t message[message_size];
-	knx_generate(message, KNX_CONNECTION_REQUEST, &request);
-
 	// Request disconnect response to be transmitted
-	if (tunnel->send_message)
+	if (tunnel->send_message) {
+		knx_connection_request request = {
+			KNX_CONNECTION_REQUEST_TUNNEL,
+			KNX_CONNECTION_LAYER_TUNNEL,
+			KNX_HOST_INFO_NAT(KNX_PROTO_UDP),
+			KNX_HOST_INFO_NAT(KNX_PROTO_UDP)
+		};
+
+		size_t message_size = knx_size(KNX_CONNECTION_REQUEST, &request);
+		uint8_t message[message_size];
+		knx_generate(message, KNX_CONNECTION_REQUEST, &request);
+
 		tunnel->send_message(tunnel, tunnel->send_message_data, message, message_size);
+	}
 
 	// Commit state change
 	tunnel->state = KNX_TUNNEL_CONNECTING;
