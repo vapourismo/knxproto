@@ -121,8 +121,9 @@ bool knx_tunnel_process(
 
 /**
  * Send a CEMI frame to the gateway.
+ * \returns Sequence number
  */
-void knx_tunnel_send(
+int16_t knx_tunnel_send(
 	knx_tunnel*     tunnel,
 	const knx_cemi* frame
 );

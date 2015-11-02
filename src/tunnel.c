@@ -236,12 +236,12 @@ bool knx_tunnel_process(
 	}
 }
 
-void knx_tunnel_send(
+int16_t knx_tunnel_send(
 	knx_tunnel*     tunnel,
 	const knx_cemi* frame
 ) {
 	if (!tunnel->send_message || tunnel->state != KNX_TUNNEL_CONNECTED)
-		return;
+		return -1;
 
 	knx_tunnel_request request = {
 		.channel    = tunnel->channel,
@@ -254,6 +254,8 @@ void knx_tunnel_send(
 	knx_generate(message, KNX_TUNNEL_REQUEST, &request);
 
 	tunnel->send_message(tunnel, tunnel->send_message_data, message, message_size);
+
+	return request.seq_number;
 }
 
 void knx_tunnel_disconnect(knx_tunnel* tunnel) {
@@ -279,5 +281,4 @@ void knx_tunnel_disconnect(knx_tunnel* tunnel) {
 
 	if (tunnel->state_change)
 		tunnel->state_change(tunnel, tunnel->state_change_data);
-
 }
