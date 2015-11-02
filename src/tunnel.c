@@ -21,11 +21,6 @@
 
 #include "tunnel.h"
 
-#include "util/sockutils.h"
-#include "util/address.h"
-#include "util/alloc.h"
-#include "util/log.h"
-
 /*
  * Helpers
  */
