@@ -22,7 +22,7 @@
 #ifndef KNXPROTO_NET_TUNNELCLIENT_H_
 #define KNXPROTO_NET_TUNNELCLIENT_H_
 
-#include "proto/knxnetip.h"
+#include "proto/proto.h"
 #include "proto/ldata.h"
 #include "proto/data.h"
 

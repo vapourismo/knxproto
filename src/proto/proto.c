@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "knxnetip.h"
+#include "proto.h"
 
 #include <arpa/inet.h>
 #include <string.h>

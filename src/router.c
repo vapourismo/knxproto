@@ -20,7 +20,7 @@
  */
 
 #include "router.h"
-#include "proto/knxnetip.h"
+#include "proto/proto.h"
 
 #include <string.h>
 

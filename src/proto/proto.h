@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KNXPROTO_PROTO_KNXNETIP_H_
-#define KNXPROTO_PROTO_KNXNETIP_H_
+#ifndef KNXPROTO_PROTO_PROTO_H_
+#define KNXPROTO_PROTO_PROTO_H_
 
 #include "connreq.h"
 #include "connres.h"

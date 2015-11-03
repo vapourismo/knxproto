@@ -21,7 +21,7 @@
 
 #include "testfw.h"
 
-#include "../src/proto/knxnetip.h"
+#include "../src/proto/proto.h"
 
 #include <stdbool.h>
 #include <string.h>
