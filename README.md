@@ -22,7 +22,10 @@ this library against the devices you own. Furthermore am I interested in how the
 on different operating systems and also different C standard libraries.
 
 ## Documentation
-A Doxygen documentation can be generated.
+A copy based on current state of the `master` branch can be found
+[here](http://vapourismo.github.io/knxproto/).
+
+You can also generate it yourself locally.
 
     $ make docs
 
