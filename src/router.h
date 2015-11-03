@@ -27,31 +27,46 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef struct _knx_router knx_router;
+struct _knx_router;
 
+/**
+ * Message transmission mechanism
+ * \note The memory addressed by `message` will cease to exist after the function has returned.
+ */
 typedef void (* knx_router_send_cb)(
-	const knx_router* router,
+	const struct _knx_router* router,
 	void*             data,
 	const uint8_t*    message,
 	size_t            message_size
 );
 
+/**
+ * Incoming message handler
+ * \note The memory addressed by `frame` will cease to exist after the function has returned.
+ */
 typedef void (* knx_router_recv_cb)(
-	const knx_router* router,
+	const struct _knx_router* router,
 	void*             data,
 	const knx_cemi*   frame
 );
 
-struct _knx_router {
+/**
+ * Router manifest
+ *
+ * Methods operating on instances of this structure are not concerned with transmission, they only
+ * handle processing and generating messages.
+ */
+typedef struct _knx_router {
 	knx_router_send_cb send_message;
 	void* send_message_data;
 
 	knx_router_recv_cb handle_cemi;
 	void* handle_cemi_data;
-};
+} knx_router;
 
 /**
- * Initialize the `knx_router` structure.
+ * Initialize the `knx_router` structure. All fields are cleared, no additional magic.
+ * \note No need to use it if you plan to initialize the `knx_router` structure manually.
  */
 void knx_router_init(knx_router* router);
 
@@ -75,6 +90,7 @@ void knx_router_set_recv_handler(
 
 /**
  * Process a message.
+ * \returns `true` if a valid message has been processed
  */
 bool knx_router_process(
 	const knx_router* router,

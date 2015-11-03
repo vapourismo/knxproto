@@ -86,6 +86,7 @@ typedef struct {
  * Unpack a CEMI header. No checks are performed whether the contained service is supported or
  * even valid.
  *
+ * \param buffer Message buffer
  * \param service CEMI service (may be `NULL`)
  * \param info_length Additional information length (may be `NULL`)
  */
