@@ -23,6 +23,8 @@
 #include "../util/log.h"
 #include "../util/alloc.h"
 
+#include <string.h>
+
 bool knx_ldata_generate(uint8_t* buffer, const knx_ldata* req) {
 	size_t tpdu_length = knx_tpdu_size(&req->tpdu);
 
