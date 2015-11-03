@@ -22,12 +22,10 @@
 #include "router.h"
 #include "proto/knxnetip.h"
 
-void knx_router_init(knx_router* router) {
-	router->send_message = NULL;
-	router->send_message_data = NULL;
+#include <string.h>
 
-	router->handle_cemi = NULL;
-	router->handle_cemi_data = NULL;
+void knx_router_init(knx_router* router) {
+	memset(router, 0, sizeof(knx_router));
 }
 
 void knx_router_set_send_handler(
