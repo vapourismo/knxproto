@@ -26,8 +26,7 @@ HEADERFILES     = proto/connreq.h proto/connres.h proto/connstatereq.h proto/con
 SOURCEFILES     = proto/connstateres.c proto/connreq.c proto/tunnelreq.c proto/connstatereq.c \
                   proto/connres.c proto/dcreq.c proto/hostinfo.c proto/proto.c proto/tunnelres.c \
                   proto/dcres.c proto/routingind.c proto/descreq.c proto/cemi.c proto/ldata.c \
-                  proto/tpdu.c proto/data.c proto/descres.c util/address.c util/log.c \
-                  tunnel.c router.c
+                  proto/tpdu.c proto/data.c proto/descres.c util/log.c tunnel.c router.c
 
 TESTFILES       = $(wildcard $(TESTDIR)/*.c)
 HEADEROBJS      = $(HEADERFILES:%=$(SOURCEDIR)/%)

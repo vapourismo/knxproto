@@ -22,9 +22,7 @@
 #include "descres.h"
 #include "../util/alloc.h"
 
-// void knx_description_response_generate(uint8_t* buffer, const knx_description_response* res) {
-
-// }
+#include <string.h>
 
 bool knx_description_response_parse(const uint8_t* buffer, size_t length,
                                     knx_description_response* res) {

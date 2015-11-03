@@ -22,37 +22,7 @@
 #ifndef KNXPROTO_UTIL_ADDRESS_H_
 #define KNXPROTO_UTIL_ADDRESS_H_
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <string.h>
 #include <stdint.h>
-#include <stdbool.h>
-
-/**
- * IPv4 Address
- */
-typedef struct sockaddr_in ip4addr;
-
-/**
- * Generate an IPv4 address from a string and a given port.
- */
-inline static void ip4addr_from_string(ip4addr* addr, const char* addrstr, in_port_t port) {
-	memset(addr, 0, sizeof(ip4addr));
-	addr->sin_family = AF_INET;
-	addr->sin_port = htons(port);
-	inet_pton(AF_INET, addrstr, &addr->sin_addr);
-}
-
-/**
- * Get the string representation of an IPv4 address.
- * The returned string has to be freed.
- */
-char* ip4addr_to_string(const ip4addr* addr);
-
-/**
- * Resolve an IPv4 address.
- */
-bool ip4addr_resolve(ip4addr* addr, const char* hostname, in_port_t port);
 
 /**
  * Indivdual Address (16-bit unsigned integer)

@@ -24,6 +24,7 @@
 
 #include "../util/address.h"
 
+#include <arpa/inet.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
