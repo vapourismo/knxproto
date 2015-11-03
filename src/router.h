@@ -85,7 +85,7 @@ bool knx_router_process(
 /**
  * Send a CEMI frame.
  */
-bool knx_router_send(
+void knx_router_send(
 	const knx_router* router,
 	const knx_cemi*   frame
 );

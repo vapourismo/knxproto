@@ -63,12 +63,12 @@ bool knx_router_process(
 	return true;
 }
 
-bool knx_router_send(
+void knx_router_send(
 	const knx_router* router,
 	const knx_cemi*   frame
 ) {
 	if (!router->send_message)
-		return false;
+		return;
 
 	knx_routing_indication indication = {*frame};
 
@@ -77,6 +77,4 @@ bool knx_router_send(
 	knx_generate(message, KNX_ROUTING_INDICATION, &indication);
 
 	router->send_message(router, router->send_message_data, message, message_size);
-
-	return true;
 }
