@@ -147,6 +147,15 @@ int16_t knx_tunnel_send(
 );
 
 /**
+ * Send a CEMI frame to the gateway.
+ */
+bool knx_tunnel_resend(
+	knx_tunnel*     tunnel,
+	uint8_t         seq_number,
+	const knx_cemi* frame
+);
+
+/**
  * Disconnect from the gateway.
  */
 void knx_tunnel_disconnect(knx_tunnel* tunnel);
