@@ -20,7 +20,6 @@
  */
 
 #include "cemi.h"
-#include "../util/log.h"
 
 #include <string.h>
 
@@ -33,10 +32,8 @@ void knx_cemi_unpack_header(const uint8_t* buffer, knx_cemi_service* service, ui
 }
 
 bool knx_cemi_parse(const uint8_t* message, size_t length, knx_cemi* frame) {
-	if (length < KNX_CEMI_HEADER_SIZE) {
-		knx_log_error("Insufficient message length %zu", length);
+	if (length < KNX_CEMI_HEADER_SIZE)
 		return false;
-	}
 
 	// Unpack header and store additional info details
 	knx_cemi_unpack_header(message, &frame->service, &frame->add_info_length);
@@ -56,7 +53,6 @@ bool knx_cemi_parse(const uint8_t* message, size_t length, knx_cemi* frame) {
 			return knx_ldata_parse(message, length, &frame->payload.ldata);
 
 		default:
-			knx_log_error("Unsupported CEMI service %02X", frame->service);
 			return false;
 	}
 }
@@ -81,7 +77,6 @@ bool knx_cemi_generate(uint8_t* buffer, const knx_cemi* frame) {
 			return knx_ldata_generate(buffer, &frame->payload.ldata);
 
 		default:
-			knx_log_error("Unsupported CEMI service %02X", frame->service);
 			return false;
 	}
 }
@@ -97,7 +92,6 @@ size_t knx_cemi_size(const knx_cemi* frame) {
 				knx_ldata_size(&frame->payload.ldata);
 
 		default:
-			knx_log_error("Unsupported CEMI service %02X", frame->service);
 			return 0;
 	}
 }

@@ -24,28 +24,6 @@
 
 #include <malloc.h>
 
-#ifdef DEBUG
-
-#include "log.h"
-
-inline static void* __debug_malloc(const char* file, size_t line, size_t n) {
-	void* a = malloc(n);
-	if (!a) knx_log_commit_raw(LOG_ERROR, file, line, "Failed to allocate %zu bytes", n);
-	return a;
-}
-
-inline static void* __debug_realloc(const char* file, size_t line, void* p, size_t n) {
-	void* a = realloc(p, n);
-	if (!a) knx_log_commit_raw(LOG_ERROR, file, line, "Failed to reallocate %zu bytes", n);
-	return a;
-}
-
-#define new(t) ((t*) __debug_malloc(__FILE__, __LINE__, sizeof(t)))
-#define newa(t, n) ((t*) __debug_malloc(__FILE__, __LINE__, sizeof(t) * (n)))
-#define renewa(p, t, n) ((t*) __debug_realloc(__FILE__, __LINE__, p, sizeof(t) * (n)))
-
-#else /* DEBUG */
-
 /**
  * Allocate a new instance of `t`.
  */
@@ -60,8 +38,6 @@ inline static void* __debug_realloc(const char* file, size_t line, void* p, size
  * Reallocate an array of `n` instances of `t`.
  */
 #define renewa(p, t, n) ((t*) realloc(p, sizeof(t) * (n)))
-
-#endif /* DEBUG */
 
 /**
  * Define an anonymous array of `t`s.

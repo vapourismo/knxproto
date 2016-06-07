@@ -20,7 +20,6 @@
  */
 
 #include "ldata.h"
-#include "../util/log.h"
 #include "../util/alloc.h"
 
 #include <string.h>
@@ -55,10 +54,8 @@ bool knx_ldata_generate(uint8_t* buffer, const knx_ldata* req) {
 
 bool knx_ldata_parse(const uint8_t* buffer, size_t length, knx_ldata* out) {
 	// Check for length and standard frame
-	if (length < 8 || (buffer[1] & 15)) {
-		knx_log_debug("Insufficient length or unknown frame format");
+	if (length < 8 || (buffer[1] & 15))
 		return false;
-	}
 
 	out->control1.repeat = !(buffer[0] >> 5 & 1);
 	out->control1.system_broadcast = !(buffer[0] >> 4 & 1);
