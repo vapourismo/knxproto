@@ -74,65 +74,104 @@ ssize_t knx_unpack_header(
 	return packet_length;
 }
 
-bool knx_parse(const uint8_t* message, size_t length, knx_packet* packet) {
-	if (length < KNX_HEADER_SIZE || message[0] != KNX_HEADER_SIZE || message[1] != 16)
-		return false;
+ssize_t knx_parse(
+	const uint8_t* frame,
+	size_t         frame_length,
+	knx_packet*    output
+) {
+	// Unpack (and validate) header
+	ssize_t unpack_result = knx_unpack_header(frame, frame_length, &output->service);
+	if (unpack_result < 0)
+		return unpack_result;
 
-	uint16_t claimed_len = (message[4] << 8) | message[5];
-	if (claimed_len > length || claimed_len < KNX_HEADER_SIZE)
-		return false;
+	// Packet length must not exceed the frame length
+	if ((unsigned) unpack_result > frame_length)
+		return -KNX_INVALID_BUFFER;
 
-	uint16_t payload_length = claimed_len - KNX_HEADER_SIZE;
-	const uint8_t* payload_ptr = message + KNX_HEADER_SIZE;
+	// Determine payload bounds
+	const uint8_t* payload = frame + KNX_HEADER_SIZE;
+	size_t payload_length = unpack_result - KNX_HEADER_SIZE;
 
-	packet->service = (message[2] << 8) | message[3];
-	switch (packet->service) {
+	switch (output->service) {
 		case KNX_CONNECTION_REQUEST:
-			return knx_connection_request_parse(payload_ptr, payload_length,
-			                                    &packet->payload.conn_req);
+			return knx_connection_request_parse(
+				payload,
+				payload_length,
+				&output->payload.conn_req
+			) ? unpack_result : -KNX_INVALID_PAYLOAD;
 
 		case KNX_CONNECTION_RESPONSE:
-			return knx_connection_response_parse(payload_ptr, payload_length,
-			                                     &packet->payload.conn_res);
+			return knx_connection_response_parse(
+				payload,
+				payload_length,
+				&output->payload.conn_res
+			) ? unpack_result : -KNX_INVALID_PAYLOAD;
 
 		case KNX_CONNECTION_STATE_REQUEST:
-			return knx_connection_state_request_parse(payload_ptr, payload_length,
-			                                          &packet->payload.conn_state_req);
+			return knx_connection_state_request_parse(
+				payload,
+				payload_length,
+				&output->payload.conn_state_req
+			) ? unpack_result : -KNX_INVALID_PAYLOAD;
 
 		case KNX_CONNECTION_STATE_RESPONSE:
-			return knx_connection_state_response_parse(payload_ptr, payload_length,
-			                                           &packet->payload.conn_state_res);
+			return knx_connection_state_response_parse(
+				payload,
+				payload_length,
+				&output->payload.conn_state_res
+			) ? unpack_result : -KNX_INVALID_PAYLOAD;
 
 		case KNX_DISCONNECT_REQUEST:
-			return knx_disconnect_request_parse(payload_ptr, payload_length,
-			                                    &packet->payload.dc_req);
+			return knx_disconnect_request_parse(
+				payload,
+				payload_length,
+				&output->payload.dc_req
+			) ? unpack_result : -KNX_INVALID_PAYLOAD;
 
 		case KNX_DISCONNECT_RESPONSE:
-			return knx_disconnect_response_parse(payload_ptr, payload_length,
-			                                     &packet->payload.dc_res);
+			return knx_disconnect_response_parse(
+				payload,
+				payload_length,
+				&output->payload.dc_res
+			) ? unpack_result : -KNX_INVALID_PAYLOAD;
 
 		case KNX_TUNNEL_REQUEST:
-			return knx_tunnel_request_parse(payload_ptr, payload_length,
-			                                &packet->payload.tunnel_req);
+			return knx_tunnel_request_parse(
+				payload,
+				payload_length,
+				&output->payload.tunnel_req
+			) ? unpack_result : -KNX_INVALID_PAYLOAD;
 
 		case KNX_TUNNEL_RESPONSE:
-			return knx_tunnel_response_parse(payload_ptr, payload_length,
-			                                 &packet->payload.tunnel_res);
+			return knx_tunnel_response_parse(
+				payload,
+				payload_length,
+				&output->payload.tunnel_res
+			) ? unpack_result : -KNX_INVALID_PAYLOAD;
 
 		case KNX_ROUTING_INDICATION:
-			return knx_routing_indication_parse(payload_ptr, payload_length,
-			                                    &packet->payload.routing_ind);
+			return knx_routing_indication_parse(
+				payload,
+				payload_length,
+				&output->payload.routing_ind
+			) ? unpack_result : -KNX_INVALID_PAYLOAD;
 
 		case KNX_DESCRIPTION_REQUEST:
-			return knx_description_request_parse(payload_ptr, payload_length,
-			                                     &packet->payload.description_req);
+			return knx_description_request_parse(
+				payload,
+				payload_length,
+				&output->payload.description_req
+			) ? unpack_result : -KNX_INVALID_PAYLOAD;
 
 		case KNX_DESCRIPTION_RESPONSE:
-			return knx_description_response_parse(payload_ptr, payload_length,
-			                                      &packet->payload.description_res);
+			return knx_description_response_parse(
+				payload,
+				payload_length,
+				&output->payload.description_res
+			) ? unpack_result : -KNX_INVALID_PAYLOAD;
 
 		default:
-			return false;
+			return -KNX_UNKNOWN_SERVICE;
 	}
 }
 

@@ -72,6 +72,16 @@ typedef enum {
 	 * Detected an invalid header.
 	 */
 	KNX_INVALID_HEADER,
+
+	/**
+	 * A service identifier could not be associated with a service.
+	 */
+	KNX_UNKNOWN_SERVICE,
+
+	/**
+	 * Payload contained in the frame is invalid.
+	 */
+	KNX_INVALID_PAYLOAD
 } knx_parse_error;
 
 /**
@@ -121,14 +131,18 @@ ssize_t knx_unpack_header(
 );
 
 /**
- * Parse the given message, and put its information into the packet structure.
+ * Parse an entire KNXnet/IP frame.
  *
- * \param buffer Raw packet
- * \param length Number of bytes in `buffer`
- * \param packet Output packet
- * \returns `true` if parsing was successful, otherwise `false`
+ * \param frame        Contains the frame
+ * \param frame_length Length of `frame` in bytes
+ * \param output       Structure that will be filled with information (must be non-`NULL`)
+ * \returns Actual frame length or negative integer indicating a `knx_parse_error`
  */
-bool knx_parse(const uint8_t* buffer, size_t length, knx_packet* packet);
+ssize_t knx_parse(
+	const uint8_t* frame,
+	size_t         frame_length,
+	knx_packet*    output
+);
 
 /**
  * Generate a message.

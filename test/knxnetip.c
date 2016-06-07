@@ -69,7 +69,7 @@ deftest(knx_connection_request, {
 
 	// Parse
 	knx_packet packet_out;
-	assert(knx_parse(buffer, sizeof(buffer), &packet_out));
+	assert(knx_parse(buffer, sizeof(buffer), &packet_out) > KNX_HEADER_SIZE);
 
 	// Check
 	assert(packet_out.service == KNX_CONNECTION_REQUEST);
@@ -95,7 +95,7 @@ deftest(knx_connection_response, {
 
 	// Parse
 	knx_packet packet_out;
-	assert(knx_parse(buffer, sizeof(buffer), &packet_out));
+	assert(knx_parse(buffer, sizeof(buffer), &packet_out) > KNX_HEADER_SIZE);
 
 	// Check
 	assert(packet_out.service == KNX_CONNECTION_RESPONSE);
@@ -118,7 +118,7 @@ deftest(knx_disconnect_request, {
 
 	// Parse
 	knx_packet packet_out;
-	assert(knx_parse(buffer, sizeof(buffer), &packet_out));
+	assert(knx_parse(buffer, sizeof(buffer), &packet_out) > KNX_HEADER_SIZE);
 
 	// Check
 	assert(packet_out.service == KNX_DISCONNECT_REQUEST);
@@ -140,7 +140,7 @@ deftest(knx_disconnect_response, {
 
 	// Parse
 	knx_packet packet_out;
-	assert(knx_parse(buffer, sizeof(buffer), &packet_out));
+	assert(knx_parse(buffer, sizeof(buffer), &packet_out) > KNX_HEADER_SIZE);
 
 	// Check
 	assert(packet_out.service == KNX_DISCONNECT_RESPONSE);
@@ -161,7 +161,7 @@ deftest(knx_connection_state_request, {
 
 	// Parse
 	knx_packet packet_out;
-	assert(knx_parse(buffer, sizeof(buffer), &packet_out));
+	assert(knx_parse(buffer, sizeof(buffer), &packet_out) > KNX_HEADER_SIZE);
 
 	// Check
 	assert(packet_out.service == KNX_CONNECTION_STATE_REQUEST);
@@ -183,7 +183,7 @@ deftest(knx_connection_state_response, {
 
 	// Parse
 	knx_packet packet_out;
-	assert(knx_parse(buffer, sizeof(buffer), &packet_out));
+	assert(knx_parse(buffer, sizeof(buffer), &packet_out) > KNX_HEADER_SIZE);
 
 	// Check
 	assert(packet_out.service == KNX_CONNECTION_STATE_RESPONSE);
@@ -211,7 +211,7 @@ deftest(knx_tunnel_request, {
 
 	// Parse
 	knx_packet packet_out;
-	assert(knx_parse(buffer, sizeof(buffer), &packet_out));
+	assert(knx_parse(buffer, sizeof(buffer), &packet_out) > KNX_HEADER_SIZE);
 
 	// Check
 	assert(packet_out.service == KNX_TUNNEL_REQUEST);
@@ -234,7 +234,7 @@ deftest(knx_tunnel_response, {
 
 	// Parse
 	knx_packet packet_out;
-	assert(knx_parse(buffer, sizeof(buffer), &packet_out));
+	assert(knx_parse(buffer, sizeof(buffer), &packet_out) > KNX_HEADER_SIZE);
 
 	// Check
 	assert(packet_out.service == KNX_TUNNEL_RESPONSE);
@@ -258,7 +258,7 @@ deftest(knx_description_request, {
 
 	// Parse
 	knx_packet packet_out;
-	assert(knx_parse(buffer, sizeof(buffer), &packet_out));
+	assert(knx_parse(buffer, sizeof(buffer), &packet_out) > KNX_HEADER_SIZE);
 
 	// Check
 	assert(packet_out.service == KNX_DESCRIPTION_REQUEST);
