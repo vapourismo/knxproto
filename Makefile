@@ -35,13 +35,11 @@ TESTOBJS        = $(TESTFILES:%.c=%.o)
 SOURCEDEPS      = $(SOURCEFILES:%.c=$(DISTDIR)/%.d)
 TESTDEPS        = $(TESTFILES:%.c=%.d)
 
-SOMAJOR         = 0
-SOMINOR         = 0
+SOVERSION       = 1
 SOBASE          = lib$(BASENAME).so
-SONAME          = $(SOBASE).$(SOMAJOR)
-SOREAL          = $(SONAME).$(SOMINOR)
+SONAME          = $(SOBASE).$(SOVERSION)
 
-SOOUTPUT        = $(DISTDIR)/$(SOREAL)
+SOOUTPUT        = $(DISTDIR)/$(SONAME)
 TESTOUTPUT      = $(DISTDIR)/$(BASENAME)-test
 
 # On Debug
@@ -108,13 +106,13 @@ $(TESTDIR)/%.o: $(TESTDIR)/%.c Makefile
 	$(CC) -c $(TESTCFLAGS) -MMD -MF$(@:%.o=%.d) -MT$@ -o$@ $<
 
 # Install
-install: $(LIBDIR)/$(SOBASE) $(LIBDIR)/$(SONAME) $(LIBDIR)/$(SOREAL) $(foreach h, $(HEADERFILES), $(INCLUDEDIR)/$h)
+install: $(LIBDIR)/$(SOBASE) $(LIBDIR)/$(SONAME) $(foreach h, $(HEADERFILES), $(INCLUDEDIR)/$h)
 
 uninstall:
-	$(RM) $(LIBDIR)/$(SOBASE) $(LIBDIR)/$(SONAME) $(LIBDIR)/$(SOREAL) $(foreach h, $(HEADERFILES), $(INCLUDEDIR)/$h)
+	$(RM) $(LIBDIR)/$(SOBASE) $(LIBDIR)/$(SONAME) $(foreach h, $(HEADERFILES), $(INCLUDEDIR)/$h)
 
-$(LIBDIR)/$(SONAME) $(LIBDIR)/$(SOBASE): $(LIBDIR)/$(SOREAL)
-	$(LINK) $(SOREAL) $@
+$(LIBDIR)/$(SOBASE): $(LIBDIR)/$(SONAME)
+	$(LINK) $(SONAME) $@
 
 $(LIBDIR)/%: $(DISTDIR)/%
 	$(INSTALL) -m755 -D $< $@
