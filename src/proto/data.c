@@ -24,7 +24,8 @@
 #include <math.h>
 #include <string.h>
 
-inline static bool knx_dpt_bool_parse(const uint8_t* apdu, size_t length, knx_bool* value) {
+inline static
+bool knx_dpt_bool_parse(const uint8_t* apdu, size_t length, knx_bool* value) {
 	if (length != 1)
 		return false;
 
@@ -33,7 +34,8 @@ inline static bool knx_dpt_bool_parse(const uint8_t* apdu, size_t length, knx_bo
 	return true;
 }
 
-inline static bool knx_dpt_cvalue_parse(const uint8_t* apdu, size_t length, knx_cvalue* value) {
+inline static
+bool knx_dpt_cvalue_parse(const uint8_t* apdu, size_t length, knx_cvalue* value) {
 	if (length != 1)
 		return false;
 
@@ -43,7 +45,8 @@ inline static bool knx_dpt_cvalue_parse(const uint8_t* apdu, size_t length, knx_
 	return true;
 }
 
-inline static bool knx_dpt_cstep_parse(const uint8_t* apdu, size_t length, knx_cstep* value) {
+inline static
+bool knx_dpt_cstep_parse(const uint8_t* apdu, size_t length, knx_cstep* value) {
 	if (length != 1)
 		return false;
 
@@ -53,7 +56,8 @@ inline static bool knx_dpt_cstep_parse(const uint8_t* apdu, size_t length, knx_c
 	return true;
 }
 
-inline static bool knx_dpt_float16_parse(const uint8_t* apdu, size_t length, knx_float16* value) {
+inline static
+bool knx_dpt_float16_parse(const uint8_t* apdu, size_t length, knx_float16* value) {
 	if (length != 3)
 		return false;
 
@@ -72,7 +76,8 @@ inline static bool knx_dpt_float16_parse(const uint8_t* apdu, size_t length, knx
 	return true;
 }
 
-inline static bool knx_dpt_timeofday_parse(const uint8_t* apdu, size_t length, knx_timeofday* value) {
+inline static
+bool knx_dpt_timeofday_parse(const uint8_t* apdu, size_t length, knx_timeofday* value) {
 	if (length != 4)
 		return false;
 
@@ -84,7 +89,8 @@ inline static bool knx_dpt_timeofday_parse(const uint8_t* apdu, size_t length, k
 	return true;
 }
 
-inline static bool knx_dpt_date_parse(const uint8_t* apdu, size_t length, knx_date* value) {
+inline static
+bool knx_dpt_date_parse(const uint8_t* apdu, size_t length, knx_date* value) {
 	if (length != 4)
 		return false;
 
@@ -159,36 +165,42 @@ bool knx_dpt_from_apdu(const uint8_t* apdu, size_t length, knx_dpt type, void* r
 	}
 }
 
-inline static void knx_dpt_generate_bool(uint8_t* apdu, const bool* value) {
+inline static
+void knx_dpt_generate_bool(uint8_t* apdu, const bool* value) {
 	apdu[0] &= ~63;
 	apdu[0] |= *value & 1;
 }
 
-inline static void knx_dpt_generate_cvalue(uint8_t* apdu, const knx_cvalue* value) {
+inline static
+void knx_dpt_generate_cvalue(uint8_t* apdu, const knx_cvalue* value) {
 	apdu[0] &= ~63;
 	apdu[0] |= (value->control & 1) << 1 | (value->value & 1);
 }
 
-inline static void knx_dpt_generate_cstep(uint8_t* apdu, const knx_cstep* value) {
+inline static
+void knx_dpt_generate_cstep(uint8_t* apdu, const knx_cstep* value) {
 	apdu[0] &= ~63;
 	apdu[0] |= (value->control & 1) << 3 | (value->step & 7);
 }
 
-inline static void knx_dpt_generate_timeofday(uint8_t* apdu, const knx_timeofday* value) {
+inline static
+void knx_dpt_generate_timeofday(uint8_t* apdu, const knx_timeofday* value) {
 	apdu[0] &= ~63;
 	apdu[1] = (value->day & 7) >> 5 | (value->hour % 24);
 	apdu[2] = value->minute % 60;
 	apdu[3] = value->second % 60;
 }
 
-inline static void knx_dpt_generate_date(uint8_t* apdu, const knx_date* value) {
+inline static
+void knx_dpt_generate_date(uint8_t* apdu, const knx_date* value) {
 	apdu[0] &= ~63;
 	apdu[1] = value->day % 32;
 	apdu[2] = value->month % 13;
 	apdu[3] = value->year % 100;
 }
 
-inline static void knx_dpt_generate_float16(uint8_t* apdu, const knx_float16* value) {
+inline static
+void knx_dpt_generate_float16(uint8_t* apdu, const knx_float16* value) {
 	apdu[0] &= ~63;
 
 	float target = *value * 100;

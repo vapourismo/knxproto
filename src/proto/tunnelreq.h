@@ -53,19 +53,23 @@ typedef struct {
  *
  * \see knx_tunnel_request_size
  * \param buffer Output buffer, you have to make sure there is enough space
- * \param req Input tunnel request
+ * \param req    Input tunnel request
  */
 void knx_tunnel_request_generate(uint8_t* buffer, const knx_tunnel_request* req);
 
 /**
  * Parse a raw tunnel request.
  *
- * \param message Raw tunnel request
- * \param length Number of bytes in `message`
- * \param req Output tunnel request
+ * \param message        Raw tunnel request
+ * \param message_length Number of bytes in `message`
+ * \param req            Output tunnel request
  * \returns `true` if parsing was successful, otherwise `false`
  */
-bool knx_tunnel_request_parse(const uint8_t* message, size_t length, knx_tunnel_request* req);
+bool knx_tunnel_request_parse(
+	const uint8_t*      message,
+	size_t              message_length,
+	knx_tunnel_request* req
+);
 
 /**
  * Tunnel request size

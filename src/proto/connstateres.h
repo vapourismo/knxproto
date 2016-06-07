@@ -46,19 +46,25 @@ typedef struct {
  *
  * \see KNX_CONNECTION_STATE_RESPONSE_SIZE
  * \param buffer Output buffer, you have to make sure there is enough space
- * \param res Input connection state response
+ * \param res    Input connection state response
  */
-void knx_connection_state_response_generate(uint8_t* buffer, const knx_connection_state_response* res);
+void knx_connection_state_response_generate(
+	uint8_t*                             buffer,
+	const knx_connection_state_response* res
+);
 
 /**
  * Parse a raw connection response.
  *
- * \param buffer Raw connection response
- * \param length Number of bytes in `buffer`
- * \param res Output connection state response
+ * \param message        Raw connection response
+ * \param message_length Number of bytes in `message`
+ * \param res            Output connection state response
  */
-bool knx_connection_state_response_parse(const uint8_t* buffer, size_t length,
-                                         knx_connection_state_response* res);
+bool knx_connection_state_response_parse(
+	const uint8_t*                 message,
+	size_t                         message_length,
+	knx_connection_state_response* res
+);
 
 /**
  * Connection state response size

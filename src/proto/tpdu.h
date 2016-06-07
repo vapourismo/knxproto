@@ -112,19 +112,23 @@ typedef struct {
 /**
  * Parse a raw transport protocol data unit.
  *
- * \param buffer Raw TPDU
- * \param length Number of bytes in `buffer`
- * \param info Ouput TPDU
+ * \param message        Raw TPDU
+ * \param message_length Number of bytes in `message`
+ * \param info           Ouput TPDU
  * \returns `true` if parsing was successful, otherwise `false`
  */
-bool knx_tpdu_parse(const uint8_t* buffer, size_t length, knx_tpdu* info);
+bool knx_tpdu_parse(
+	const uint8_t* message,
+	size_t         message_length,
+	knx_tpdu*      info
+);
 
 /**
  * Generate a raw transport protocol data unit.
  *
  * \see knx_tpdu_size
  * \param buffer Output buffer, you have to make sure there is enough space
- * \param info Input TPDU
+ * \param info   Input TPDU
  */
 void knx_tpdu_generate(uint8_t* buffer, const knx_tpdu* info);
 

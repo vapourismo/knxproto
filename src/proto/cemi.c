@@ -23,34 +23,27 @@
 
 #include <string.h>
 
-void knx_cemi_unpack_header(const uint8_t* buffer, knx_cemi_service* service, uint8_t* info_length) {
-	if (service)
-		*service = buffer[0];
-
-	if (info_length)
-		*info_length = buffer[1];
-}
-
-bool knx_cemi_parse(const uint8_t* message, size_t length, knx_cemi* frame) {
-	if (length < KNX_CEMI_HEADER_SIZE)
+bool knx_cemi_parse(const uint8_t* message, size_t message_length, knx_cemi* frame) {
+	if (message_length < KNX_CEMI_HEADER_SIZE)
 		return false;
 
 	// Unpack header and store additional info details
-	knx_cemi_unpack_header(message, &frame->service, &frame->add_info_length);
+	frame->service = message[0];
+	frame->add_info_length = message[1];
 
 	// Does the additional information exceed the frame?
-	if (KNX_CEMI_HEADER_SIZE + ((size_t) frame->add_info_length) > length)
+	if (KNX_CEMI_HEADER_SIZE + (size_t) frame->add_info_length > message_length)
 		return false;
 
 	frame->add_info = message + KNX_CEMI_HEADER_SIZE;
 	message += KNX_CEMI_HEADER_SIZE + frame->add_info_length;
-	length -= KNX_CEMI_HEADER_SIZE + frame->add_info_length;
+	message_length -= KNX_CEMI_HEADER_SIZE + frame->add_info_length;
 
 	switch (frame->service) {
 		case KNX_CEMI_LDATA_IND:
 		case KNX_CEMI_LDATA_REQ:
 		case KNX_CEMI_LDATA_CON:
-			return knx_ldata_parse(message, length, &frame->payload.ldata);
+			return knx_ldata_parse(message, message_length, &frame->payload.ldata);
 
 		default:
 			return false;

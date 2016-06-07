@@ -30,6 +30,10 @@ bool knx_routing_indication_generate(uint8_t* buffer, const knx_routing_indicati
 	return knx_cemi_generate(buffer, &ind->data);
 }
 
-bool knx_routing_indication_parse(const uint8_t* message, size_t length, knx_routing_indication* ind) {
-	return knx_cemi_parse(message, length, &ind->data);
+bool knx_routing_indication_parse(
+	const uint8_t*          message,
+	size_t                  message_length,
+	knx_routing_indication* ind
+) {
+	return knx_cemi_parse(message, message_length, &ind->data);
 }

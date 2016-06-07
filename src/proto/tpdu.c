@@ -24,21 +24,25 @@
 
 #include <string.h>
 
-bool knx_tpdu_parse(const uint8_t* tpdu, size_t length, knx_tpdu* info) {
-	if (length == 0)
+bool knx_tpdu_parse(
+	const uint8_t* message,
+	size_t         message_length,
+	knx_tpdu*      info
+) {
+	if (message_length == 0)
 		return false;
 
-	info->tpci = (tpdu[0] >> 6) & 3;
-	info->seq_number = (tpdu[0] >> 2) & 15;
+	info->tpci = (message[0] >> 6) & 3;
+	info->seq_number = (message[0] >> 2) & 15;
 
 	if (info->tpci == KNX_TPCI_UNNUMBERED_CONTROL || info->tpci == KNX_TPCI_NUMBERED_CONTROL) {
-		info->info.control = tpdu[0] & 3;
-	} else if (length < 2) {
+		info->info.control = message[0] & 3;
+	} else if (message_length < 2) {
 		return false;
 	} else {
-		info->info.data.apci = (tpdu[0] << 2 & 12) | (tpdu[1] >> 6 & 3);
-		info->info.data.length = length - 1;
-		info->info.data.payload = tpdu + 1;
+		info->info.data.apci = (message[0] << 2 & 12) | (message[1] >> 6 & 3);
+		info->info.data.length = message_length - 1;
+		info->info.data.payload = message + 1;
 	}
 
 	return true;

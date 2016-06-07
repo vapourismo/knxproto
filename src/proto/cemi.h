@@ -83,24 +83,14 @@ typedef struct {
 #define KNX_CEMI_HEADER_SIZE 2
 
 /**
- * Unpack a CEMI header. No checks are performed whether the contained service is supported or
- * even valid.
- *
- * \param buffer Message buffer
- * \param service CEMI service (may be `NULL`)
- * \param info_length Additional information length (may be `NULL`)
- */
-void knx_cemi_unpack_header(const uint8_t* buffer, knx_cemi_service* service, uint8_t* info_length);
-
-/**
  * Parse a message which contains a CEMI frame.
  *
- * \param message Raw CEMI frame
- * \param length Number of bytes contained in `message`
- * \param frame Output frame
+ * \param message        Raw CEMI frame
+ * \param message_length Number of bytes contained in `message`
+ * \param frame          Output frame
  * \returns `true` if parsing was successful, otherwise `false`
  */
-bool knx_cemi_parse(const uint8_t* message, size_t length, knx_cemi* frame);
+bool knx_cemi_parse(const uint8_t* message, size_t message_length, knx_cemi* frame);
 
 /**
  * Generate a CEMI frame.

@@ -34,21 +34,25 @@
 //   Octet 2: KNX Layer
 //   Octet 3: Reserved (should be 0)
 
-void knx_connection_request_generate(uint8_t* buffer, const knx_connection_request* conn_req) {
-	knx_host_info_generate(buffer, &conn_req->control_host);
+void knx_connection_request_generate(uint8_t* buffer, const knx_connection_request* req) {
+	knx_host_info_generate(buffer, &req->control_host);
 	buffer += KNX_HOST_INFO_SIZE;
 
-	knx_host_info_generate(buffer, &conn_req->tunnel_host);
+	knx_host_info_generate(buffer, &req->tunnel_host);
 	buffer += KNX_HOST_INFO_SIZE;
 
 	*buffer++ = 4;
-	*buffer++ = conn_req->type;
-	*buffer++ = conn_req->layer;
+	*buffer++ = req->type;
+	*buffer++ = req->layer;
 	*buffer++ = 0;
 }
 
-bool knx_connection_request_parse(const uint8_t* message, size_t length, knx_connection_request* req) {
-	if (length < KNX_CONNECTION_REQUEST_SIZE || message[16] != 4)
+bool knx_connection_request_parse(
+	const uint8_t*          message,
+	size_t                  message_length,
+	knx_connection_request* req
+) {
+	if (message_length < KNX_CONNECTION_REQUEST_SIZE || message[16] != 4)
 		return false;
 
 	// This seems redundant, but is required for the purposes of extensibility.
@@ -72,7 +76,10 @@ bool knx_connection_request_parse(const uint8_t* message, size_t length, knx_con
 	}
 
 	return
-		knx_host_info_parse(message, length, &req->control_host) &&
-		knx_host_info_parse(message + KNX_HOST_INFO_SIZE, length - KNX_HOST_INFO_SIZE,
-		                    &req->tunnel_host);
+		knx_host_info_parse(message, message_length, &req->control_host) &&
+		knx_host_info_parse(
+			message + KNX_HOST_INFO_SIZE,
+			message_length - KNX_HOST_INFO_SIZE,
+			&req->tunnel_host
+		);
 }

@@ -25,9 +25,13 @@ void knx_description_request_generate(uint8_t* buffer, const knx_description_req
 	knx_host_info_generate(buffer, &req->control_host);
 }
 
-bool knx_description_request_parse(const uint8_t* message, size_t length, knx_description_request* req) {
-	if (length < KNX_DESCRIPTION_REQUEST_SIZE)
+bool knx_description_request_parse(
+	const uint8_t*           message,
+	size_t                   message_length,
+	knx_description_request* req
+) {
+	if (message_length < KNX_DESCRIPTION_REQUEST_SIZE)
 		return false;
 
-	return knx_host_info_parse(message, length, &req->control_host);
+	return knx_host_info_parse(message, message_length, &req->control_host);
 }

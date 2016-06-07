@@ -32,8 +32,12 @@ void knx_disconnect_response_generate(uint8_t* buffer, const knx_disconnect_resp
 	*buffer++ = res->status;
 }
 
-bool knx_disconnect_response_parse(const uint8_t* message, size_t length, knx_disconnect_response* res) {
-	if (length < KNX_DISCONNECT_RESPONSE_SIZE)
+bool knx_disconnect_response_parse(
+	const uint8_t*           message,
+	size_t                   message_length,
+	knx_disconnect_response* res
+) {
+	if (message_length < KNX_DISCONNECT_RESPONSE_SIZE)
 		return false;
 
 	res->channel = message[0];

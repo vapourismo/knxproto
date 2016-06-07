@@ -28,20 +28,26 @@
 //   Octet 1:   Status
 //   Octet 2-9: Host info
 
-void knx_connection_state_request_generate(uint8_t* buffer, const knx_connection_state_request* req) {
+void knx_connection_state_request_generate(
+	uint8_t*                            buffer,
+	const knx_connection_state_request* req
+) {
 	*buffer++ = req->channel;
 	*buffer++ = req->status;
 
 	knx_host_info_generate(buffer, &req->host);
 }
 
-bool knx_connection_state_request_parse(const uint8_t* message, size_t length,
-                                        knx_connection_state_request* req) {
-	if (length < KNX_CONNECTION_STATE_REQUEST_SIZE)
+bool knx_connection_state_request_parse(
+	const uint8_t*                message,
+	size_t                        message_length,
+	knx_connection_state_request* req
+) {
+	if (message_length < KNX_CONNECTION_STATE_REQUEST_SIZE)
 		return false;
 
 	req->channel = message[0];
 	req->status = message[1];
 
-	return knx_host_info_parse(message + 2, length - 2, &req->host);
+	return knx_host_info_parse(message + 2, message_length - 2, &req->host);
 }

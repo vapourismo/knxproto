@@ -53,20 +53,26 @@ typedef struct {
  *
  * \see KNX_CONNECTION_STATE_REQUEST_SIZE
  * \param buffer Output buffer, you have to make sure there is enough space
- * \param req Input connection state request
+ * \param req    Input connection state request
  */
-void knx_connection_state_request_generate(uint8_t* buffer, const knx_connection_state_request* req);
+void knx_connection_state_request_generate(
+	uint8_t*                            buffer,
+	const knx_connection_state_request* req
+);
 
 /**
  * Parse a raw connection state request.
  *
- * \param buffer Raw connection state request
- * \param length Number of bytes in `buffer`
- * \param req Output connection state request
+ * \param message        Raw connection state request
+ * \param message_length Number of bytes in `message`
+ * \param req            Output connection state request
  * \returns `true` if parsing was successful, otherwise `false`
  */
-bool knx_connection_state_request_parse(const uint8_t* buffer, size_t length,
-                                        knx_connection_state_request* req);
+bool knx_connection_state_request_parse(
+	const uint8_t*                message,
+	size_t                        message_length,
+	knx_connection_state_request* req
+);
 
 /**
  * Connection state request size

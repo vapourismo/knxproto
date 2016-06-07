@@ -53,19 +53,23 @@ typedef struct {
  *
  * \see KNX_DISCONNECT_REQUEST_SIZE
  * \param buffer Output buffer, you have to make sure there is enough space
- * \param req Input disconnect request
+ * \param req    Input disconnect request
  */
 void knx_disconnect_request_generate(uint8_t* buffer, const knx_disconnect_request* req);
 
 /**
  * Parse a raw disconnect request.
  *
- * \param buffer Raw disconnect request
- * \param length Number of bytes in `buffer`
- * \param req Output disconnect request
+ * \param message        Raw disconnect request
+ * \param message_length Number of bytes in `message`
+ * \param req            Output disconnect request
  * \returns `true` if parsing was successful, otherwise `false`
  */
-bool knx_disconnect_request_parse(const uint8_t* buffer, size_t length, knx_disconnect_request* req);
+bool knx_disconnect_request_parse(
+	const uint8_t*          message,
+	size_t                  message_length,
+	knx_disconnect_request* req
+);
 
 /**
  * Disconnect request size

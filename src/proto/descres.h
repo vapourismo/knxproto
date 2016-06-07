@@ -96,21 +96,19 @@ typedef struct {
 	knx_description_service* services;
 } knx_description_response;
 
-// /**
-//  * Generate the message for a description response.
-//  */
-// void knx_description_response_generate(uint8_t* buffer, const knx_description_response* res);
-
 /**
  * Parse a raw description response.
  *
  * \note You have to free the `services` array using `knx_description_response_free_services`.
- * \param buffer Raw description response
- * \param length Number of bytes in `buffer`
- * \param res Output description response
+ * \param message        Raw description response
+ * \param message_length Number of bytes in `message`
+ * \param res            Output description response
  */
-bool knx_description_response_parse(const uint8_t* buffer, size_t length,
-                                    knx_description_response* res);
+bool knx_description_response_parse(
+	const uint8_t*            message,
+	size_t                    message_length,
+	knx_description_response* res
+);
 
 /**
  * Free the dynamically allocated `services` array.

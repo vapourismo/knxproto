@@ -58,20 +58,23 @@ typedef struct {
  *
  * \see knx_connection_response_size
  * \param buffer Output buffer
- * \param res Input connection response
+ * \param res    Input connection response
  */
 void knx_connection_response_generate(uint8_t* buffer, const knx_connection_response* res);
 
 /**
  * Parse a raw connection response.
  *
- * \param buffer Raw connection response
- * \param length Number of bytes in `buffer`
- * \param res Output connection response
+ * \param message        Raw connection response
+ * \param message_length Number of bytes in `message`
+ * \param res            Output connection response
  * \returns `true` if parsing was successful, otherwise `false`
  */
-bool knx_connection_response_parse(const uint8_t* buffer, size_t length,
-                                   knx_connection_response* res);
+bool knx_connection_response_parse(
+	const uint8_t*           message,
+	size_t                   message_length,
+	knx_connection_response* res
+);
 
 /**
  * Calculate the size of a raw connection response.

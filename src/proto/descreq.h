@@ -43,20 +43,23 @@ typedef struct {
  *
  * \see KNX_DESCRIPTION_REQUEST_SIZE
  * \param buffer Output buffer, you have to make sure there is enough space
- * \param req Input description request
+ * \param req    Input description request
  */
 void knx_description_request_generate(uint8_t* buffer, const knx_description_request* req);
 
 /**
  * Parse a raw description request.
  *
- * \param buffer Raw description request
- * \param length Number of bytes in `buffer`
- * \param req Output description request
+ * \param message        Raw description request
+ * \param message_length Number of bytes in `message`
+ * \param req            Output description request
  * \returns `true` if parsing was successful, otherwise `false`
  */
-bool knx_description_request_parse(const uint8_t* buffer, size_t length,
-                                   knx_description_request* req);
+bool knx_description_request_parse(
+	const uint8_t*           message,
+	size_t                   message_length,
+	knx_description_request* req
+);
 
 /**
  * Description request size

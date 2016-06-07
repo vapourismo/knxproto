@@ -52,9 +52,9 @@ bool knx_ldata_generate(uint8_t* buffer, const knx_ldata* req) {
 	return true;
 }
 
-bool knx_ldata_parse(const uint8_t* buffer, size_t length, knx_ldata* out) {
+bool knx_ldata_parse(const uint8_t* buffer, size_t buffer_length, knx_ldata* out) {
 	// Check for length and standard frame
-	if (length < 8 || (buffer[1] & 15))
+	if (buffer_length < 8 || (buffer[1] & 15))
 		return false;
 
 	out->control1.repeat = !(buffer[0] >> 5 & 1);
@@ -69,7 +69,7 @@ bool knx_ldata_parse(const uint8_t* buffer, size_t length, knx_ldata* out) {
 	out->source = buffer[2] << 8 | buffer[3];
 	out->destination = buffer[4] << 8 | buffer[5];
 
-	if (((size_t) buffer[6]) + 8 > length)
+	if (((size_t) buffer[6]) + 8 > buffer_length)
 		return false;
 
 	return knx_tpdu_parse(buffer + 7, buffer[6] + 1, &out->tpdu);

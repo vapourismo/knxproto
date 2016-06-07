@@ -51,19 +51,23 @@ typedef struct {
  *
  * \see KNX_TUNNEL_RESPONSE_SIZE
  * \param buffer Output buffer, you have to make sure there is enough space
- * \param res Input tunnel response
+ * \param res    Input tunnel response
  */
 void knx_tunnel_response_generate(uint8_t* buffer, const knx_tunnel_response* res);
 
 /**
  * Parse a raw tunnel response.
  *
- * \param message Raw tunnel response frame
- * \param length Number of bytes in `message`
- * \param res Output tunnel response
+ * \param message        Raw tunnel response frame
+ * \param message_length Number of bytes in `message`
+ * \param res            Output tunnel response
  * \returns `true` if parsing was successful, otherwise `false`
  */
-bool knx_tunnel_response_parse(const uint8_t* message, size_t length, knx_tunnel_response* res);
+bool knx_tunnel_response_parse(
+	const uint8_t*       message,
+	size_t               message_length,
+	knx_tunnel_response* res
+);
 
 /**
  * Tunnel response size

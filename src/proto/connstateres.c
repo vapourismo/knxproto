@@ -27,14 +27,20 @@
 //   Octet 0: Channel
 //   Octet 1: Status
 
-void knx_connection_state_response_generate(uint8_t* buffer, const knx_connection_state_response* res) {
+void knx_connection_state_response_generate(
+	uint8_t*                             buffer,
+	const knx_connection_state_response* res
+) {
 	*buffer++ = res->channel;
 	*buffer++ = res->status;
 }
 
-bool knx_connection_state_response_parse(const uint8_t* message, size_t length,
-                                         knx_connection_state_response* res) {
-	if (length < KNX_CONNECTION_STATE_RESPONSE_SIZE)
+bool knx_connection_state_response_parse(
+	const uint8_t*                 message,
+	size_t                         message_length,
+	knx_connection_state_response* res
+) {
+	if (message_length < KNX_CONNECTION_STATE_RESPONSE_SIZE)
 		return false;
 
 	res->channel = message[0];

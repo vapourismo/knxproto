@@ -24,8 +24,11 @@
 
 #include <string.h>
 
-bool knx_description_response_parse(const uint8_t* buffer, size_t length,
-                                    knx_description_response* res) {
+bool knx_description_response_parse(
+	const uint8_t*            buffer,
+	size_t                    length,
+	knx_description_response* res
+) {
 	if (length < 56 || buffer[0] != 54 || buffer[1] != 1 || buffer[54] % 2 != 0 || buffer[55] != 2)
 		return false;
 

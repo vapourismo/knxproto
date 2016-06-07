@@ -57,19 +57,19 @@ typedef struct {
  *
  * \see KNX_HOST_INFO_SIZE
  * \param buffer Output buffer, you have to make sure there is enough space
- * \param host Input host information
+ * \param host   Input host information
  */
 void knx_host_info_generate(uint8_t* buffer, const knx_host_info* host);
 
 /**
  * Retrieve host information.
  *
- * \param buffer Raw host information
- * \param length Number of bytes in `buffer`
- * \param host Output host information
+ * \param message        Raw host information
+ * \param message_length Number of bytes in `message`
+ * \param host           Output host information
  * \returns `true` if parsing was successful, otherwise `false`
  */
-bool knx_host_info_parse(const uint8_t* buffer, size_t length, knx_host_info* host);
+bool knx_host_info_parse(const uint8_t* message, size_t message_length, knx_host_info* host);
 
 /**
  * Size of a host info segment

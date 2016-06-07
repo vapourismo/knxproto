@@ -43,19 +43,23 @@ typedef struct {
  *
  * \see knx_routing_indication_size
  * \param buffer Output buffer, you have to make sure there is enough space
- * \param ind Input routing indication
+ * \param ind    Input routing indication
  */
 bool knx_routing_indication_generate(uint8_t* buffer, const knx_routing_indication* ind);
 
 /**
  * Parse a raw routing indication.
  *
- * \param buffer Raw routing indication
- * \param length Number of bytes in `buffer`
- * \param ind Output routing indication
+ * \param message        Raw routing indication
+ * \param message_length Number of bytes in `message`
+ * \param ind            Output routing indication
  * \returns `true` if parsing was successful, otherwise `false`
  */
-bool knx_routing_indication_parse(const uint8_t* buffer, size_t length, knx_routing_indication* ind);
+bool knx_routing_indication_parse(
+	const uint8_t*          message,
+	size_t                  message_length,
+	knx_routing_indication* ind
+);
 
 /**
  * Routing indication size
