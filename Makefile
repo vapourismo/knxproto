@@ -83,6 +83,11 @@ valgrind: $(TESTOUTPUT)
 docs:
 	doxygen
 
+gh-pages: docs
+	git add docs
+	git commit -m "docs: $$(date)"
+	git subtree push --prefix docs/html origin gh-pages
+
 # Targets
 -include $(SOURCEDEPS)
 -include $(TESTDEPS)
