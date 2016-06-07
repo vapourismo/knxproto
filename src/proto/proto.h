@@ -75,20 +75,6 @@ typedef enum {
 } knx_parse_error;
 
 /**
- * Unpack a KNXnet/IP header.
- *
- * \param buffer        Contains the header
- * \param buffer_length Length of `buffer` in bytes
- * \param service       Service identifier will be stored here (may be `NULL`)
- * \returns Entire packet length in bytes or negative integer indicating a `knx_parse_error`
- */
-ssize_t knx_unpack_header(
-	const uint8_t* buffer,
-	size_t         buffer_length,
-	knx_service*   service
-);
-
-/**
  * KNXnet/IP Header Size
  */
 #define KNX_HEADER_SIZE 6
@@ -119,6 +105,20 @@ typedef struct {
 		knx_description_response description_res;
 	} payload;
 } knx_packet;
+
+/**
+ * Unpack a KNXnet/IP header.
+ *
+ * \param buffer        Contains the header
+ * \param buffer_length Length of `buffer` in bytes
+ * \param service       Service identifier will be stored here (may be `NULL`)
+ * \returns Entire packet length in bytes or negative integer indicating a `knx_parse_error`
+ */
+ssize_t knx_unpack_header(
+	const uint8_t* buffer,
+	size_t         buffer_length,
+	knx_service*   service
+);
 
 /**
  * Parse the given message, and put its information into the packet structure.
