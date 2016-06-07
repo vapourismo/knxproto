@@ -60,13 +60,33 @@ typedef enum {
 } knx_service;
 
 /**
+ *
+ */
+typedef enum {
+	/**
+	 * Given input buffer is invalid or too small.
+	 */
+	KNX_INVALID_BUFFER = 1,
+
+	/**
+	 * Detected an invalid header.
+	 */
+	KNX_INVALID_HEADER,
+} knx_parse_error;
+
+/**
  * Unpack a KNXnet/IP header.
  *
- * \param buffer Raw header
- * \param service Output service (may be `NULL`)
- * \param length Output packet length (may be `NULL`)
+ * \param buffer        Contains the header
+ * \param buffer_length Length of `buffer` in bytes
+ * \param service       Service identifier will be stored here (may be `NULL`)
+ * \returns Entire packet length in bytes or negative integer indicating a `knx_parse_error`
  */
-bool knx_unpack_header(const uint8_t* buffer, knx_service* service, size_t* length);
+ssize_t knx_unpack_header(
+	const uint8_t* buffer,
+	size_t         buffer_length,
+	knx_service*   service
+);
 
 /**
  * KNXnet/IP Header Size

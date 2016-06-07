@@ -52,17 +52,26 @@ bool knx_header_generate(uint8_t* buffer, knx_service srv, size_t length) {
 	return true;
 }
 
-bool knx_unpack_header(const uint8_t* buffer, knx_service* service, size_t* length) {
-	if (buffer[0] != KNX_HEADER_SIZE || buffer[1] != 16)
-		return false;
+ssize_t knx_unpack_header(
+	const uint8_t* buffer,
+	size_t         buffer_length,
+	knx_service*   service
+) {
+	if (buffer == NULL || buffer_length < KNX_HEADER_SIZE)
+		return -KNX_INVALID_BUFFER;
+
+	uint16_t packet_length = buffer[4] << 8 | buffer[5];
+
+	// Loosely check for a valid header. One would need to verify if the given service identifier is
+	// valid and that the packet length does not exceed the buffer length. We delegate this duty to
+	// the users of this function.
+	if (buffer[0] != KNX_HEADER_SIZE || buffer[1] != 16 || packet_length < KNX_HEADER_SIZE)
+		return -KNX_INVALID_HEADER;
 
 	if (service)
 		*service = buffer[2] << 8 | buffer[3];
 
-	if (length)
-		*length = buffer[4] << 8 | buffer[5];
-
-	return true;
+	return packet_length;
 }
 
 bool knx_parse(const uint8_t* message, size_t length, knx_packet* packet) {
