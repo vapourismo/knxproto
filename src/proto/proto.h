@@ -101,7 +101,7 @@ typedef struct {
 } knx_packet;
 
 /**
- * Parse a given message into a packet.
+ * Parse the given message, and put its information into the packet structure.
  *
  * \param buffer Raw packet
  * \param length Number of bytes in `buffer`
