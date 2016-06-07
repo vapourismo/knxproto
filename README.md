@@ -23,7 +23,7 @@ on different operating systems and also different C standard libraries.
 
 ## Documentation
 A copy based on current state of the `master` branch can be found
-[here](http://vapourismo.github.io/knxproto/).
+[here](http://knxproto.vprsm.de/).
 
 You can also generate it yourself locally.
 
