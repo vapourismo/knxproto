@@ -1,0 +1,137 @@
+\hypertarget{cemi_8h}{}\section{src/proto/cemi.h File Reference}
+\label{cemi_8h}\index{src/proto/cemi.\+h@{src/proto/cemi.\+h}}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structknx__cemi}{knx\+\_\+cemi}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{cemi_8h_a37de6887b5c77d97d3e4eb3ad87fdaba}{K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+H\+E\+A\+D\+E\+R\+\_\+\+S\+I\+ZE}~2
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{cemi_8h_ae47bed4554412a1c2fa3778705375754}{knx\+\_\+cemi\+\_\+service} \{ \hyperlink{cemi_8h_ae47bed4554412a1c2fa3778705375754a2eac87d0e5653c2505c7e1b7c269b5b2}{K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+L\+D\+A\+T\+A\+\_\+\+R\+EQ} = 0x11, 
+\hyperlink{cemi_8h_ae47bed4554412a1c2fa3778705375754ae575fddd7ec83addd81299b50d1eb265}{K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+L\+D\+A\+T\+A\+\_\+\+I\+ND} = 0x29, 
+\hyperlink{cemi_8h_ae47bed4554412a1c2fa3778705375754a440a54bc10fa5cf3f000972f36bda47f}{K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+L\+D\+A\+T\+A\+\_\+\+C\+ON} = 0x2E
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{cemi_8h_a3d02cebc5bf20a467f7d4b680999c6ff}{knx\+\_\+cemi\+\_\+unpack\+\_\+header} (const uint8\+\_\+t $\ast$buffer, \hyperlink{cemi_8h_ae47bed4554412a1c2fa3778705375754}{knx\+\_\+cemi\+\_\+service} $\ast$service, uint8\+\_\+t $\ast$info\+\_\+length)
+\item 
+bool \hyperlink{cemi_8h_a65b847e52804324eb1f8c853588537c2}{knx\+\_\+cemi\+\_\+parse} (const uint8\+\_\+t $\ast$message, size\+\_\+t length, \hyperlink{structknx__cemi}{knx\+\_\+cemi} $\ast$frame)
+\item 
+bool \hyperlink{cemi_8h_a1c88c96067be2c4d2bbbaf441675737a}{knx\+\_\+cemi\+\_\+generate} (uint8\+\_\+t $\ast$buffer, const \hyperlink{structknx__cemi}{knx\+\_\+cemi} $\ast$cemi)
+\item 
+size\+\_\+t \hyperlink{cemi_8h_a0faa0ec2a51e7035d3212ede391c0f59}{knx\+\_\+cemi\+\_\+size} (const \hyperlink{structknx__cemi}{knx\+\_\+cemi} $\ast$cemi)
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\index{cemi.\+h@{cemi.\+h}!K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+H\+E\+A\+D\+E\+R\+\_\+\+S\+I\+ZE@{K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+H\+E\+A\+D\+E\+R\+\_\+\+S\+I\+ZE}}
+\index{K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+H\+E\+A\+D\+E\+R\+\_\+\+S\+I\+ZE@{K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+H\+E\+A\+D\+E\+R\+\_\+\+S\+I\+ZE}!cemi.\+h@{cemi.\+h}}
+\subsubsection[{\texorpdfstring{K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+H\+E\+A\+D\+E\+R\+\_\+\+S\+I\+ZE}{KNX_CEMI_HEADER_SIZE}}]{\setlength{\rightskip}{0pt plus 5cm}\#define K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+H\+E\+A\+D\+E\+R\+\_\+\+S\+I\+ZE~2}\hypertarget{cemi_8h_a37de6887b5c77d97d3e4eb3ad87fdaba}{}\label{cemi_8h_a37de6887b5c77d97d3e4eb3ad87fdaba}
+C\+E\+MI Header Size 
+
+\subsection{Enumeration Type Documentation}
+\index{cemi.\+h@{cemi.\+h}!knx\+\_\+cemi\+\_\+service@{knx\+\_\+cemi\+\_\+service}}
+\index{knx\+\_\+cemi\+\_\+service@{knx\+\_\+cemi\+\_\+service}!cemi.\+h@{cemi.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+cemi\+\_\+service}{knx_cemi_service}}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf knx\+\_\+cemi\+\_\+service}}\hypertarget{cemi_8h_ae47bed4554412a1c2fa3778705375754}{}\label{cemi_8h_ae47bed4554412a1c2fa3778705375754}
+K\+NX C\+E\+MI Service Types \begin{Desc}
+\item[Enumerator]\par
+\begin{description}
+\index{K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+L\+D\+A\+T\+A\+\_\+\+R\+EQ@{K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+L\+D\+A\+T\+A\+\_\+\+R\+EQ}!cemi.\+h@{cemi.\+h}}\index{cemi.\+h@{cemi.\+h}!K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+L\+D\+A\+T\+A\+\_\+\+R\+EQ@{K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+L\+D\+A\+T\+A\+\_\+\+R\+EQ}}\item[{\em 
+K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+L\+D\+A\+T\+A\+\_\+\+R\+EQ\hypertarget{cemi_8h_ae47bed4554412a1c2fa3778705375754a2eac87d0e5653c2505c7e1b7c269b5b2}{}\label{cemi_8h_ae47bed4554412a1c2fa3778705375754a2eac87d0e5653c2505c7e1b7c269b5b2}
+}]L\+\_\+\+Data.\+req \begin{DoxySeeAlso}{See also}
+\hyperlink{structknx__tunnel__request}{knx\+\_\+tunnel\+\_\+request} 
+\end{DoxySeeAlso}
+\index{K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+L\+D\+A\+T\+A\+\_\+\+I\+ND@{K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+L\+D\+A\+T\+A\+\_\+\+I\+ND}!cemi.\+h@{cemi.\+h}}\index{cemi.\+h@{cemi.\+h}!K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+L\+D\+A\+T\+A\+\_\+\+I\+ND@{K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+L\+D\+A\+T\+A\+\_\+\+I\+ND}}\item[{\em 
+K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+L\+D\+A\+T\+A\+\_\+\+I\+ND\hypertarget{cemi_8h_ae47bed4554412a1c2fa3778705375754ae575fddd7ec83addd81299b50d1eb265}{}\label{cemi_8h_ae47bed4554412a1c2fa3778705375754ae575fddd7ec83addd81299b50d1eb265}
+}]L\+\_\+\+Data.\+ind \begin{DoxySeeAlso}{See also}
+\hyperlink{structknx__routing__indication}{knx\+\_\+routing\+\_\+indication} 
+\end{DoxySeeAlso}
+\index{K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+L\+D\+A\+T\+A\+\_\+\+C\+ON@{K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+L\+D\+A\+T\+A\+\_\+\+C\+ON}!cemi.\+h@{cemi.\+h}}\index{cemi.\+h@{cemi.\+h}!K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+L\+D\+A\+T\+A\+\_\+\+C\+ON@{K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+L\+D\+A\+T\+A\+\_\+\+C\+ON}}\item[{\em 
+K\+N\+X\+\_\+\+C\+E\+M\+I\+\_\+\+L\+D\+A\+T\+A\+\_\+\+C\+ON\hypertarget{cemi_8h_ae47bed4554412a1c2fa3778705375754a440a54bc10fa5cf3f000972f36bda47f}{}\label{cemi_8h_ae47bed4554412a1c2fa3778705375754a440a54bc10fa5cf3f000972f36bda47f}
+}]L\+\_\+\+Data.\+con \end{description}
+\end{Desc}
+
+
+\subsection{Function Documentation}
+\index{cemi.\+h@{cemi.\+h}!knx\+\_\+cemi\+\_\+unpack\+\_\+header@{knx\+\_\+cemi\+\_\+unpack\+\_\+header}}
+\index{knx\+\_\+cemi\+\_\+unpack\+\_\+header@{knx\+\_\+cemi\+\_\+unpack\+\_\+header}!cemi.\+h@{cemi.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+cemi\+\_\+unpack\+\_\+header(const uint8\+\_\+t $\ast$buffer, knx\+\_\+cemi\+\_\+service $\ast$service, uint8\+\_\+t $\ast$info\+\_\+length)}{knx_cemi_unpack_header(const uint8_t *buffer, knx_cemi_service *service, uint8_t *info_length)}}]{\setlength{\rightskip}{0pt plus 5cm}void knx\+\_\+cemi\+\_\+unpack\+\_\+header (
+\begin{DoxyParamCaption}
+\item[{const uint8\+\_\+t $\ast$}]{buffer, }
+\item[{{\bf knx\+\_\+cemi\+\_\+service} $\ast$}]{service, }
+\item[{uint8\+\_\+t $\ast$}]{info\+\_\+length}
+\end{DoxyParamCaption}
+)}\hypertarget{cemi_8h_a3d02cebc5bf20a467f7d4b680999c6ff}{}\label{cemi_8h_a3d02cebc5bf20a467f7d4b680999c6ff}
+Unpack a C\+E\+MI header. No checks are performed whether the contained service is supported or even valid.
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Message buffer \\
+\hline
+{\em service} & C\+E\+MI service (may be {\ttfamily N\+U\+LL}) \\
+\hline
+{\em info\+\_\+length} & Additional information length (may be {\ttfamily N\+U\+LL}) \\
+\hline
+\end{DoxyParams}
+\index{cemi.\+h@{cemi.\+h}!knx\+\_\+cemi\+\_\+parse@{knx\+\_\+cemi\+\_\+parse}}
+\index{knx\+\_\+cemi\+\_\+parse@{knx\+\_\+cemi\+\_\+parse}!cemi.\+h@{cemi.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+cemi\+\_\+parse(const uint8\+\_\+t $\ast$message, size\+\_\+t length, knx\+\_\+cemi $\ast$frame)}{knx_cemi_parse(const uint8_t *message, size_t length, knx_cemi *frame)}}]{\setlength{\rightskip}{0pt plus 5cm}bool knx\+\_\+cemi\+\_\+parse (
+\begin{DoxyParamCaption}
+\item[{const uint8\+\_\+t $\ast$}]{message, }
+\item[{size\+\_\+t}]{length, }
+\item[{{\bf knx\+\_\+cemi} $\ast$}]{frame}
+\end{DoxyParamCaption}
+)}\hypertarget{cemi_8h_a65b847e52804324eb1f8c853588537c2}{}\label{cemi_8h_a65b847e52804324eb1f8c853588537c2}
+Parse a message which contains a C\+E\+MI frame.
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & Raw C\+E\+MI frame \\
+\hline
+{\em length} & Number of bytes contained in {\ttfamily message} \\
+\hline
+{\em frame} & Output frame \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\ttfamily true} if parsing was successful, otherwise {\ttfamily false} 
+\end{DoxyReturn}
+\index{cemi.\+h@{cemi.\+h}!knx\+\_\+cemi\+\_\+generate@{knx\+\_\+cemi\+\_\+generate}}
+\index{knx\+\_\+cemi\+\_\+generate@{knx\+\_\+cemi\+\_\+generate}!cemi.\+h@{cemi.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+cemi\+\_\+generate(uint8\+\_\+t $\ast$buffer, const knx\+\_\+cemi $\ast$cemi)}{knx_cemi_generate(uint8_t *buffer, const knx_cemi *cemi)}}]{\setlength{\rightskip}{0pt plus 5cm}bool knx\+\_\+cemi\+\_\+generate (
+\begin{DoxyParamCaption}
+\item[{uint8\+\_\+t $\ast$}]{buffer, }
+\item[{const {\bf knx\+\_\+cemi} $\ast$}]{cemi}
+\end{DoxyParamCaption}
+)}\hypertarget{cemi_8h_a1c88c96067be2c4d2bbbaf441675737a}{}\label{cemi_8h_a1c88c96067be2c4d2bbbaf441675737a}
+Generate a C\+E\+MI frame.
+
+\begin{DoxySeeAlso}{See also}
+\hyperlink{cemi_8h_a0faa0ec2a51e7035d3212ede391c0f59}{knx\+\_\+cemi\+\_\+size} 
+\end{DoxySeeAlso}
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Raw frame output, you have to make sure there is enough space \\
+\hline
+{\em cemi} & Source frame \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\ttfamily true} if the frame has been generated successfully, otherwise {\ttfamily false} 
+\end{DoxyReturn}
+\index{cemi.\+h@{cemi.\+h}!knx\+\_\+cemi\+\_\+size@{knx\+\_\+cemi\+\_\+size}}
+\index{knx\+\_\+cemi\+\_\+size@{knx\+\_\+cemi\+\_\+size}!cemi.\+h@{cemi.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+cemi\+\_\+size(const knx\+\_\+cemi $\ast$cemi)}{knx_cemi_size(const knx_cemi *cemi)}}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t knx\+\_\+cemi\+\_\+size (
+\begin{DoxyParamCaption}
+\item[{const {\bf knx\+\_\+cemi} $\ast$}]{cemi}
+\end{DoxyParamCaption}
+)}\hypertarget{cemi_8h_a0faa0ec2a51e7035d3212ede391c0f59}{}\label{cemi_8h_a0faa0ec2a51e7035d3212ede391c0f59}
+Calculate the space required to fit the given C\+E\+MI frame. 

@@ -1,0 +1,50 @@
+\hypertarget{address_8h}{}\section{src/util/address.h File Reference}
+\label{address_8h}\index{src/util/address.\+h@{src/util/address.\+h}}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{address_8h_a7f48ba278353f9570df1e9b7587d29a8}{knx\+\_\+individual\+\_\+addr}(area,  line,  device)~((((area) \& 15) $<$$<$ 12) $\vert$ (((line) \& 15) $<$$<$ 8) $\vert$ ((device) \& 255))
+\item 
+\#define \hyperlink{address_8h_a6cd5d231ee34809a198a39240dfa186c}{knx\+\_\+group\+\_\+addr}(main,  sub,  group)~((((main) \& 15) $<$$<$ 11) $\vert$ (((sub) \& 7) $<$$<$ 8) $\vert$ ((group) \& 255))
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef uint16\+\_\+t \hyperlink{address_8h_a88b9bc5d57b990da72d16dc49b9448df}{knx\+\_\+addr}
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\index{address.\+h@{address.\+h}!knx\+\_\+individual\+\_\+addr@{knx\+\_\+individual\+\_\+addr}}
+\index{knx\+\_\+individual\+\_\+addr@{knx\+\_\+individual\+\_\+addr}!address.\+h@{address.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+individual\+\_\+addr}{knx_individual_addr}}]{\setlength{\rightskip}{0pt plus 5cm}\#define knx\+\_\+individual\+\_\+addr(
+\begin{DoxyParamCaption}
+\item[{}]{area, }
+\item[{}]{line, }
+\item[{}]{device}
+\end{DoxyParamCaption}
+)~((((area) \& 15) $<$$<$ 12) $\vert$ (((line) \& 15) $<$$<$ 8) $\vert$ ((device) \& 255))}\hypertarget{address_8h_a7f48ba278353f9570df1e9b7587d29a8}{}\label{address_8h_a7f48ba278353f9570df1e9b7587d29a8}
+Create an Individual Address. \index{address.\+h@{address.\+h}!knx\+\_\+group\+\_\+addr@{knx\+\_\+group\+\_\+addr}}
+\index{knx\+\_\+group\+\_\+addr@{knx\+\_\+group\+\_\+addr}!address.\+h@{address.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+group\+\_\+addr}{knx_group_addr}}]{\setlength{\rightskip}{0pt plus 5cm}\#define knx\+\_\+group\+\_\+addr(
+\begin{DoxyParamCaption}
+\item[{}]{main, }
+\item[{}]{sub, }
+\item[{}]{group}
+\end{DoxyParamCaption}
+)~((((main) \& 15) $<$$<$ 11) $\vert$ (((sub) \& 7) $<$$<$ 8) $\vert$ ((group) \& 255))}\hypertarget{address_8h_a6cd5d231ee34809a198a39240dfa186c}{}\label{address_8h_a6cd5d231ee34809a198a39240dfa186c}
+Create a Group Address. 
+
+\subsection{Typedef Documentation}
+\index{address.\+h@{address.\+h}!knx\+\_\+addr@{knx\+\_\+addr}}
+\index{knx\+\_\+addr@{knx\+\_\+addr}!address.\+h@{address.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+addr}{knx_addr}}]{\setlength{\rightskip}{0pt plus 5cm}typedef uint16\+\_\+t {\bf knx\+\_\+addr}}\hypertarget{address_8h_a88b9bc5d57b990da72d16dc49b9448df}{}\label{address_8h_a88b9bc5d57b990da72d16dc49b9448df}
+Indivdual Address (16-\/bit unsigned integer)
+
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+ $\vert$ 7 $\vert$ 6 $\vert$ 5 $\vert$ 4 $\vert$ 3 $\vert$ 2 $\vert$ 1 $\vert$ 0 $\vert$ 7 $\vert$ 6 $\vert$ 5 $\vert$ 4 $\vert$ 3 $\vert$ 2 $\vert$ 1 $\vert$ 0 $\vert$ +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+ $\vert$ Area $\vert$ Line $\vert$ Device $\vert$ +-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/---+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/---+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/---+
+
+Group Address (15-\/bit unsigned integer)
+
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+ $\vert$ 7 $\vert$ 6 $\vert$ 5 $\vert$ 4 $\vert$ 3 $\vert$ 2 $\vert$ 1 $\vert$ 0 $\vert$ 7 $\vert$ 6 $\vert$ 5 $\vert$ 4 $\vert$ 3 $\vert$ 2 $\vert$ 1 $\vert$ 0 $\vert$ +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+ $\vert$ $\vert$ Main group $\vert$ Group $\vert$ +-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/---+-\/-\/-\/-\/-\/-\/-\/-\/---+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/---+ $\vert$ $\vert$ Main group $\vert$ Sub group $\vert$ Group $\vert$ +-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/---+-\/-\/-\/-\/-\/-\/-\/-\/---+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/---+
+
+Both address types are assumed to be in host byte order. They are converted to network byte order during frame assembly. 

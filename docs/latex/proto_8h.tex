@@ -1,0 +1,205 @@
+\hypertarget{proto_8h}{}\section{src/proto/proto.h File Reference}
+\label{proto_8h}\index{src/proto/proto.\+h@{src/proto/proto.\+h}}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structknx__packet}{knx\+\_\+packet}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{proto_8h_ab375c2bc05cedc0600fb47ee4f3aa417}{K\+N\+X\+\_\+\+H\+E\+A\+D\+E\+R\+\_\+\+S\+I\+ZE}~6
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{proto_8h_a79a58352734751991772fe02346cb547}{knx\+\_\+service} \{ \\*
+\hyperlink{proto_8h_a79a58352734751991772fe02346cb547a90a500009094090df4ce7432d9f01aa5}{K\+N\+X\+\_\+\+S\+E\+A\+R\+C\+H\+\_\+\+R\+E\+Q\+U\+E\+ST} = 0x0201, 
+\hyperlink{proto_8h_a79a58352734751991772fe02346cb547afde2d8a9238467f84697ee020dd1c8e5}{K\+N\+X\+\_\+\+S\+E\+A\+R\+C\+H\+\_\+\+R\+E\+S\+P\+O\+N\+SE} = 0x0202, 
+\hyperlink{proto_8h_a79a58352734751991772fe02346cb547a0440390fbc4cbd614034daa7b9486bdd}{K\+N\+X\+\_\+\+D\+E\+S\+C\+R\+I\+P\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+ST} = 0x0203, 
+\hyperlink{proto_8h_a79a58352734751991772fe02346cb547aaa314453e88cb56e87ef7f97c011c98e}{K\+N\+X\+\_\+\+D\+E\+S\+C\+R\+I\+P\+T\+I\+O\+N\+\_\+\+R\+E\+S\+P\+O\+N\+SE} = 0x0204, 
+\\*
+\hyperlink{proto_8h_a79a58352734751991772fe02346cb547a75ed3f559af9db9bd0cf07ba5a185c6f}{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+ST} = 0x0205, 
+\hyperlink{proto_8h_a79a58352734751991772fe02346cb547a10a125d821d4b12eba76fc504b19c2f4}{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+S\+P\+O\+N\+SE} = 0x0206, 
+\hyperlink{proto_8h_a79a58352734751991772fe02346cb547a1aa3aacbee8119b5509e2e5d8f887674}{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+Q\+U\+E\+ST} = 0x0207, 
+\hyperlink{proto_8h_a79a58352734751991772fe02346cb547a7e0072a491897089ad86f072ee027dc2}{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+S\+P\+O\+N\+SE} = 0x0208, 
+\\*
+\hyperlink{proto_8h_a79a58352734751991772fe02346cb547a89a2e537606ef1a40d9c41ed4e0cd912}{K\+N\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+R\+E\+Q\+U\+E\+ST} = 0x0209, 
+\hyperlink{proto_8h_a79a58352734751991772fe02346cb547ae3b112b213a173d07b4a64de75381637}{K\+N\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+R\+E\+S\+P\+O\+N\+SE} = 0x020A, 
+\hyperlink{proto_8h_a79a58352734751991772fe02346cb547a1ee8604fa4c88858d40f7dd0749f739b}{K\+N\+X\+\_\+\+D\+E\+V\+I\+C\+E\+\_\+\+C\+O\+N\+F\+I\+G\+U\+R\+A\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+ST} = 0x0310, 
+\hyperlink{proto_8h_a79a58352734751991772fe02346cb547a08edea62b725e2fedad35e533a8c273e}{K\+N\+X\+\_\+\+D\+E\+V\+I\+C\+E\+\_\+\+C\+O\+N\+F\+I\+G\+U\+R\+A\+T\+I\+O\+N\+\_\+\+A\+CK} = 0x0311, 
+\\*
+\hyperlink{proto_8h_a79a58352734751991772fe02346cb547a159c0749cd8cb4e82c60fe223205477a}{K\+N\+X\+\_\+\+T\+U\+N\+N\+E\+L\+\_\+\+R\+E\+Q\+U\+E\+ST} = 0x0420, 
+\hyperlink{proto_8h_a79a58352734751991772fe02346cb547ad6e860f66995a3c19f086913236f619e}{K\+N\+X\+\_\+\+T\+U\+N\+N\+E\+L\+\_\+\+R\+E\+S\+P\+O\+N\+SE} = 0x0421, 
+\hyperlink{proto_8h_a79a58352734751991772fe02346cb547a76acbb191df64bd7d564befc1c968b3f}{K\+N\+X\+\_\+\+R\+O\+U\+T\+I\+N\+G\+\_\+\+I\+N\+D\+I\+C\+A\+T\+I\+ON} = 0x0530
+ \}
+\item 
+enum \hyperlink{proto_8h_aaa9c02883967e34d8835fec5e263dc65}{knx\+\_\+parse\+\_\+error} \{ \hyperlink{proto_8h_aaa9c02883967e34d8835fec5e263dc65a9e967403374c94bfe2e941b0fdbeb6e8}{K\+N\+X\+\_\+\+I\+N\+V\+A\+L\+I\+D\+\_\+\+B\+U\+F\+F\+ER} = 1, 
+\hyperlink{proto_8h_aaa9c02883967e34d8835fec5e263dc65a9140e266ccd464b6202d44765e334a8d}{K\+N\+X\+\_\+\+I\+N\+V\+A\+L\+I\+D\+\_\+\+H\+E\+A\+D\+ER}, 
+\hyperlink{proto_8h_aaa9c02883967e34d8835fec5e263dc65a54dd47775aa8afb3b27b3f67117c0c8b}{K\+N\+X\+\_\+\+U\+N\+K\+N\+O\+W\+N\+\_\+\+S\+E\+R\+V\+I\+CE}, 
+\hyperlink{proto_8h_aaa9c02883967e34d8835fec5e263dc65a67799e249a6d2f8626566646b200e2de}{K\+N\+X\+\_\+\+I\+N\+V\+A\+L\+I\+D\+\_\+\+P\+A\+Y\+L\+O\+AD}
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+ssize\+\_\+t \hyperlink{proto_8h_ac026b85771ae18fbe877bb69d1dfaa6d}{knx\+\_\+unpack\+\_\+header} (const uint8\+\_\+t $\ast$buffer, size\+\_\+t buffer\+\_\+length, \hyperlink{proto_8h_a79a58352734751991772fe02346cb547}{knx\+\_\+service} $\ast$service)
+\item 
+ssize\+\_\+t \hyperlink{proto_8h_af79ca22817256653012ee07bcafc3c77}{knx\+\_\+parse} (const uint8\+\_\+t $\ast$frame, size\+\_\+t frame\+\_\+length, \hyperlink{structknx__packet}{knx\+\_\+packet} $\ast$output)
+\item 
+bool \hyperlink{proto_8h_ae59003abf91fe144aa653445aef1b041}{knx\+\_\+generate} (uint8\+\_\+t $\ast$buffer, \hyperlink{proto_8h_a79a58352734751991772fe02346cb547}{knx\+\_\+service} service, const void $\ast$payload)
+\item 
+size\+\_\+t \hyperlink{proto_8h_ad535e040e6631c20db2135e24819ed52}{knx\+\_\+payload\+\_\+size} (\hyperlink{proto_8h_a79a58352734751991772fe02346cb547}{knx\+\_\+service} service, const void $\ast$payload)
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\index{proto.\+h@{proto.\+h}!K\+N\+X\+\_\+\+H\+E\+A\+D\+E\+R\+\_\+\+S\+I\+ZE@{K\+N\+X\+\_\+\+H\+E\+A\+D\+E\+R\+\_\+\+S\+I\+ZE}}
+\index{K\+N\+X\+\_\+\+H\+E\+A\+D\+E\+R\+\_\+\+S\+I\+ZE@{K\+N\+X\+\_\+\+H\+E\+A\+D\+E\+R\+\_\+\+S\+I\+ZE}!proto.\+h@{proto.\+h}}
+\subsubsection[{\texorpdfstring{K\+N\+X\+\_\+\+H\+E\+A\+D\+E\+R\+\_\+\+S\+I\+ZE}{KNX_HEADER_SIZE}}]{\setlength{\rightskip}{0pt plus 5cm}\#define K\+N\+X\+\_\+\+H\+E\+A\+D\+E\+R\+\_\+\+S\+I\+ZE~6}\hypertarget{proto_8h_ab375c2bc05cedc0600fb47ee4f3aa417}{}\label{proto_8h_ab375c2bc05cedc0600fb47ee4f3aa417}
+K\+N\+Xnet/\+IP Header Size 
+
+\subsection{Enumeration Type Documentation}
+\index{proto.\+h@{proto.\+h}!knx\+\_\+service@{knx\+\_\+service}}
+\index{knx\+\_\+service@{knx\+\_\+service}!proto.\+h@{proto.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+service}{knx_service}}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf knx\+\_\+service}}\hypertarget{proto_8h_a79a58352734751991772fe02346cb547}{}\label{proto_8h_a79a58352734751991772fe02346cb547}
+K\+N\+Xnet/\+IP Service Type \begin{Desc}
+\item[Enumerator]\par
+\begin{description}
+\index{K\+N\+X\+\_\+\+S\+E\+A\+R\+C\+H\+\_\+\+R\+E\+Q\+U\+E\+ST@{K\+N\+X\+\_\+\+S\+E\+A\+R\+C\+H\+\_\+\+R\+E\+Q\+U\+E\+ST}!proto.\+h@{proto.\+h}}\index{proto.\+h@{proto.\+h}!K\+N\+X\+\_\+\+S\+E\+A\+R\+C\+H\+\_\+\+R\+E\+Q\+U\+E\+ST@{K\+N\+X\+\_\+\+S\+E\+A\+R\+C\+H\+\_\+\+R\+E\+Q\+U\+E\+ST}}\item[{\em 
+K\+N\+X\+\_\+\+S\+E\+A\+R\+C\+H\+\_\+\+R\+E\+Q\+U\+E\+ST\hypertarget{proto_8h_a79a58352734751991772fe02346cb547a90a500009094090df4ce7432d9f01aa5}{}\label{proto_8h_a79a58352734751991772fe02346cb547a90a500009094090df4ce7432d9f01aa5}
+}]\index{K\+N\+X\+\_\+\+S\+E\+A\+R\+C\+H\+\_\+\+R\+E\+S\+P\+O\+N\+SE@{K\+N\+X\+\_\+\+S\+E\+A\+R\+C\+H\+\_\+\+R\+E\+S\+P\+O\+N\+SE}!proto.\+h@{proto.\+h}}\index{proto.\+h@{proto.\+h}!K\+N\+X\+\_\+\+S\+E\+A\+R\+C\+H\+\_\+\+R\+E\+S\+P\+O\+N\+SE@{K\+N\+X\+\_\+\+S\+E\+A\+R\+C\+H\+\_\+\+R\+E\+S\+P\+O\+N\+SE}}\item[{\em 
+K\+N\+X\+\_\+\+S\+E\+A\+R\+C\+H\+\_\+\+R\+E\+S\+P\+O\+N\+SE\hypertarget{proto_8h_a79a58352734751991772fe02346cb547afde2d8a9238467f84697ee020dd1c8e5}{}\label{proto_8h_a79a58352734751991772fe02346cb547afde2d8a9238467f84697ee020dd1c8e5}
+}]\index{K\+N\+X\+\_\+\+D\+E\+S\+C\+R\+I\+P\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+ST@{K\+N\+X\+\_\+\+D\+E\+S\+C\+R\+I\+P\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+ST}!proto.\+h@{proto.\+h}}\index{proto.\+h@{proto.\+h}!K\+N\+X\+\_\+\+D\+E\+S\+C\+R\+I\+P\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+ST@{K\+N\+X\+\_\+\+D\+E\+S\+C\+R\+I\+P\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+ST}}\item[{\em 
+K\+N\+X\+\_\+\+D\+E\+S\+C\+R\+I\+P\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+ST\hypertarget{proto_8h_a79a58352734751991772fe02346cb547a0440390fbc4cbd614034daa7b9486bdd}{}\label{proto_8h_a79a58352734751991772fe02346cb547a0440390fbc4cbd614034daa7b9486bdd}
+}]\index{K\+N\+X\+\_\+\+D\+E\+S\+C\+R\+I\+P\+T\+I\+O\+N\+\_\+\+R\+E\+S\+P\+O\+N\+SE@{K\+N\+X\+\_\+\+D\+E\+S\+C\+R\+I\+P\+T\+I\+O\+N\+\_\+\+R\+E\+S\+P\+O\+N\+SE}!proto.\+h@{proto.\+h}}\index{proto.\+h@{proto.\+h}!K\+N\+X\+\_\+\+D\+E\+S\+C\+R\+I\+P\+T\+I\+O\+N\+\_\+\+R\+E\+S\+P\+O\+N\+SE@{K\+N\+X\+\_\+\+D\+E\+S\+C\+R\+I\+P\+T\+I\+O\+N\+\_\+\+R\+E\+S\+P\+O\+N\+SE}}\item[{\em 
+K\+N\+X\+\_\+\+D\+E\+S\+C\+R\+I\+P\+T\+I\+O\+N\+\_\+\+R\+E\+S\+P\+O\+N\+SE\hypertarget{proto_8h_a79a58352734751991772fe02346cb547aaa314453e88cb56e87ef7f97c011c98e}{}\label{proto_8h_a79a58352734751991772fe02346cb547aaa314453e88cb56e87ef7f97c011c98e}
+}]\index{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+ST@{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+ST}!proto.\+h@{proto.\+h}}\index{proto.\+h@{proto.\+h}!K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+ST@{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+ST}}\item[{\em 
+K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+ST\hypertarget{proto_8h_a79a58352734751991772fe02346cb547a75ed3f559af9db9bd0cf07ba5a185c6f}{}\label{proto_8h_a79a58352734751991772fe02346cb547a75ed3f559af9db9bd0cf07ba5a185c6f}
+}]\index{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+S\+P\+O\+N\+SE@{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+S\+P\+O\+N\+SE}!proto.\+h@{proto.\+h}}\index{proto.\+h@{proto.\+h}!K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+S\+P\+O\+N\+SE@{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+S\+P\+O\+N\+SE}}\item[{\em 
+K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+S\+P\+O\+N\+SE\hypertarget{proto_8h_a79a58352734751991772fe02346cb547a10a125d821d4b12eba76fc504b19c2f4}{}\label{proto_8h_a79a58352734751991772fe02346cb547a10a125d821d4b12eba76fc504b19c2f4}
+}]\index{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+Q\+U\+E\+ST@{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+Q\+U\+E\+ST}!proto.\+h@{proto.\+h}}\index{proto.\+h@{proto.\+h}!K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+Q\+U\+E\+ST@{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+Q\+U\+E\+ST}}\item[{\em 
+K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+Q\+U\+E\+ST\hypertarget{proto_8h_a79a58352734751991772fe02346cb547a1aa3aacbee8119b5509e2e5d8f887674}{}\label{proto_8h_a79a58352734751991772fe02346cb547a1aa3aacbee8119b5509e2e5d8f887674}
+}]\index{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+S\+P\+O\+N\+SE@{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+S\+P\+O\+N\+SE}!proto.\+h@{proto.\+h}}\index{proto.\+h@{proto.\+h}!K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+S\+P\+O\+N\+SE@{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+S\+P\+O\+N\+SE}}\item[{\em 
+K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+S\+P\+O\+N\+SE\hypertarget{proto_8h_a79a58352734751991772fe02346cb547a7e0072a491897089ad86f072ee027dc2}{}\label{proto_8h_a79a58352734751991772fe02346cb547a7e0072a491897089ad86f072ee027dc2}
+}]\index{K\+N\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+R\+E\+Q\+U\+E\+ST@{K\+N\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+R\+E\+Q\+U\+E\+ST}!proto.\+h@{proto.\+h}}\index{proto.\+h@{proto.\+h}!K\+N\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+R\+E\+Q\+U\+E\+ST@{K\+N\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+R\+E\+Q\+U\+E\+ST}}\item[{\em 
+K\+N\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+R\+E\+Q\+U\+E\+ST\hypertarget{proto_8h_a79a58352734751991772fe02346cb547a89a2e537606ef1a40d9c41ed4e0cd912}{}\label{proto_8h_a79a58352734751991772fe02346cb547a89a2e537606ef1a40d9c41ed4e0cd912}
+}]\index{K\+N\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+R\+E\+S\+P\+O\+N\+SE@{K\+N\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+R\+E\+S\+P\+O\+N\+SE}!proto.\+h@{proto.\+h}}\index{proto.\+h@{proto.\+h}!K\+N\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+R\+E\+S\+P\+O\+N\+SE@{K\+N\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+R\+E\+S\+P\+O\+N\+SE}}\item[{\em 
+K\+N\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+R\+E\+S\+P\+O\+N\+SE\hypertarget{proto_8h_a79a58352734751991772fe02346cb547ae3b112b213a173d07b4a64de75381637}{}\label{proto_8h_a79a58352734751991772fe02346cb547ae3b112b213a173d07b4a64de75381637}
+}]\index{K\+N\+X\+\_\+\+D\+E\+V\+I\+C\+E\+\_\+\+C\+O\+N\+F\+I\+G\+U\+R\+A\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+ST@{K\+N\+X\+\_\+\+D\+E\+V\+I\+C\+E\+\_\+\+C\+O\+N\+F\+I\+G\+U\+R\+A\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+ST}!proto.\+h@{proto.\+h}}\index{proto.\+h@{proto.\+h}!K\+N\+X\+\_\+\+D\+E\+V\+I\+C\+E\+\_\+\+C\+O\+N\+F\+I\+G\+U\+R\+A\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+ST@{K\+N\+X\+\_\+\+D\+E\+V\+I\+C\+E\+\_\+\+C\+O\+N\+F\+I\+G\+U\+R\+A\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+ST}}\item[{\em 
+K\+N\+X\+\_\+\+D\+E\+V\+I\+C\+E\+\_\+\+C\+O\+N\+F\+I\+G\+U\+R\+A\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+ST\hypertarget{proto_8h_a79a58352734751991772fe02346cb547a1ee8604fa4c88858d40f7dd0749f739b}{}\label{proto_8h_a79a58352734751991772fe02346cb547a1ee8604fa4c88858d40f7dd0749f739b}
+}]\index{K\+N\+X\+\_\+\+D\+E\+V\+I\+C\+E\+\_\+\+C\+O\+N\+F\+I\+G\+U\+R\+A\+T\+I\+O\+N\+\_\+\+A\+CK@{K\+N\+X\+\_\+\+D\+E\+V\+I\+C\+E\+\_\+\+C\+O\+N\+F\+I\+G\+U\+R\+A\+T\+I\+O\+N\+\_\+\+A\+CK}!proto.\+h@{proto.\+h}}\index{proto.\+h@{proto.\+h}!K\+N\+X\+\_\+\+D\+E\+V\+I\+C\+E\+\_\+\+C\+O\+N\+F\+I\+G\+U\+R\+A\+T\+I\+O\+N\+\_\+\+A\+CK@{K\+N\+X\+\_\+\+D\+E\+V\+I\+C\+E\+\_\+\+C\+O\+N\+F\+I\+G\+U\+R\+A\+T\+I\+O\+N\+\_\+\+A\+CK}}\item[{\em 
+K\+N\+X\+\_\+\+D\+E\+V\+I\+C\+E\+\_\+\+C\+O\+N\+F\+I\+G\+U\+R\+A\+T\+I\+O\+N\+\_\+\+A\+CK\hypertarget{proto_8h_a79a58352734751991772fe02346cb547a08edea62b725e2fedad35e533a8c273e}{}\label{proto_8h_a79a58352734751991772fe02346cb547a08edea62b725e2fedad35e533a8c273e}
+}]\index{K\+N\+X\+\_\+\+T\+U\+N\+N\+E\+L\+\_\+\+R\+E\+Q\+U\+E\+ST@{K\+N\+X\+\_\+\+T\+U\+N\+N\+E\+L\+\_\+\+R\+E\+Q\+U\+E\+ST}!proto.\+h@{proto.\+h}}\index{proto.\+h@{proto.\+h}!K\+N\+X\+\_\+\+T\+U\+N\+N\+E\+L\+\_\+\+R\+E\+Q\+U\+E\+ST@{K\+N\+X\+\_\+\+T\+U\+N\+N\+E\+L\+\_\+\+R\+E\+Q\+U\+E\+ST}}\item[{\em 
+K\+N\+X\+\_\+\+T\+U\+N\+N\+E\+L\+\_\+\+R\+E\+Q\+U\+E\+ST\hypertarget{proto_8h_a79a58352734751991772fe02346cb547a159c0749cd8cb4e82c60fe223205477a}{}\label{proto_8h_a79a58352734751991772fe02346cb547a159c0749cd8cb4e82c60fe223205477a}
+}]\index{K\+N\+X\+\_\+\+T\+U\+N\+N\+E\+L\+\_\+\+R\+E\+S\+P\+O\+N\+SE@{K\+N\+X\+\_\+\+T\+U\+N\+N\+E\+L\+\_\+\+R\+E\+S\+P\+O\+N\+SE}!proto.\+h@{proto.\+h}}\index{proto.\+h@{proto.\+h}!K\+N\+X\+\_\+\+T\+U\+N\+N\+E\+L\+\_\+\+R\+E\+S\+P\+O\+N\+SE@{K\+N\+X\+\_\+\+T\+U\+N\+N\+E\+L\+\_\+\+R\+E\+S\+P\+O\+N\+SE}}\item[{\em 
+K\+N\+X\+\_\+\+T\+U\+N\+N\+E\+L\+\_\+\+R\+E\+S\+P\+O\+N\+SE\hypertarget{proto_8h_a79a58352734751991772fe02346cb547ad6e860f66995a3c19f086913236f619e}{}\label{proto_8h_a79a58352734751991772fe02346cb547ad6e860f66995a3c19f086913236f619e}
+}]\index{K\+N\+X\+\_\+\+R\+O\+U\+T\+I\+N\+G\+\_\+\+I\+N\+D\+I\+C\+A\+T\+I\+ON@{K\+N\+X\+\_\+\+R\+O\+U\+T\+I\+N\+G\+\_\+\+I\+N\+D\+I\+C\+A\+T\+I\+ON}!proto.\+h@{proto.\+h}}\index{proto.\+h@{proto.\+h}!K\+N\+X\+\_\+\+R\+O\+U\+T\+I\+N\+G\+\_\+\+I\+N\+D\+I\+C\+A\+T\+I\+ON@{K\+N\+X\+\_\+\+R\+O\+U\+T\+I\+N\+G\+\_\+\+I\+N\+D\+I\+C\+A\+T\+I\+ON}}\item[{\em 
+K\+N\+X\+\_\+\+R\+O\+U\+T\+I\+N\+G\+\_\+\+I\+N\+D\+I\+C\+A\+T\+I\+ON\hypertarget{proto_8h_a79a58352734751991772fe02346cb547a76acbb191df64bd7d564befc1c968b3f}{}\label{proto_8h_a79a58352734751991772fe02346cb547a76acbb191df64bd7d564befc1c968b3f}
+}]\end{description}
+\end{Desc}
+\index{proto.\+h@{proto.\+h}!knx\+\_\+parse\+\_\+error@{knx\+\_\+parse\+\_\+error}}
+\index{knx\+\_\+parse\+\_\+error@{knx\+\_\+parse\+\_\+error}!proto.\+h@{proto.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+parse\+\_\+error}{knx_parse_error}}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf knx\+\_\+parse\+\_\+error}}\hypertarget{proto_8h_aaa9c02883967e34d8835fec5e263dc65}{}\label{proto_8h_aaa9c02883967e34d8835fec5e263dc65}
+\begin{Desc}
+\item[Enumerator]\par
+\begin{description}
+\index{K\+N\+X\+\_\+\+I\+N\+V\+A\+L\+I\+D\+\_\+\+B\+U\+F\+F\+ER@{K\+N\+X\+\_\+\+I\+N\+V\+A\+L\+I\+D\+\_\+\+B\+U\+F\+F\+ER}!proto.\+h@{proto.\+h}}\index{proto.\+h@{proto.\+h}!K\+N\+X\+\_\+\+I\+N\+V\+A\+L\+I\+D\+\_\+\+B\+U\+F\+F\+ER@{K\+N\+X\+\_\+\+I\+N\+V\+A\+L\+I\+D\+\_\+\+B\+U\+F\+F\+ER}}\item[{\em 
+K\+N\+X\+\_\+\+I\+N\+V\+A\+L\+I\+D\+\_\+\+B\+U\+F\+F\+ER\hypertarget{proto_8h_aaa9c02883967e34d8835fec5e263dc65a9e967403374c94bfe2e941b0fdbeb6e8}{}\label{proto_8h_aaa9c02883967e34d8835fec5e263dc65a9e967403374c94bfe2e941b0fdbeb6e8}
+}]Given input buffer is invalid or too small. \index{K\+N\+X\+\_\+\+I\+N\+V\+A\+L\+I\+D\+\_\+\+H\+E\+A\+D\+ER@{K\+N\+X\+\_\+\+I\+N\+V\+A\+L\+I\+D\+\_\+\+H\+E\+A\+D\+ER}!proto.\+h@{proto.\+h}}\index{proto.\+h@{proto.\+h}!K\+N\+X\+\_\+\+I\+N\+V\+A\+L\+I\+D\+\_\+\+H\+E\+A\+D\+ER@{K\+N\+X\+\_\+\+I\+N\+V\+A\+L\+I\+D\+\_\+\+H\+E\+A\+D\+ER}}\item[{\em 
+K\+N\+X\+\_\+\+I\+N\+V\+A\+L\+I\+D\+\_\+\+H\+E\+A\+D\+ER\hypertarget{proto_8h_aaa9c02883967e34d8835fec5e263dc65a9140e266ccd464b6202d44765e334a8d}{}\label{proto_8h_aaa9c02883967e34d8835fec5e263dc65a9140e266ccd464b6202d44765e334a8d}
+}]Detected an invalid header. \index{K\+N\+X\+\_\+\+U\+N\+K\+N\+O\+W\+N\+\_\+\+S\+E\+R\+V\+I\+CE@{K\+N\+X\+\_\+\+U\+N\+K\+N\+O\+W\+N\+\_\+\+S\+E\+R\+V\+I\+CE}!proto.\+h@{proto.\+h}}\index{proto.\+h@{proto.\+h}!K\+N\+X\+\_\+\+U\+N\+K\+N\+O\+W\+N\+\_\+\+S\+E\+R\+V\+I\+CE@{K\+N\+X\+\_\+\+U\+N\+K\+N\+O\+W\+N\+\_\+\+S\+E\+R\+V\+I\+CE}}\item[{\em 
+K\+N\+X\+\_\+\+U\+N\+K\+N\+O\+W\+N\+\_\+\+S\+E\+R\+V\+I\+CE\hypertarget{proto_8h_aaa9c02883967e34d8835fec5e263dc65a54dd47775aa8afb3b27b3f67117c0c8b}{}\label{proto_8h_aaa9c02883967e34d8835fec5e263dc65a54dd47775aa8afb3b27b3f67117c0c8b}
+}]A service identifier could not be associated with a service. \index{K\+N\+X\+\_\+\+I\+N\+V\+A\+L\+I\+D\+\_\+\+P\+A\+Y\+L\+O\+AD@{K\+N\+X\+\_\+\+I\+N\+V\+A\+L\+I\+D\+\_\+\+P\+A\+Y\+L\+O\+AD}!proto.\+h@{proto.\+h}}\index{proto.\+h@{proto.\+h}!K\+N\+X\+\_\+\+I\+N\+V\+A\+L\+I\+D\+\_\+\+P\+A\+Y\+L\+O\+AD@{K\+N\+X\+\_\+\+I\+N\+V\+A\+L\+I\+D\+\_\+\+P\+A\+Y\+L\+O\+AD}}\item[{\em 
+K\+N\+X\+\_\+\+I\+N\+V\+A\+L\+I\+D\+\_\+\+P\+A\+Y\+L\+O\+AD\hypertarget{proto_8h_aaa9c02883967e34d8835fec5e263dc65a67799e249a6d2f8626566646b200e2de}{}\label{proto_8h_aaa9c02883967e34d8835fec5e263dc65a67799e249a6d2f8626566646b200e2de}
+}]Payload contained in the frame is invalid. \end{description}
+\end{Desc}
+
+
+\subsection{Function Documentation}
+\index{proto.\+h@{proto.\+h}!knx\+\_\+unpack\+\_\+header@{knx\+\_\+unpack\+\_\+header}}
+\index{knx\+\_\+unpack\+\_\+header@{knx\+\_\+unpack\+\_\+header}!proto.\+h@{proto.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+unpack\+\_\+header(const uint8\+\_\+t $\ast$buffer, size\+\_\+t buffer\+\_\+length, knx\+\_\+service $\ast$service)}{knx_unpack_header(const uint8_t *buffer, size_t buffer_length, knx_service *service)}}]{\setlength{\rightskip}{0pt plus 5cm}ssize\+\_\+t knx\+\_\+unpack\+\_\+header (
+\begin{DoxyParamCaption}
+\item[{const uint8\+\_\+t $\ast$}]{buffer, }
+\item[{size\+\_\+t}]{buffer\+\_\+length, }
+\item[{{\bf knx\+\_\+service} $\ast$}]{service}
+\end{DoxyParamCaption}
+)}\hypertarget{proto_8h_ac026b85771ae18fbe877bb69d1dfaa6d}{}\label{proto_8h_ac026b85771ae18fbe877bb69d1dfaa6d}
+Unpack a K\+N\+Xnet/\+IP header.
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Contains the header \\
+\hline
+{\em buffer\+\_\+length} & Length of {\ttfamily buffer} in bytes \\
+\hline
+{\em service} & Service identifier will be stored here (may be {\ttfamily N\+U\+LL}) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Entire packet length in bytes or negative integer indicating a {\ttfamily knx\+\_\+parse\+\_\+error} 
+\end{DoxyReturn}
+\index{proto.\+h@{proto.\+h}!knx\+\_\+parse@{knx\+\_\+parse}}
+\index{knx\+\_\+parse@{knx\+\_\+parse}!proto.\+h@{proto.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+parse(const uint8\+\_\+t $\ast$frame, size\+\_\+t frame\+\_\+length, knx\+\_\+packet $\ast$output)}{knx_parse(const uint8_t *frame, size_t frame_length, knx_packet *output)}}]{\setlength{\rightskip}{0pt plus 5cm}ssize\+\_\+t knx\+\_\+parse (
+\begin{DoxyParamCaption}
+\item[{const uint8\+\_\+t $\ast$}]{frame, }
+\item[{size\+\_\+t}]{frame\+\_\+length, }
+\item[{{\bf knx\+\_\+packet} $\ast$}]{output}
+\end{DoxyParamCaption}
+)}\hypertarget{proto_8h_af79ca22817256653012ee07bcafc3c77}{}\label{proto_8h_af79ca22817256653012ee07bcafc3c77}
+Parse an entire K\+N\+Xnet/\+IP frame.
+
+
+\begin{DoxyParams}{Parameters}
+{\em frame} & Contains the frame \\
+\hline
+{\em frame\+\_\+length} & Length of {\ttfamily frame} in bytes \\
+\hline
+{\em output} & Structure that will be filled with information (must be non-\/{\ttfamily N\+U\+LL}) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Actual frame length or negative integer indicating a {\ttfamily knx\+\_\+parse\+\_\+error} 
+\end{DoxyReturn}
+\index{proto.\+h@{proto.\+h}!knx\+\_\+generate@{knx\+\_\+generate}}
+\index{knx\+\_\+generate@{knx\+\_\+generate}!proto.\+h@{proto.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+generate(uint8\+\_\+t $\ast$buffer, knx\+\_\+service service, const void $\ast$payload)}{knx_generate(uint8_t *buffer, knx_service service, const void *payload)}}]{\setlength{\rightskip}{0pt plus 5cm}bool knx\+\_\+generate (
+\begin{DoxyParamCaption}
+\item[{uint8\+\_\+t $\ast$}]{buffer, }
+\item[{{\bf knx\+\_\+service}}]{service, }
+\item[{const void $\ast$}]{payload}
+\end{DoxyParamCaption}
+)}\hypertarget{proto_8h_ae59003abf91fe144aa653445aef1b041}{}\label{proto_8h_ae59003abf91fe144aa653445aef1b041}
+Generate a message.
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Output buffer, you have to make sure there is enough space \\
+\hline
+{\em service} & Service identifier \\
+\hline
+{\em payload} & Pointer to a payload structure \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\ttfamily true} if the packet has been generated sucessfully 
+\end{DoxyReturn}
+\index{proto.\+h@{proto.\+h}!knx\+\_\+payload\+\_\+size@{knx\+\_\+payload\+\_\+size}}
+\index{knx\+\_\+payload\+\_\+size@{knx\+\_\+payload\+\_\+size}!proto.\+h@{proto.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+payload\+\_\+size(knx\+\_\+service service, const void $\ast$payload)}{knx_payload_size(knx_service service, const void *payload)}}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t knx\+\_\+payload\+\_\+size (
+\begin{DoxyParamCaption}
+\item[{{\bf knx\+\_\+service}}]{service, }
+\item[{const void $\ast$}]{payload}
+\end{DoxyParamCaption}
+)}\hypertarget{proto_8h_ad535e040e6631c20db2135e24819ed52}{}\label{proto_8h_ad535e040e6631c20db2135e24819ed52}
+Calculate the space needed to generate a message. This excludes the space needed for a header.
+
+
+\begin{DoxyParams}{Parameters}
+{\em service} & Service identifier \\
+\hline
+{\em payload} & Pointer to a payload structure \\
+\hline
+\end{DoxyParams}

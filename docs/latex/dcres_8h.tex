@@ -1,0 +1,71 @@
+\hypertarget{dcres_8h}{}\section{src/proto/dcres.h File Reference}
+\label{dcres_8h}\index{src/proto/dcres.\+h@{src/proto/dcres.\+h}}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structknx__disconnect__response}{knx\+\_\+disconnect\+\_\+response}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{dcres_8h_a541343b7c4da20cf011655740f5699b2}{K\+N\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE}~2
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{dcres_8h_ae7f90fe386fde034d1fa4c184a92567e}{knx\+\_\+disconnect\+\_\+response\+\_\+generate} (uint8\+\_\+t $\ast$buffer, const \hyperlink{structknx__disconnect__response}{knx\+\_\+disconnect\+\_\+response} $\ast$res)
+\item 
+bool \hyperlink{dcres_8h_ac6f7e3c2ced96b6230385914eb5d81b6}{knx\+\_\+disconnect\+\_\+response\+\_\+parse} (const uint8\+\_\+t $\ast$buffer, size\+\_\+t length, \hyperlink{structknx__disconnect__response}{knx\+\_\+disconnect\+\_\+response} $\ast$res)
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\index{dcres.\+h@{dcres.\+h}!K\+N\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE@{K\+N\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE}}
+\index{K\+N\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE@{K\+N\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE}!dcres.\+h@{dcres.\+h}}
+\subsubsection[{\texorpdfstring{K\+N\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE}{KNX_DISCONNECT_RESPONSE_SIZE}}]{\setlength{\rightskip}{0pt plus 5cm}\#define K\+N\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE~2}\hypertarget{dcres_8h_a541343b7c4da20cf011655740f5699b2}{}\label{dcres_8h_a541343b7c4da20cf011655740f5699b2}
+Disconnect response size 
+
+\subsection{Function Documentation}
+\index{dcres.\+h@{dcres.\+h}!knx\+\_\+disconnect\+\_\+response\+\_\+generate@{knx\+\_\+disconnect\+\_\+response\+\_\+generate}}
+\index{knx\+\_\+disconnect\+\_\+response\+\_\+generate@{knx\+\_\+disconnect\+\_\+response\+\_\+generate}!dcres.\+h@{dcres.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+disconnect\+\_\+response\+\_\+generate(uint8\+\_\+t $\ast$buffer, const knx\+\_\+disconnect\+\_\+response $\ast$res)}{knx_disconnect_response_generate(uint8_t *buffer, const knx_disconnect_response *res)}}]{\setlength{\rightskip}{0pt plus 5cm}void knx\+\_\+disconnect\+\_\+response\+\_\+generate (
+\begin{DoxyParamCaption}
+\item[{uint8\+\_\+t $\ast$}]{buffer, }
+\item[{const {\bf knx\+\_\+disconnect\+\_\+response} $\ast$}]{res}
+\end{DoxyParamCaption}
+)}\hypertarget{dcres_8h_ae7f90fe386fde034d1fa4c184a92567e}{}\label{dcres_8h_ae7f90fe386fde034d1fa4c184a92567e}
+Generate a raw disconnect response.
+
+\begin{DoxySeeAlso}{See also}
+\hyperlink{dcres_8h_a541343b7c4da20cf011655740f5699b2}{K\+N\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE} 
+\end{DoxySeeAlso}
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Output buffer, you have to make sure there is enough space \\
+\hline
+{\em res} & Input disconnect response \\
+\hline
+\end{DoxyParams}
+\index{dcres.\+h@{dcres.\+h}!knx\+\_\+disconnect\+\_\+response\+\_\+parse@{knx\+\_\+disconnect\+\_\+response\+\_\+parse}}
+\index{knx\+\_\+disconnect\+\_\+response\+\_\+parse@{knx\+\_\+disconnect\+\_\+response\+\_\+parse}!dcres.\+h@{dcres.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+disconnect\+\_\+response\+\_\+parse(const uint8\+\_\+t $\ast$buffer, size\+\_\+t length, knx\+\_\+disconnect\+\_\+response $\ast$res)}{knx_disconnect_response_parse(const uint8_t *buffer, size_t length, knx_disconnect_response *res)}}]{\setlength{\rightskip}{0pt plus 5cm}bool knx\+\_\+disconnect\+\_\+response\+\_\+parse (
+\begin{DoxyParamCaption}
+\item[{const uint8\+\_\+t $\ast$}]{buffer, }
+\item[{size\+\_\+t}]{length, }
+\item[{{\bf knx\+\_\+disconnect\+\_\+response} $\ast$}]{res}
+\end{DoxyParamCaption}
+)}\hypertarget{dcres_8h_ac6f7e3c2ced96b6230385914eb5d81b6}{}\label{dcres_8h_ac6f7e3c2ced96b6230385914eb5d81b6}
+Parse a raw disconnect response.
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Raw disconnect response \\
+\hline
+{\em length} & Number of bytes in {\ttfamily buffer} \\
+\hline
+{\em res} & Output disconnect response \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\ttfamily true} if parsing was successful, otherwise {\ttfamily false} 
+\end{DoxyReturn}

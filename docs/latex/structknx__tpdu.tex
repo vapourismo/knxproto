@@ -1,0 +1,59 @@
+\hypertarget{structknx__tpdu}{}\section{knx\+\_\+tpdu Struct Reference}
+\label{structknx__tpdu}\index{knx\+\_\+tpdu@{knx\+\_\+tpdu}}
+\subsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{tpdu_8h_a733c5f7d9c5d89eb999ac1dee021682a}{knx\+\_\+tpci} \hyperlink{structknx__tpdu_ac7420f748442fdfd7bfeff18b5303614}{tpci}
+\item 
+uint8\+\_\+t \hyperlink{structknx__tpdu_a6550220aae73dde64314cab49b83f27c}{seq\+\_\+number}
+\item 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>\hyperlink{tpdu_8h_ae7b800e7475f6cc101ca5a31c1a50f48}{knx\_tpci\_control} \hyperlink{structknx__tpdu_ae90e15aae00f9581fb487af4dfa2f8f0}{control}\\
+\>struct \{\\
+\>\>\hyperlink{tpdu_8h_a4650bb624572da4ef75f9a631a303864}{knx\_apci} \hyperlink{structknx__tpdu_a6e337499867cdf5a71636ca286677916}{apci}\\
+\>\>const uint8\_t $\ast$ \hyperlink{structknx__tpdu_a13ab4255465e6196814ec91bb39eb193}{payload}\\
+\>\>size\_t \hyperlink{structknx__tpdu_a3d47bdbccf5dbb1865ed2b4b88588d48}{length}\\
+\>\} \hyperlink{structknx__tpdu_aa9ed5329afde048f53431af7a4582726}{data}\\
+\} \hyperlink{structknx__tpdu_a2dcc1d62735212949841a228cc5c45e8}{info}\\
+
+\end{tabbing}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Transport Protocol Data Unit 
+
+\subsection{Field Documentation}
+\index{knx\+\_\+tpdu@{knx\+\_\+tpdu}!tpci@{tpci}}
+\index{tpci@{tpci}!knx\+\_\+tpdu@{knx\+\_\+tpdu}}
+\subsubsection[{\texorpdfstring{tpci}{tpci}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf knx\+\_\+tpci} knx\+\_\+tpdu\+::tpci}\hypertarget{structknx__tpdu_ac7420f748442fdfd7bfeff18b5303614}{}\label{structknx__tpdu_ac7420f748442fdfd7bfeff18b5303614}
+Transport protocol control information \index{knx\+\_\+tpdu@{knx\+\_\+tpdu}!seq\+\_\+number@{seq\+\_\+number}}
+\index{seq\+\_\+number@{seq\+\_\+number}!knx\+\_\+tpdu@{knx\+\_\+tpdu}}
+\subsubsection[{\texorpdfstring{seq\+\_\+number}{seq_number}}]{\setlength{\rightskip}{0pt plus 5cm}uint8\+\_\+t knx\+\_\+tpdu\+::seq\+\_\+number}\hypertarget{structknx__tpdu_a6550220aae73dde64314cab49b83f27c}{}\label{structknx__tpdu_a6550220aae73dde64314cab49b83f27c}
+Sequence number \index{knx\+\_\+tpdu@{knx\+\_\+tpdu}!control@{control}}
+\index{control@{control}!knx\+\_\+tpdu@{knx\+\_\+tpdu}}
+\subsubsection[{\texorpdfstring{control}{control}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf knx\+\_\+tpci\+\_\+control} knx\+\_\+tpdu\+::control}\hypertarget{structknx__tpdu_ae90e15aae00f9581fb487af4dfa2f8f0}{}\label{structknx__tpdu_ae90e15aae00f9581fb487af4dfa2f8f0}
+\index{knx\+\_\+tpdu@{knx\+\_\+tpdu}!apci@{apci}}
+\index{apci@{apci}!knx\+\_\+tpdu@{knx\+\_\+tpdu}}
+\subsubsection[{\texorpdfstring{apci}{apci}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf knx\+\_\+apci} knx\+\_\+tpdu\+::apci}\hypertarget{structknx__tpdu_a6e337499867cdf5a71636ca286677916}{}\label{structknx__tpdu_a6e337499867cdf5a71636ca286677916}
+Application protocol control information \index{knx\+\_\+tpdu@{knx\+\_\+tpdu}!payload@{payload}}
+\index{payload@{payload}!knx\+\_\+tpdu@{knx\+\_\+tpdu}}
+\subsubsection[{\texorpdfstring{payload}{payload}}]{\setlength{\rightskip}{0pt plus 5cm}const uint8\+\_\+t$\ast$ knx\+\_\+tpdu\+::payload}\hypertarget{structknx__tpdu_a13ab4255465e6196814ec91bb39eb193}{}\label{structknx__tpdu_a13ab4255465e6196814ec91bb39eb193}
+Payload pointer \begin{DoxyNote}{Note}
+The two most significant bits of {\ttfamily payload\mbox{[}0\mbox{]}} are part of the A\+P\+CI 
+\end{DoxyNote}
+\index{knx\+\_\+tpdu@{knx\+\_\+tpdu}!length@{length}}
+\index{length@{length}!knx\+\_\+tpdu@{knx\+\_\+tpdu}}
+\subsubsection[{\texorpdfstring{length}{length}}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t knx\+\_\+tpdu\+::length}\hypertarget{structknx__tpdu_a3d47bdbccf5dbb1865ed2b4b88588d48}{}\label{structknx__tpdu_a3d47bdbccf5dbb1865ed2b4b88588d48}
+Number of bytes in {\ttfamily payload} \index{knx\+\_\+tpdu@{knx\+\_\+tpdu}!data@{data}}
+\index{data@{data}!knx\+\_\+tpdu@{knx\+\_\+tpdu}}
+\subsubsection[{\texorpdfstring{data}{data}}]{\setlength{\rightskip}{0pt plus 5cm}struct \{ ... \}   knx\+\_\+tpdu\+::data}\hypertarget{structknx__tpdu_aa9ed5329afde048f53431af7a4582726}{}\label{structknx__tpdu_aa9ed5329afde048f53431af7a4582726}
+\index{knx\+\_\+tpdu@{knx\+\_\+tpdu}!info@{info}}
+\index{info@{info}!knx\+\_\+tpdu@{knx\+\_\+tpdu}}
+\subsubsection[{\texorpdfstring{info}{info}}]{\setlength{\rightskip}{0pt plus 5cm}union \{ ... \}   knx\+\_\+tpdu\+::info}\hypertarget{structknx__tpdu_a2dcc1d62735212949841a228cc5c45e8}{}\label{structknx__tpdu_a2dcc1d62735212949841a228cc5c45e8}
+Frame payload\+: Control information or application protocol data unit 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/proto/\hyperlink{tpdu_8h}{tpdu.\+h}\end{DoxyCompactItemize}

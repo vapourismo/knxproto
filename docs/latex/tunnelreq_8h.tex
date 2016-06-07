@@ -1,0 +1,60 @@
+\hypertarget{tunnelreq_8h}{}\section{src/proto/tunnelreq.h File Reference}
+\label{tunnelreq_8h}\index{src/proto/tunnelreq.\+h@{src/proto/tunnelreq.\+h}}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structknx__tunnel__request}{knx\+\_\+tunnel\+\_\+request}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{tunnelreq_8h_ae7957ba98644bd490bed309710b7cda7}{knx\+\_\+tunnel\+\_\+request\+\_\+generate} (uint8\+\_\+t $\ast$buffer, const \hyperlink{structknx__tunnel__request}{knx\+\_\+tunnel\+\_\+request} $\ast$req)
+\item 
+bool \hyperlink{tunnelreq_8h_a717646b8e158e54fc53a89681b89dfb9}{knx\+\_\+tunnel\+\_\+request\+\_\+parse} (const uint8\+\_\+t $\ast$message, size\+\_\+t length, \hyperlink{structknx__tunnel__request}{knx\+\_\+tunnel\+\_\+request} $\ast$req)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\index{tunnelreq.\+h@{tunnelreq.\+h}!knx\+\_\+tunnel\+\_\+request\+\_\+generate@{knx\+\_\+tunnel\+\_\+request\+\_\+generate}}
+\index{knx\+\_\+tunnel\+\_\+request\+\_\+generate@{knx\+\_\+tunnel\+\_\+request\+\_\+generate}!tunnelreq.\+h@{tunnelreq.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+tunnel\+\_\+request\+\_\+generate(uint8\+\_\+t $\ast$buffer, const knx\+\_\+tunnel\+\_\+request $\ast$req)}{knx_tunnel_request_generate(uint8_t *buffer, const knx_tunnel_request *req)}}]{\setlength{\rightskip}{0pt plus 5cm}void knx\+\_\+tunnel\+\_\+request\+\_\+generate (
+\begin{DoxyParamCaption}
+\item[{uint8\+\_\+t $\ast$}]{buffer, }
+\item[{const {\bf knx\+\_\+tunnel\+\_\+request} $\ast$}]{req}
+\end{DoxyParamCaption}
+)}\hypertarget{tunnelreq_8h_ae7957ba98644bd490bed309710b7cda7}{}\label{tunnelreq_8h_ae7957ba98644bd490bed309710b7cda7}
+Generate a raw tunnel request.
+
+\begin{DoxySeeAlso}{See also}
+knx\+\_\+tunnel\+\_\+request\+\_\+size 
+\end{DoxySeeAlso}
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Output buffer, you have to make sure there is enough space \\
+\hline
+{\em req} & Input tunnel request \\
+\hline
+\end{DoxyParams}
+\index{tunnelreq.\+h@{tunnelreq.\+h}!knx\+\_\+tunnel\+\_\+request\+\_\+parse@{knx\+\_\+tunnel\+\_\+request\+\_\+parse}}
+\index{knx\+\_\+tunnel\+\_\+request\+\_\+parse@{knx\+\_\+tunnel\+\_\+request\+\_\+parse}!tunnelreq.\+h@{tunnelreq.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+tunnel\+\_\+request\+\_\+parse(const uint8\+\_\+t $\ast$message, size\+\_\+t length, knx\+\_\+tunnel\+\_\+request $\ast$req)}{knx_tunnel_request_parse(const uint8_t *message, size_t length, knx_tunnel_request *req)}}]{\setlength{\rightskip}{0pt plus 5cm}bool knx\+\_\+tunnel\+\_\+request\+\_\+parse (
+\begin{DoxyParamCaption}
+\item[{const uint8\+\_\+t $\ast$}]{message, }
+\item[{size\+\_\+t}]{length, }
+\item[{{\bf knx\+\_\+tunnel\+\_\+request} $\ast$}]{req}
+\end{DoxyParamCaption}
+)}\hypertarget{tunnelreq_8h_a717646b8e158e54fc53a89681b89dfb9}{}\label{tunnelreq_8h_a717646b8e158e54fc53a89681b89dfb9}
+Parse a raw tunnel request.
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & Raw tunnel request \\
+\hline
+{\em length} & Number of bytes in {\ttfamily message} \\
+\hline
+{\em req} & Output tunnel request \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\ttfamily true} if parsing was successful, otherwise {\ttfamily false} 
+\end{DoxyReturn}

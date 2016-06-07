@@ -1,0 +1,123 @@
+\hypertarget{ldata_8h}{}\section{src/proto/ldata.h File Reference}
+\label{ldata_8h}\index{src/proto/ldata.\+h@{src/proto/ldata.\+h}}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structknx__ldata}{knx\+\_\+ldata}
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{ldata_8h_ac1575210de5e91cf85f849efa7f6b275}{knx\+\_\+ldata\+\_\+prio} \{ \hyperlink{ldata_8h_ac1575210de5e91cf85f849efa7f6b275a07289a12dfdb96004afe8c3fba9ec263}{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+S\+Y\+S\+T\+EM} = 0, 
+\hyperlink{ldata_8h_ac1575210de5e91cf85f849efa7f6b275a22f34444bbaf8e991bf0883920670f67}{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+N\+O\+R\+M\+AL} = 1, 
+\hyperlink{ldata_8h_ac1575210de5e91cf85f849efa7f6b275adeb7193d9afb1ac93a02591703533f62}{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+U\+R\+G\+E\+NT} = 2, 
+\hyperlink{ldata_8h_ac1575210de5e91cf85f849efa7f6b275a008b3062ce42779ac920512f02668206}{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+L\+OW} = 3
+ \}
+\item 
+enum \hyperlink{ldata_8h_a30997f1c52ab825cf528e639c83d8c62}{knx\+\_\+ldata\+\_\+addr\+\_\+type} \{ \hyperlink{ldata_8h_a30997f1c52ab825cf528e639c83d8c62ab5f1fd12a48b1af1c2512ec92fd8ecfa}{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+A\+D\+D\+R\+\_\+\+I\+N\+D\+I\+V\+I\+D\+U\+AL} = 0, 
+\hyperlink{ldata_8h_a30997f1c52ab825cf528e639c83d8c62a491a705b5b692e2862efbb86a6d08aa4}{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+A\+D\+D\+R\+\_\+\+G\+R\+O\+UP} = 1
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \hyperlink{ldata_8h_ace8ae7ccda16d40e7d067a16e9c1fd71}{knx\+\_\+ldata\+\_\+generate} (uint8\+\_\+t $\ast$buffer, const \hyperlink{structknx__ldata}{knx\+\_\+ldata} $\ast$ldata)
+\item 
+bool \hyperlink{ldata_8h_ad10f0849f4614620655513315cd09927}{knx\+\_\+ldata\+\_\+parse} (const uint8\+\_\+t $\ast$buffer, size\+\_\+t length, \hyperlink{structknx__ldata}{knx\+\_\+ldata} $\ast$output)
+\item 
+size\+\_\+t \hyperlink{ldata_8h_a32f2a753253349d2d85952013ca21238}{knx\+\_\+ldata\+\_\+size} (const \hyperlink{structknx__ldata}{knx\+\_\+ldata} $\ast$req)
+\item 
+\hyperlink{structknx__ldata}{knx\+\_\+ldata} $\ast$ \hyperlink{ldata_8h_a0b5b0f78339f76edb558272f7aaceab9}{knx\+\_\+ldata\+\_\+duplicate} (const \hyperlink{structknx__ldata}{knx\+\_\+ldata} $\ast$data)
+\end{DoxyCompactItemize}
+
+
+\subsection{Enumeration Type Documentation}
+\index{ldata.\+h@{ldata.\+h}!knx\+\_\+ldata\+\_\+prio@{knx\+\_\+ldata\+\_\+prio}}
+\index{knx\+\_\+ldata\+\_\+prio@{knx\+\_\+ldata\+\_\+prio}!ldata.\+h@{ldata.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+ldata\+\_\+prio}{knx_ldata_prio}}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf knx\+\_\+ldata\+\_\+prio}}\hypertarget{ldata_8h_ac1575210de5e91cf85f849efa7f6b275}{}\label{ldata_8h_ac1575210de5e91cf85f849efa7f6b275}
+L\+\_\+\+Data Priority \begin{Desc}
+\item[Enumerator]\par
+\begin{description}
+\index{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+S\+Y\+S\+T\+EM@{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+S\+Y\+S\+T\+EM}!ldata.\+h@{ldata.\+h}}\index{ldata.\+h@{ldata.\+h}!K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+S\+Y\+S\+T\+EM@{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+S\+Y\+S\+T\+EM}}\item[{\em 
+K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+S\+Y\+S\+T\+EM\hypertarget{ldata_8h_ac1575210de5e91cf85f849efa7f6b275a07289a12dfdb96004afe8c3fba9ec263}{}\label{ldata_8h_ac1575210de5e91cf85f849efa7f6b275a07289a12dfdb96004afe8c3fba9ec263}
+}]\index{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+N\+O\+R\+M\+AL@{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+N\+O\+R\+M\+AL}!ldata.\+h@{ldata.\+h}}\index{ldata.\+h@{ldata.\+h}!K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+N\+O\+R\+M\+AL@{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+N\+O\+R\+M\+AL}}\item[{\em 
+K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+N\+O\+R\+M\+AL\hypertarget{ldata_8h_ac1575210de5e91cf85f849efa7f6b275a22f34444bbaf8e991bf0883920670f67}{}\label{ldata_8h_ac1575210de5e91cf85f849efa7f6b275a22f34444bbaf8e991bf0883920670f67}
+}]\index{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+U\+R\+G\+E\+NT@{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+U\+R\+G\+E\+NT}!ldata.\+h@{ldata.\+h}}\index{ldata.\+h@{ldata.\+h}!K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+U\+R\+G\+E\+NT@{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+U\+R\+G\+E\+NT}}\item[{\em 
+K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+U\+R\+G\+E\+NT\hypertarget{ldata_8h_ac1575210de5e91cf85f849efa7f6b275adeb7193d9afb1ac93a02591703533f62}{}\label{ldata_8h_ac1575210de5e91cf85f849efa7f6b275adeb7193d9afb1ac93a02591703533f62}
+}]\index{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+L\+OW@{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+L\+OW}!ldata.\+h@{ldata.\+h}}\index{ldata.\+h@{ldata.\+h}!K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+L\+OW@{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+L\+OW}}\item[{\em 
+K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+P\+R\+I\+O\+\_\+\+L\+OW\hypertarget{ldata_8h_ac1575210de5e91cf85f849efa7f6b275a008b3062ce42779ac920512f02668206}{}\label{ldata_8h_ac1575210de5e91cf85f849efa7f6b275a008b3062ce42779ac920512f02668206}
+}]\end{description}
+\end{Desc}
+\index{ldata.\+h@{ldata.\+h}!knx\+\_\+ldata\+\_\+addr\+\_\+type@{knx\+\_\+ldata\+\_\+addr\+\_\+type}}
+\index{knx\+\_\+ldata\+\_\+addr\+\_\+type@{knx\+\_\+ldata\+\_\+addr\+\_\+type}!ldata.\+h@{ldata.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+ldata\+\_\+addr\+\_\+type}{knx_ldata_addr_type}}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf knx\+\_\+ldata\+\_\+addr\+\_\+type}}\hypertarget{ldata_8h_a30997f1c52ab825cf528e639c83d8c62}{}\label{ldata_8h_a30997f1c52ab825cf528e639c83d8c62}
+L\+\_\+\+Data Destination Address Type \begin{Desc}
+\item[Enumerator]\par
+\begin{description}
+\index{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+A\+D\+D\+R\+\_\+\+I\+N\+D\+I\+V\+I\+D\+U\+AL@{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+A\+D\+D\+R\+\_\+\+I\+N\+D\+I\+V\+I\+D\+U\+AL}!ldata.\+h@{ldata.\+h}}\index{ldata.\+h@{ldata.\+h}!K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+A\+D\+D\+R\+\_\+\+I\+N\+D\+I\+V\+I\+D\+U\+AL@{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+A\+D\+D\+R\+\_\+\+I\+N\+D\+I\+V\+I\+D\+U\+AL}}\item[{\em 
+K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+A\+D\+D\+R\+\_\+\+I\+N\+D\+I\+V\+I\+D\+U\+AL\hypertarget{ldata_8h_a30997f1c52ab825cf528e639c83d8c62ab5f1fd12a48b1af1c2512ec92fd8ecfa}{}\label{ldata_8h_a30997f1c52ab825cf528e639c83d8c62ab5f1fd12a48b1af1c2512ec92fd8ecfa}
+}]\index{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+A\+D\+D\+R\+\_\+\+G\+R\+O\+UP@{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+A\+D\+D\+R\+\_\+\+G\+R\+O\+UP}!ldata.\+h@{ldata.\+h}}\index{ldata.\+h@{ldata.\+h}!K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+A\+D\+D\+R\+\_\+\+G\+R\+O\+UP@{K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+A\+D\+D\+R\+\_\+\+G\+R\+O\+UP}}\item[{\em 
+K\+N\+X\+\_\+\+L\+D\+A\+T\+A\+\_\+\+A\+D\+D\+R\+\_\+\+G\+R\+O\+UP\hypertarget{ldata_8h_a30997f1c52ab825cf528e639c83d8c62a491a705b5b692e2862efbb86a6d08aa4}{}\label{ldata_8h_a30997f1c52ab825cf528e639c83d8c62a491a705b5b692e2862efbb86a6d08aa4}
+}]\end{description}
+\end{Desc}
+
+
+\subsection{Function Documentation}
+\index{ldata.\+h@{ldata.\+h}!knx\+\_\+ldata\+\_\+generate@{knx\+\_\+ldata\+\_\+generate}}
+\index{knx\+\_\+ldata\+\_\+generate@{knx\+\_\+ldata\+\_\+generate}!ldata.\+h@{ldata.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+ldata\+\_\+generate(uint8\+\_\+t $\ast$buffer, const knx\+\_\+ldata $\ast$ldata)}{knx_ldata_generate(uint8_t *buffer, const knx_ldata *ldata)}}]{\setlength{\rightskip}{0pt plus 5cm}bool knx\+\_\+ldata\+\_\+generate (
+\begin{DoxyParamCaption}
+\item[{uint8\+\_\+t $\ast$}]{buffer, }
+\item[{const {\bf knx\+\_\+ldata} $\ast$}]{ldata}
+\end{DoxyParamCaption}
+)}\hypertarget{ldata_8h_ace8ae7ccda16d40e7d067a16e9c1fd71}{}\label{ldata_8h_ace8ae7ccda16d40e7d067a16e9c1fd71}
+Generate a raw L\+\_\+\+Data frame.
+
+\begin{DoxySeeAlso}{See also}
+\hyperlink{ldata_8h_a32f2a753253349d2d85952013ca21238}{knx\+\_\+ldata\+\_\+size} 
+\end{DoxySeeAlso}
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Output buffer, you have to make sure there is enough space \\
+\hline
+{\em ldata} & Input L\+\_\+\+Data frame \\
+\hline
+\end{DoxyParams}
+\index{ldata.\+h@{ldata.\+h}!knx\+\_\+ldata\+\_\+parse@{knx\+\_\+ldata\+\_\+parse}}
+\index{knx\+\_\+ldata\+\_\+parse@{knx\+\_\+ldata\+\_\+parse}!ldata.\+h@{ldata.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+ldata\+\_\+parse(const uint8\+\_\+t $\ast$buffer, size\+\_\+t length, knx\+\_\+ldata $\ast$output)}{knx_ldata_parse(const uint8_t *buffer, size_t length, knx_ldata *output)}}]{\setlength{\rightskip}{0pt plus 5cm}bool knx\+\_\+ldata\+\_\+parse (
+\begin{DoxyParamCaption}
+\item[{const uint8\+\_\+t $\ast$}]{buffer, }
+\item[{size\+\_\+t}]{length, }
+\item[{{\bf knx\+\_\+ldata} $\ast$}]{output}
+\end{DoxyParamCaption}
+)}\hypertarget{ldata_8h_ad10f0849f4614620655513315cd09927}{}\label{ldata_8h_ad10f0849f4614620655513315cd09927}
+Parse a raw L\+\_\+\+Data frame.
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Raw frame \\
+\hline
+{\em length} & Number of bytes in {\ttfamily buffer} \\
+\hline
+{\em output} & Ouput frame \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\ttfamily true} if parsing was successful, otherwise {\ttfamily false} 
+\end{DoxyReturn}
+\index{ldata.\+h@{ldata.\+h}!knx\+\_\+ldata\+\_\+size@{knx\+\_\+ldata\+\_\+size}}
+\index{knx\+\_\+ldata\+\_\+size@{knx\+\_\+ldata\+\_\+size}!ldata.\+h@{ldata.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+ldata\+\_\+size(const knx\+\_\+ldata $\ast$req)}{knx_ldata_size(const knx_ldata *req)}}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t knx\+\_\+ldata\+\_\+size (
+\begin{DoxyParamCaption}
+\item[{const {\bf knx\+\_\+ldata} $\ast$}]{req}
+\end{DoxyParamCaption}
+)}\hypertarget{ldata_8h_a32f2a753253349d2d85952013ca21238}{}\label{ldata_8h_a32f2a753253349d2d85952013ca21238}
+Calculate the required space for the given L\+\_\+\+Data frame. \index{ldata.\+h@{ldata.\+h}!knx\+\_\+ldata\+\_\+duplicate@{knx\+\_\+ldata\+\_\+duplicate}}
+\index{knx\+\_\+ldata\+\_\+duplicate@{knx\+\_\+ldata\+\_\+duplicate}!ldata.\+h@{ldata.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+ldata\+\_\+duplicate(const knx\+\_\+ldata $\ast$data)}{knx_ldata_duplicate(const knx_ldata *data)}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf knx\+\_\+ldata}$\ast$ knx\+\_\+ldata\+\_\+duplicate (
+\begin{DoxyParamCaption}
+\item[{const {\bf knx\+\_\+ldata} $\ast$}]{data}
+\end{DoxyParamCaption}
+)}\hypertarget{ldata_8h_a0b5b0f78339f76edb558272f7aaceab9}{}\label{ldata_8h_a0b5b0f78339f76edb558272f7aaceab9}
+Duplicate the L\+\_\+\+Data structure including the data it might refer to. 

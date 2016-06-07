@@ -1,0 +1,71 @@
+\hypertarget{tunnelres_8h}{}\section{src/proto/tunnelres.h File Reference}
+\label{tunnelres_8h}\index{src/proto/tunnelres.\+h@{src/proto/tunnelres.\+h}}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structknx__tunnel__response}{knx\+\_\+tunnel\+\_\+response}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{tunnelres_8h_ab444adf7f729975b7d1277bb5017a3e3}{K\+N\+X\+\_\+\+T\+U\+N\+N\+E\+L\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE}~4
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{tunnelres_8h_aae1e2bd6aa4862eefd3144c6b9ae8b5d}{knx\+\_\+tunnel\+\_\+response\+\_\+generate} (uint8\+\_\+t $\ast$buffer, const \hyperlink{structknx__tunnel__response}{knx\+\_\+tunnel\+\_\+response} $\ast$res)
+\item 
+bool \hyperlink{tunnelres_8h_ae78e71623291164958d74901df2add08}{knx\+\_\+tunnel\+\_\+response\+\_\+parse} (const uint8\+\_\+t $\ast$message, size\+\_\+t length, \hyperlink{structknx__tunnel__response}{knx\+\_\+tunnel\+\_\+response} $\ast$res)
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\index{tunnelres.\+h@{tunnelres.\+h}!K\+N\+X\+\_\+\+T\+U\+N\+N\+E\+L\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE@{K\+N\+X\+\_\+\+T\+U\+N\+N\+E\+L\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE}}
+\index{K\+N\+X\+\_\+\+T\+U\+N\+N\+E\+L\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE@{K\+N\+X\+\_\+\+T\+U\+N\+N\+E\+L\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE}!tunnelres.\+h@{tunnelres.\+h}}
+\subsubsection[{\texorpdfstring{K\+N\+X\+\_\+\+T\+U\+N\+N\+E\+L\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE}{KNX_TUNNEL_RESPONSE_SIZE}}]{\setlength{\rightskip}{0pt plus 5cm}\#define K\+N\+X\+\_\+\+T\+U\+N\+N\+E\+L\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE~4}\hypertarget{tunnelres_8h_ab444adf7f729975b7d1277bb5017a3e3}{}\label{tunnelres_8h_ab444adf7f729975b7d1277bb5017a3e3}
+Tunnel response size 
+
+\subsection{Function Documentation}
+\index{tunnelres.\+h@{tunnelres.\+h}!knx\+\_\+tunnel\+\_\+response\+\_\+generate@{knx\+\_\+tunnel\+\_\+response\+\_\+generate}}
+\index{knx\+\_\+tunnel\+\_\+response\+\_\+generate@{knx\+\_\+tunnel\+\_\+response\+\_\+generate}!tunnelres.\+h@{tunnelres.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+tunnel\+\_\+response\+\_\+generate(uint8\+\_\+t $\ast$buffer, const knx\+\_\+tunnel\+\_\+response $\ast$res)}{knx_tunnel_response_generate(uint8_t *buffer, const knx_tunnel_response *res)}}]{\setlength{\rightskip}{0pt plus 5cm}void knx\+\_\+tunnel\+\_\+response\+\_\+generate (
+\begin{DoxyParamCaption}
+\item[{uint8\+\_\+t $\ast$}]{buffer, }
+\item[{const {\bf knx\+\_\+tunnel\+\_\+response} $\ast$}]{res}
+\end{DoxyParamCaption}
+)}\hypertarget{tunnelres_8h_aae1e2bd6aa4862eefd3144c6b9ae8b5d}{}\label{tunnelres_8h_aae1e2bd6aa4862eefd3144c6b9ae8b5d}
+Generate a raw tunnel response.
+
+\begin{DoxySeeAlso}{See also}
+\hyperlink{tunnelres_8h_ab444adf7f729975b7d1277bb5017a3e3}{K\+N\+X\+\_\+\+T\+U\+N\+N\+E\+L\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE} 
+\end{DoxySeeAlso}
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Output buffer, you have to make sure there is enough space \\
+\hline
+{\em res} & Input tunnel response \\
+\hline
+\end{DoxyParams}
+\index{tunnelres.\+h@{tunnelres.\+h}!knx\+\_\+tunnel\+\_\+response\+\_\+parse@{knx\+\_\+tunnel\+\_\+response\+\_\+parse}}
+\index{knx\+\_\+tunnel\+\_\+response\+\_\+parse@{knx\+\_\+tunnel\+\_\+response\+\_\+parse}!tunnelres.\+h@{tunnelres.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+tunnel\+\_\+response\+\_\+parse(const uint8\+\_\+t $\ast$message, size\+\_\+t length, knx\+\_\+tunnel\+\_\+response $\ast$res)}{knx_tunnel_response_parse(const uint8_t *message, size_t length, knx_tunnel_response *res)}}]{\setlength{\rightskip}{0pt plus 5cm}bool knx\+\_\+tunnel\+\_\+response\+\_\+parse (
+\begin{DoxyParamCaption}
+\item[{const uint8\+\_\+t $\ast$}]{message, }
+\item[{size\+\_\+t}]{length, }
+\item[{{\bf knx\+\_\+tunnel\+\_\+response} $\ast$}]{res}
+\end{DoxyParamCaption}
+)}\hypertarget{tunnelres_8h_ae78e71623291164958d74901df2add08}{}\label{tunnelres_8h_ae78e71623291164958d74901df2add08}
+Parse a raw tunnel response.
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & Raw tunnel response frame \\
+\hline
+{\em length} & Number of bytes in {\ttfamily message} \\
+\hline
+{\em res} & Output tunnel response \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\ttfamily true} if parsing was successful, otherwise {\ttfamily false} 
+\end{DoxyReturn}

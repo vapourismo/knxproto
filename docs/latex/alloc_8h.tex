@@ -1,0 +1,59 @@
+\hypertarget{alloc_8h}{}\section{src/util/alloc.h File Reference}
+\label{alloc_8h}\index{src/util/alloc.\+h@{src/util/alloc.\+h}}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{alloc_8h_a49d9785217dacc4f5de192faa232b9fb}{new}(t)~((t$\ast$) malloc(sizeof(t)))
+\item 
+\#define \hyperlink{alloc_8h_a1fac2807e231e4cc9a0956f6c544d2ff}{newa}(t,  n)~((t$\ast$) malloc(sizeof(t) $\ast$ (n)))
+\item 
+\#define \hyperlink{alloc_8h_a8bf42315540d9585e8f4b4f33899be0b}{renewa}(p,  t,  n)~((t$\ast$) realloc(p, sizeof(t) $\ast$ (n)))
+\item 
+\#define \hyperlink{alloc_8h_a1e03094d0d56c73078f84aac220fbb0a}{anona}(t, ...)~((t\mbox{[}$\,$\mbox{]}) \{\+\_\+\+\_\+\+V\+A\+\_\+\+A\+R\+G\+S\+\_\+\+\_\+\})
+\item 
+\#define \hyperlink{alloc_8h_a246c297fd439a4b958890c8b5852906e}{anon}(t, ...)~((t\mbox{[}$\,$\mbox{]}) \{\{\+\_\+\+\_\+\+V\+A\+\_\+\+A\+R\+G\+S\+\_\+\+\_\+\}\})
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\index{alloc.\+h@{alloc.\+h}!new@{new}}
+\index{new@{new}!alloc.\+h@{alloc.\+h}}
+\subsubsection[{\texorpdfstring{new}{new}}]{\setlength{\rightskip}{0pt plus 5cm}\#define new(
+\begin{DoxyParamCaption}
+\item[{}]{t}
+\end{DoxyParamCaption}
+)~((t$\ast$) malloc(sizeof(t)))}\hypertarget{alloc_8h_a49d9785217dacc4f5de192faa232b9fb}{}\label{alloc_8h_a49d9785217dacc4f5de192faa232b9fb}
+Allocate a new instance of {\ttfamily t}. \index{alloc.\+h@{alloc.\+h}!newa@{newa}}
+\index{newa@{newa}!alloc.\+h@{alloc.\+h}}
+\subsubsection[{\texorpdfstring{newa}{newa}}]{\setlength{\rightskip}{0pt plus 5cm}\#define newa(
+\begin{DoxyParamCaption}
+\item[{}]{t, }
+\item[{}]{n}
+\end{DoxyParamCaption}
+)~((t$\ast$) malloc(sizeof(t) $\ast$ (n)))}\hypertarget{alloc_8h_a1fac2807e231e4cc9a0956f6c544d2ff}{}\label{alloc_8h_a1fac2807e231e4cc9a0956f6c544d2ff}
+Allocate an array of {\ttfamily n} instances of {\ttfamily t}. \index{alloc.\+h@{alloc.\+h}!renewa@{renewa}}
+\index{renewa@{renewa}!alloc.\+h@{alloc.\+h}}
+\subsubsection[{\texorpdfstring{renewa}{renewa}}]{\setlength{\rightskip}{0pt plus 5cm}\#define renewa(
+\begin{DoxyParamCaption}
+\item[{}]{p, }
+\item[{}]{t, }
+\item[{}]{n}
+\end{DoxyParamCaption}
+)~((t$\ast$) realloc(p, sizeof(t) $\ast$ (n)))}\hypertarget{alloc_8h_a8bf42315540d9585e8f4b4f33899be0b}{}\label{alloc_8h_a8bf42315540d9585e8f4b4f33899be0b}
+Reallocate an array of {\ttfamily n} instances of {\ttfamily t}. \index{alloc.\+h@{alloc.\+h}!anona@{anona}}
+\index{anona@{anona}!alloc.\+h@{alloc.\+h}}
+\subsubsection[{\texorpdfstring{anona}{anona}}]{\setlength{\rightskip}{0pt plus 5cm}\#define anona(
+\begin{DoxyParamCaption}
+\item[{}]{t, }
+\item[{}]{...}
+\end{DoxyParamCaption}
+)~((t\mbox{[}$\,$\mbox{]}) \{\+\_\+\+\_\+\+V\+A\+\_\+\+A\+R\+G\+S\+\_\+\+\_\+\})}\hypertarget{alloc_8h_a1e03094d0d56c73078f84aac220fbb0a}{}\label{alloc_8h_a1e03094d0d56c73078f84aac220fbb0a}
+Define an anonymous array of {\ttfamily t}s. This uses a C99 feature and can only be used to pass them to functions. \index{alloc.\+h@{alloc.\+h}!anon@{anon}}
+\index{anon@{anon}!alloc.\+h@{alloc.\+h}}
+\subsubsection[{\texorpdfstring{anon}{anon}}]{\setlength{\rightskip}{0pt plus 5cm}\#define anon(
+\begin{DoxyParamCaption}
+\item[{}]{t, }
+\item[{}]{...}
+\end{DoxyParamCaption}
+)~((t\mbox{[}$\,$\mbox{]}) \{\{\+\_\+\+\_\+\+V\+A\+\_\+\+A\+R\+G\+S\+\_\+\+\_\+\}\})}\hypertarget{alloc_8h_a246c297fd439a4b958890c8b5852906e}{}\label{alloc_8h_a246c297fd439a4b958890c8b5852906e}
+Define an anonymous pointer to an instance of {\ttfamily t}. 

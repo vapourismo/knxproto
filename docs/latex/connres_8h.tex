@@ -1,0 +1,60 @@
+\hypertarget{connres_8h}{}\section{src/proto/connres.h File Reference}
+\label{connres_8h}\index{src/proto/connres.\+h@{src/proto/connres.\+h}}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structknx__connection__response}{knx\+\_\+connection\+\_\+response}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{connres_8h_aaae5c6acfd51355eebfb8aa54c252d1f}{knx\+\_\+connection\+\_\+response\+\_\+generate} (uint8\+\_\+t $\ast$buffer, const \hyperlink{structknx__connection__response}{knx\+\_\+connection\+\_\+response} $\ast$res)
+\item 
+bool \hyperlink{connres_8h_a088288b9b2f0016d5f6ceaba67a148ae}{knx\+\_\+connection\+\_\+response\+\_\+parse} (const uint8\+\_\+t $\ast$buffer, size\+\_\+t length, \hyperlink{structknx__connection__response}{knx\+\_\+connection\+\_\+response} $\ast$res)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\index{connres.\+h@{connres.\+h}!knx\+\_\+connection\+\_\+response\+\_\+generate@{knx\+\_\+connection\+\_\+response\+\_\+generate}}
+\index{knx\+\_\+connection\+\_\+response\+\_\+generate@{knx\+\_\+connection\+\_\+response\+\_\+generate}!connres.\+h@{connres.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+connection\+\_\+response\+\_\+generate(uint8\+\_\+t $\ast$buffer, const knx\+\_\+connection\+\_\+response $\ast$res)}{knx_connection_response_generate(uint8_t *buffer, const knx_connection_response *res)}}]{\setlength{\rightskip}{0pt plus 5cm}void knx\+\_\+connection\+\_\+response\+\_\+generate (
+\begin{DoxyParamCaption}
+\item[{uint8\+\_\+t $\ast$}]{buffer, }
+\item[{const {\bf knx\+\_\+connection\+\_\+response} $\ast$}]{res}
+\end{DoxyParamCaption}
+)}\hypertarget{connres_8h_aaae5c6acfd51355eebfb8aa54c252d1f}{}\label{connres_8h_aaae5c6acfd51355eebfb8aa54c252d1f}
+Generate a raw connection response.
+
+\begin{DoxySeeAlso}{See also}
+knx\+\_\+connection\+\_\+response\+\_\+size 
+\end{DoxySeeAlso}
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Output buffer \\
+\hline
+{\em res} & Input connection response \\
+\hline
+\end{DoxyParams}
+\index{connres.\+h@{connres.\+h}!knx\+\_\+connection\+\_\+response\+\_\+parse@{knx\+\_\+connection\+\_\+response\+\_\+parse}}
+\index{knx\+\_\+connection\+\_\+response\+\_\+parse@{knx\+\_\+connection\+\_\+response\+\_\+parse}!connres.\+h@{connres.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+connection\+\_\+response\+\_\+parse(const uint8\+\_\+t $\ast$buffer, size\+\_\+t length, knx\+\_\+connection\+\_\+response $\ast$res)}{knx_connection_response_parse(const uint8_t *buffer, size_t length, knx_connection_response *res)}}]{\setlength{\rightskip}{0pt plus 5cm}bool knx\+\_\+connection\+\_\+response\+\_\+parse (
+\begin{DoxyParamCaption}
+\item[{const uint8\+\_\+t $\ast$}]{buffer, }
+\item[{size\+\_\+t}]{length, }
+\item[{{\bf knx\+\_\+connection\+\_\+response} $\ast$}]{res}
+\end{DoxyParamCaption}
+)}\hypertarget{connres_8h_a088288b9b2f0016d5f6ceaba67a148ae}{}\label{connres_8h_a088288b9b2f0016d5f6ceaba67a148ae}
+Parse a raw connection response.
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Raw connection response \\
+\hline
+{\em length} & Number of bytes in {\ttfamily buffer} \\
+\hline
+{\em res} & Output connection response \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\ttfamily true} if parsing was successful, otherwise {\ttfamily false} 
+\end{DoxyReturn}

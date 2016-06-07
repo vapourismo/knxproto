@@ -1,0 +1,71 @@
+\hypertarget{connstatereq_8h}{}\section{src/proto/connstatereq.h File Reference}
+\label{connstatereq_8h}\index{src/proto/connstatereq.\+h@{src/proto/connstatereq.\+h}}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structknx__connection__state__request}{knx\+\_\+connection\+\_\+state\+\_\+request}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{connstatereq_8h_a9d9af7f452d22b92ba21035f359e5f9b}{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE}~(2 + \hyperlink{hostinfo_8h_a9bf54e87cecbc76611155dff352ca9f2}{K\+N\+X\+\_\+\+H\+O\+S\+T\+\_\+\+I\+N\+F\+O\+\_\+\+S\+I\+ZE})
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{connstatereq_8h_a2335f897132048291a94ef94450915f1}{knx\+\_\+connection\+\_\+state\+\_\+request\+\_\+generate} (uint8\+\_\+t $\ast$buffer, const \hyperlink{structknx__connection__state__request}{knx\+\_\+connection\+\_\+state\+\_\+request} $\ast$req)
+\item 
+bool \hyperlink{connstatereq_8h_ab302cf1e7ac602a2fddd1c6ef0b27548}{knx\+\_\+connection\+\_\+state\+\_\+request\+\_\+parse} (const uint8\+\_\+t $\ast$buffer, size\+\_\+t length, \hyperlink{structknx__connection__state__request}{knx\+\_\+connection\+\_\+state\+\_\+request} $\ast$req)
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\index{connstatereq.\+h@{connstatereq.\+h}!K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE@{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE}}
+\index{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE@{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE}!connstatereq.\+h@{connstatereq.\+h}}
+\subsubsection[{\texorpdfstring{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE}{KNX_CONNECTION_STATE_REQUEST_SIZE}}]{\setlength{\rightskip}{0pt plus 5cm}\#define K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE~(2 + {\bf K\+N\+X\+\_\+\+H\+O\+S\+T\+\_\+\+I\+N\+F\+O\+\_\+\+S\+I\+ZE})}\hypertarget{connstatereq_8h_a9d9af7f452d22b92ba21035f359e5f9b}{}\label{connstatereq_8h_a9d9af7f452d22b92ba21035f359e5f9b}
+Connection state request size 
+
+\subsection{Function Documentation}
+\index{connstatereq.\+h@{connstatereq.\+h}!knx\+\_\+connection\+\_\+state\+\_\+request\+\_\+generate@{knx\+\_\+connection\+\_\+state\+\_\+request\+\_\+generate}}
+\index{knx\+\_\+connection\+\_\+state\+\_\+request\+\_\+generate@{knx\+\_\+connection\+\_\+state\+\_\+request\+\_\+generate}!connstatereq.\+h@{connstatereq.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+connection\+\_\+state\+\_\+request\+\_\+generate(uint8\+\_\+t $\ast$buffer, const knx\+\_\+connection\+\_\+state\+\_\+request $\ast$req)}{knx_connection_state_request_generate(uint8_t *buffer, const knx_connection_state_request *req)}}]{\setlength{\rightskip}{0pt plus 5cm}void knx\+\_\+connection\+\_\+state\+\_\+request\+\_\+generate (
+\begin{DoxyParamCaption}
+\item[{uint8\+\_\+t $\ast$}]{buffer, }
+\item[{const {\bf knx\+\_\+connection\+\_\+state\+\_\+request} $\ast$}]{req}
+\end{DoxyParamCaption}
+)}\hypertarget{connstatereq_8h_a2335f897132048291a94ef94450915f1}{}\label{connstatereq_8h_a2335f897132048291a94ef94450915f1}
+Generate a raw connection state request.
+
+\begin{DoxySeeAlso}{See also}
+\hyperlink{connstatereq_8h_a9d9af7f452d22b92ba21035f359e5f9b}{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE} 
+\end{DoxySeeAlso}
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Output buffer, you have to make sure there is enough space \\
+\hline
+{\em req} & Input connection state request \\
+\hline
+\end{DoxyParams}
+\index{connstatereq.\+h@{connstatereq.\+h}!knx\+\_\+connection\+\_\+state\+\_\+request\+\_\+parse@{knx\+\_\+connection\+\_\+state\+\_\+request\+\_\+parse}}
+\index{knx\+\_\+connection\+\_\+state\+\_\+request\+\_\+parse@{knx\+\_\+connection\+\_\+state\+\_\+request\+\_\+parse}!connstatereq.\+h@{connstatereq.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+connection\+\_\+state\+\_\+request\+\_\+parse(const uint8\+\_\+t $\ast$buffer, size\+\_\+t length, knx\+\_\+connection\+\_\+state\+\_\+request $\ast$req)}{knx_connection_state_request_parse(const uint8_t *buffer, size_t length, knx_connection_state_request *req)}}]{\setlength{\rightskip}{0pt plus 5cm}bool knx\+\_\+connection\+\_\+state\+\_\+request\+\_\+parse (
+\begin{DoxyParamCaption}
+\item[{const uint8\+\_\+t $\ast$}]{buffer, }
+\item[{size\+\_\+t}]{length, }
+\item[{{\bf knx\+\_\+connection\+\_\+state\+\_\+request} $\ast$}]{req}
+\end{DoxyParamCaption}
+)}\hypertarget{connstatereq_8h_ab302cf1e7ac602a2fddd1c6ef0b27548}{}\label{connstatereq_8h_ab302cf1e7ac602a2fddd1c6ef0b27548}
+Parse a raw connection state request.
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Raw connection state request \\
+\hline
+{\em length} & Number of bytes in {\ttfamily buffer} \\
+\hline
+{\em req} & Output connection state request \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\ttfamily true} if parsing was successful, otherwise {\ttfamily false} 
+\end{DoxyReturn}

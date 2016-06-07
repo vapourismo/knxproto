@@ -1,0 +1,77 @@
+\hypertarget{structknx__ldata}{}\section{knx\+\_\+ldata Struct Reference}
+\label{structknx__ldata}\index{knx\+\_\+ldata@{knx\+\_\+ldata}}
+\subsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>\hyperlink{ldata_8h_ac1575210de5e91cf85f849efa7f6b275}{knx\_ldata\_prio} \hyperlink{structknx__ldata_a87741fe097735a5f77fcd73ebecc4d30}{priority}\\
+\>bool \hyperlink{structknx__ldata_a8f5c98118b6a2fbbd902a700699ef0a7}{repeat}\\
+\>bool \hyperlink{structknx__ldata_a33061511aae90bd36a73153cf461ae14}{system\_broadcast}\\
+\>bool \hyperlink{structknx__ldata_a4dcd21b2f2cb1e105bf8eeffea378af3}{request\_ack}\\
+\>bool \hyperlink{structknx__ldata_a9975ca659781a65fa468299c553040d1}{error}\\
+\} \hyperlink{structknx__ldata_a9e42111fdc076358ad027879c80e9151}{control1}\\
+
+\end{tabbing}\item 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>\hyperlink{ldata_8h_a30997f1c52ab825cf528e639c83d8c62}{knx\_ldata\_addr\_type} \hyperlink{structknx__ldata_aa2e94b1374d52a1734c74f8cf692bb11}{address\_type}\\
+\>unsigned \hyperlink{structknx__ldata_ad18b3beef28a5ea401b8a9ef766ad258}{hops}:4\\
+\} \hyperlink{structknx__ldata_a34dfef899ceff0e56c9b6775b0208442}{control2}\\
+
+\end{tabbing}\item 
+\hyperlink{address_8h_a88b9bc5d57b990da72d16dc49b9448df}{knx\+\_\+addr} \hyperlink{structknx__ldata_a97901fe0a2260a11dec4c1685cff63b6}{source}
+\item 
+\hyperlink{address_8h_a88b9bc5d57b990da72d16dc49b9448df}{knx\+\_\+addr} \hyperlink{structknx__ldata_a2c84f12aa89d8d00ac24f3bb9305d739}{destination}
+\item 
+\hyperlink{structknx__tpdu}{knx\+\_\+tpdu} \hyperlink{structknx__ldata_a096ce543e8bf7400388c0babf862817c}{tpdu}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+L\+\_\+\+Data Frame 
+
+\subsection{Field Documentation}
+\index{knx\+\_\+ldata@{knx\+\_\+ldata}!priority@{priority}}
+\index{priority@{priority}!knx\+\_\+ldata@{knx\+\_\+ldata}}
+\subsubsection[{\texorpdfstring{priority}{priority}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf knx\+\_\+ldata\+\_\+prio} knx\+\_\+ldata\+::priority}\hypertarget{structknx__ldata_a87741fe097735a5f77fcd73ebecc4d30}{}\label{structknx__ldata_a87741fe097735a5f77fcd73ebecc4d30}
+Frame priority \index{knx\+\_\+ldata@{knx\+\_\+ldata}!repeat@{repeat}}
+\index{repeat@{repeat}!knx\+\_\+ldata@{knx\+\_\+ldata}}
+\subsubsection[{\texorpdfstring{repeat}{repeat}}]{\setlength{\rightskip}{0pt plus 5cm}bool knx\+\_\+ldata\+::repeat}\hypertarget{structknx__ldata_a8f5c98118b6a2fbbd902a700699ef0a7}{}\label{structknx__ldata_a8f5c98118b6a2fbbd902a700699ef0a7}
+Repeat in case of an error \index{knx\+\_\+ldata@{knx\+\_\+ldata}!system\+\_\+broadcast@{system\+\_\+broadcast}}
+\index{system\+\_\+broadcast@{system\+\_\+broadcast}!knx\+\_\+ldata@{knx\+\_\+ldata}}
+\subsubsection[{\texorpdfstring{system\+\_\+broadcast}{system_broadcast}}]{\setlength{\rightskip}{0pt plus 5cm}bool knx\+\_\+ldata\+::system\+\_\+broadcast}\hypertarget{structknx__ldata_a33061511aae90bd36a73153cf461ae14}{}\label{structknx__ldata_a33061511aae90bd36a73153cf461ae14}
+Perform system broadcast \index{knx\+\_\+ldata@{knx\+\_\+ldata}!request\+\_\+ack@{request\+\_\+ack}}
+\index{request\+\_\+ack@{request\+\_\+ack}!knx\+\_\+ldata@{knx\+\_\+ldata}}
+\subsubsection[{\texorpdfstring{request\+\_\+ack}{request_ack}}]{\setlength{\rightskip}{0pt plus 5cm}bool knx\+\_\+ldata\+::request\+\_\+ack}\hypertarget{structknx__ldata_a4dcd21b2f2cb1e105bf8eeffea378af3}{}\label{structknx__ldata_a4dcd21b2f2cb1e105bf8eeffea378af3}
+Request acknowledgement (only L\+\_\+\+Data.\+req) \index{knx\+\_\+ldata@{knx\+\_\+ldata}!error@{error}}
+\index{error@{error}!knx\+\_\+ldata@{knx\+\_\+ldata}}
+\subsubsection[{\texorpdfstring{error}{error}}]{\setlength{\rightskip}{0pt plus 5cm}bool knx\+\_\+ldata\+::error}\hypertarget{structknx__ldata_a9975ca659781a65fa468299c553040d1}{}\label{structknx__ldata_a9975ca659781a65fa468299c553040d1}
+Indicate an error (only L\+\_\+\+Data.\+con) \index{knx\+\_\+ldata@{knx\+\_\+ldata}!control1@{control1}}
+\index{control1@{control1}!knx\+\_\+ldata@{knx\+\_\+ldata}}
+\subsubsection[{\texorpdfstring{control1}{control1}}]{\setlength{\rightskip}{0pt plus 5cm}struct \{ ... \}   knx\+\_\+ldata\+::control1}\hypertarget{structknx__ldata_a9e42111fdc076358ad027879c80e9151}{}\label{structknx__ldata_a9e42111fdc076358ad027879c80e9151}
+Represents Control Field 1 \index{knx\+\_\+ldata@{knx\+\_\+ldata}!address\+\_\+type@{address\+\_\+type}}
+\index{address\+\_\+type@{address\+\_\+type}!knx\+\_\+ldata@{knx\+\_\+ldata}}
+\subsubsection[{\texorpdfstring{address\+\_\+type}{address_type}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf knx\+\_\+ldata\+\_\+addr\+\_\+type} knx\+\_\+ldata\+::address\+\_\+type}\hypertarget{structknx__ldata_aa2e94b1374d52a1734c74f8cf692bb11}{}\label{structknx__ldata_aa2e94b1374d52a1734c74f8cf692bb11}
+Type of {\ttfamily desination} address \index{knx\+\_\+ldata@{knx\+\_\+ldata}!hops@{hops}}
+\index{hops@{hops}!knx\+\_\+ldata@{knx\+\_\+ldata}}
+\subsubsection[{\texorpdfstring{hops}{hops}}]{\setlength{\rightskip}{0pt plus 5cm}unsigned knx\+\_\+ldata\+::hops}\hypertarget{structknx__ldata_ad18b3beef28a5ea401b8a9ef766ad258}{}\label{structknx__ldata_ad18b3beef28a5ea401b8a9ef766ad258}
+Routing hop count in range from 0 to 7 (7 means infinite hops) \index{knx\+\_\+ldata@{knx\+\_\+ldata}!control2@{control2}}
+\index{control2@{control2}!knx\+\_\+ldata@{knx\+\_\+ldata}}
+\subsubsection[{\texorpdfstring{control2}{control2}}]{\setlength{\rightskip}{0pt plus 5cm}struct \{ ... \}   knx\+\_\+ldata\+::control2}\hypertarget{structknx__ldata_a34dfef899ceff0e56c9b6775b0208442}{}\label{structknx__ldata_a34dfef899ceff0e56c9b6775b0208442}
+Represents Control Field 1 \index{knx\+\_\+ldata@{knx\+\_\+ldata}!source@{source}}
+\index{source@{source}!knx\+\_\+ldata@{knx\+\_\+ldata}}
+\subsubsection[{\texorpdfstring{source}{source}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf knx\+\_\+addr} knx\+\_\+ldata\+::source}\hypertarget{structknx__ldata_a97901fe0a2260a11dec4c1685cff63b6}{}\label{structknx__ldata_a97901fe0a2260a11dec4c1685cff63b6}
+Originating device (set to 0 if you want it to be filled in automatically) \index{knx\+\_\+ldata@{knx\+\_\+ldata}!destination@{destination}}
+\index{destination@{destination}!knx\+\_\+ldata@{knx\+\_\+ldata}}
+\subsubsection[{\texorpdfstring{destination}{destination}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf knx\+\_\+addr} knx\+\_\+ldata\+::destination}\hypertarget{structknx__ldata_a2c84f12aa89d8d00ac24f3bb9305d739}{}\label{structknx__ldata_a2c84f12aa89d8d00ac24f3bb9305d739}
+Destination device or group \index{knx\+\_\+ldata@{knx\+\_\+ldata}!tpdu@{tpdu}}
+\index{tpdu@{tpdu}!knx\+\_\+ldata@{knx\+\_\+ldata}}
+\subsubsection[{\texorpdfstring{tpdu}{tpdu}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf knx\+\_\+tpdu} knx\+\_\+ldata\+::tpdu}\hypertarget{structknx__ldata_a096ce543e8bf7400388c0babf862817c}{}\label{structknx__ldata_a096ce543e8bf7400388c0babf862817c}
+Transport data unit 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/proto/\hyperlink{ldata_8h}{ldata.\+h}\end{DoxyCompactItemize}

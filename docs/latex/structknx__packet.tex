@@ -1,0 +1,74 @@
+\hypertarget{structknx__packet}{}\section{knx\+\_\+packet Struct Reference}
+\label{structknx__packet}\index{knx\+\_\+packet@{knx\+\_\+packet}}
+\subsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{proto_8h_a79a58352734751991772fe02346cb547}{knx\+\_\+service} \hyperlink{structknx__packet_a261e009afb82702c74622ee1f1b71379}{service}
+\item 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>\hyperlink{structknx__connection__request}{knx\_connection\_request} \hyperlink{structknx__packet_a4b13c7c00d121f4d8b9d9dd642b7030b}{conn\_req}\\
+\>\hyperlink{structknx__connection__response}{knx\_connection\_response} \hyperlink{structknx__packet_a249c9a779cb81c818cf8982e29903866}{conn\_res}\\
+\>\hyperlink{structknx__disconnect__request}{knx\_disconnect\_request} \hyperlink{structknx__packet_ac73f1384f312aed4ece535b1af138e51}{dc\_req}\\
+\>\hyperlink{structknx__disconnect__response}{knx\_disconnect\_response} \hyperlink{structknx__packet_a198251b1172c5289645b2db455d33cac}{dc\_res}\\
+\>\hyperlink{structknx__connection__state__request}{knx\_connection\_state\_request} \hyperlink{structknx__packet_a55d76d312af07132d79dbbb82a06c3dc}{conn\_state\_req}\\
+\>\hyperlink{structknx__connection__state__response}{knx\_connection\_state\_response} \hyperlink{structknx__packet_ad93a401097c6411efbdb1d470f3f205e}{conn\_state\_res}\\
+\>\hyperlink{structknx__tunnel__request}{knx\_tunnel\_request} \hyperlink{structknx__packet_a23beb7d550b21c593033d2364d7ea81f}{tunnel\_req}\\
+\>\hyperlink{structknx__tunnel__response}{knx\_tunnel\_response} \hyperlink{structknx__packet_a45c9dfca1be13c58ae8c1345874ca241}{tunnel\_res}\\
+\>\hyperlink{structknx__routing__indication}{knx\_routing\_indication} \hyperlink{structknx__packet_a36d90ba08b5345368cf825593858f2ff}{routing\_ind}\\
+\>\hyperlink{structknx__description__request}{knx\_description\_request} \hyperlink{structknx__packet_a0c3b07a198f28c1920fa6a9733031c5c}{description\_req}\\
+\>\hyperlink{structknx__description__response}{knx\_description\_response} \hyperlink{structknx__packet_aec96c1383c69c27bc305d80fcb9b8d5e}{description\_res}\\
+\} \hyperlink{structknx__packet_af2e942a6804bb6e75272fdd43881a775}{payload}\\
+
+\end{tabbing}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+K\+N\+Xnet/\+IP Packet 
+
+\subsection{Field Documentation}
+\index{knx\+\_\+packet@{knx\+\_\+packet}!service@{service}}
+\index{service@{service}!knx\+\_\+packet@{knx\+\_\+packet}}
+\subsubsection[{\texorpdfstring{service}{service}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf knx\+\_\+service} knx\+\_\+packet\+::service}\hypertarget{structknx__packet_a261e009afb82702c74622ee1f1b71379}{}\label{structknx__packet_a261e009afb82702c74622ee1f1b71379}
+Service identifier \index{knx\+\_\+packet@{knx\+\_\+packet}!conn\+\_\+req@{conn\+\_\+req}}
+\index{conn\+\_\+req@{conn\+\_\+req}!knx\+\_\+packet@{knx\+\_\+packet}}
+\subsubsection[{\texorpdfstring{conn\+\_\+req}{conn_req}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf knx\+\_\+connection\+\_\+request} knx\+\_\+packet\+::conn\+\_\+req}\hypertarget{structknx__packet_a4b13c7c00d121f4d8b9d9dd642b7030b}{}\label{structknx__packet_a4b13c7c00d121f4d8b9d9dd642b7030b}
+\index{knx\+\_\+packet@{knx\+\_\+packet}!conn\+\_\+res@{conn\+\_\+res}}
+\index{conn\+\_\+res@{conn\+\_\+res}!knx\+\_\+packet@{knx\+\_\+packet}}
+\subsubsection[{\texorpdfstring{conn\+\_\+res}{conn_res}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf knx\+\_\+connection\+\_\+response} knx\+\_\+packet\+::conn\+\_\+res}\hypertarget{structknx__packet_a249c9a779cb81c818cf8982e29903866}{}\label{structknx__packet_a249c9a779cb81c818cf8982e29903866}
+\index{knx\+\_\+packet@{knx\+\_\+packet}!dc\+\_\+req@{dc\+\_\+req}}
+\index{dc\+\_\+req@{dc\+\_\+req}!knx\+\_\+packet@{knx\+\_\+packet}}
+\subsubsection[{\texorpdfstring{dc\+\_\+req}{dc_req}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf knx\+\_\+disconnect\+\_\+request} knx\+\_\+packet\+::dc\+\_\+req}\hypertarget{structknx__packet_ac73f1384f312aed4ece535b1af138e51}{}\label{structknx__packet_ac73f1384f312aed4ece535b1af138e51}
+\index{knx\+\_\+packet@{knx\+\_\+packet}!dc\+\_\+res@{dc\+\_\+res}}
+\index{dc\+\_\+res@{dc\+\_\+res}!knx\+\_\+packet@{knx\+\_\+packet}}
+\subsubsection[{\texorpdfstring{dc\+\_\+res}{dc_res}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf knx\+\_\+disconnect\+\_\+response} knx\+\_\+packet\+::dc\+\_\+res}\hypertarget{structknx__packet_a198251b1172c5289645b2db455d33cac}{}\label{structknx__packet_a198251b1172c5289645b2db455d33cac}
+\index{knx\+\_\+packet@{knx\+\_\+packet}!conn\+\_\+state\+\_\+req@{conn\+\_\+state\+\_\+req}}
+\index{conn\+\_\+state\+\_\+req@{conn\+\_\+state\+\_\+req}!knx\+\_\+packet@{knx\+\_\+packet}}
+\subsubsection[{\texorpdfstring{conn\+\_\+state\+\_\+req}{conn_state_req}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf knx\+\_\+connection\+\_\+state\+\_\+request} knx\+\_\+packet\+::conn\+\_\+state\+\_\+req}\hypertarget{structknx__packet_a55d76d312af07132d79dbbb82a06c3dc}{}\label{structknx__packet_a55d76d312af07132d79dbbb82a06c3dc}
+\index{knx\+\_\+packet@{knx\+\_\+packet}!conn\+\_\+state\+\_\+res@{conn\+\_\+state\+\_\+res}}
+\index{conn\+\_\+state\+\_\+res@{conn\+\_\+state\+\_\+res}!knx\+\_\+packet@{knx\+\_\+packet}}
+\subsubsection[{\texorpdfstring{conn\+\_\+state\+\_\+res}{conn_state_res}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf knx\+\_\+connection\+\_\+state\+\_\+response} knx\+\_\+packet\+::conn\+\_\+state\+\_\+res}\hypertarget{structknx__packet_ad93a401097c6411efbdb1d470f3f205e}{}\label{structknx__packet_ad93a401097c6411efbdb1d470f3f205e}
+\index{knx\+\_\+packet@{knx\+\_\+packet}!tunnel\+\_\+req@{tunnel\+\_\+req}}
+\index{tunnel\+\_\+req@{tunnel\+\_\+req}!knx\+\_\+packet@{knx\+\_\+packet}}
+\subsubsection[{\texorpdfstring{tunnel\+\_\+req}{tunnel_req}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf knx\+\_\+tunnel\+\_\+request} knx\+\_\+packet\+::tunnel\+\_\+req}\hypertarget{structknx__packet_a23beb7d550b21c593033d2364d7ea81f}{}\label{structknx__packet_a23beb7d550b21c593033d2364d7ea81f}
+\index{knx\+\_\+packet@{knx\+\_\+packet}!tunnel\+\_\+res@{tunnel\+\_\+res}}
+\index{tunnel\+\_\+res@{tunnel\+\_\+res}!knx\+\_\+packet@{knx\+\_\+packet}}
+\subsubsection[{\texorpdfstring{tunnel\+\_\+res}{tunnel_res}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf knx\+\_\+tunnel\+\_\+response} knx\+\_\+packet\+::tunnel\+\_\+res}\hypertarget{structknx__packet_a45c9dfca1be13c58ae8c1345874ca241}{}\label{structknx__packet_a45c9dfca1be13c58ae8c1345874ca241}
+\index{knx\+\_\+packet@{knx\+\_\+packet}!routing\+\_\+ind@{routing\+\_\+ind}}
+\index{routing\+\_\+ind@{routing\+\_\+ind}!knx\+\_\+packet@{knx\+\_\+packet}}
+\subsubsection[{\texorpdfstring{routing\+\_\+ind}{routing_ind}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf knx\+\_\+routing\+\_\+indication} knx\+\_\+packet\+::routing\+\_\+ind}\hypertarget{structknx__packet_a36d90ba08b5345368cf825593858f2ff}{}\label{structknx__packet_a36d90ba08b5345368cf825593858f2ff}
+\index{knx\+\_\+packet@{knx\+\_\+packet}!description\+\_\+req@{description\+\_\+req}}
+\index{description\+\_\+req@{description\+\_\+req}!knx\+\_\+packet@{knx\+\_\+packet}}
+\subsubsection[{\texorpdfstring{description\+\_\+req}{description_req}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf knx\+\_\+description\+\_\+request} knx\+\_\+packet\+::description\+\_\+req}\hypertarget{structknx__packet_a0c3b07a198f28c1920fa6a9733031c5c}{}\label{structknx__packet_a0c3b07a198f28c1920fa6a9733031c5c}
+\index{knx\+\_\+packet@{knx\+\_\+packet}!description\+\_\+res@{description\+\_\+res}}
+\index{description\+\_\+res@{description\+\_\+res}!knx\+\_\+packet@{knx\+\_\+packet}}
+\subsubsection[{\texorpdfstring{description\+\_\+res}{description_res}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf knx\+\_\+description\+\_\+response} knx\+\_\+packet\+::description\+\_\+res}\hypertarget{structknx__packet_aec96c1383c69c27bc305d80fcb9b8d5e}{}\label{structknx__packet_aec96c1383c69c27bc305d80fcb9b8d5e}
+\index{knx\+\_\+packet@{knx\+\_\+packet}!payload@{payload}}
+\index{payload@{payload}!knx\+\_\+packet@{knx\+\_\+packet}}
+\subsubsection[{\texorpdfstring{payload}{payload}}]{\setlength{\rightskip}{0pt plus 5cm}union \{ ... \}   knx\+\_\+packet\+::payload}\hypertarget{structknx__packet_af2e942a6804bb6e75272fdd43881a775}{}\label{structknx__packet_af2e942a6804bb6e75272fdd43881a775}
+Packet payload 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/proto/\hyperlink{proto_8h}{proto.\+h}\end{DoxyCompactItemize}

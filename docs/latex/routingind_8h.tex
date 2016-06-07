@@ -1,0 +1,60 @@
+\hypertarget{routingind_8h}{}\section{src/proto/routingind.h File Reference}
+\label{routingind_8h}\index{src/proto/routingind.\+h@{src/proto/routingind.\+h}}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structknx__routing__indication}{knx\+\_\+routing\+\_\+indication}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \hyperlink{routingind_8h_a32f14c555cbec8791d5708bcd25040bd}{knx\+\_\+routing\+\_\+indication\+\_\+generate} (uint8\+\_\+t $\ast$buffer, const \hyperlink{structknx__routing__indication}{knx\+\_\+routing\+\_\+indication} $\ast$ind)
+\item 
+bool \hyperlink{routingind_8h_a8b3cd50ae8b196278f9f1fe328dd79d1}{knx\+\_\+routing\+\_\+indication\+\_\+parse} (const uint8\+\_\+t $\ast$buffer, size\+\_\+t length, \hyperlink{structknx__routing__indication}{knx\+\_\+routing\+\_\+indication} $\ast$ind)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\index{routingind.\+h@{routingind.\+h}!knx\+\_\+routing\+\_\+indication\+\_\+generate@{knx\+\_\+routing\+\_\+indication\+\_\+generate}}
+\index{knx\+\_\+routing\+\_\+indication\+\_\+generate@{knx\+\_\+routing\+\_\+indication\+\_\+generate}!routingind.\+h@{routingind.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+routing\+\_\+indication\+\_\+generate(uint8\+\_\+t $\ast$buffer, const knx\+\_\+routing\+\_\+indication $\ast$ind)}{knx_routing_indication_generate(uint8_t *buffer, const knx_routing_indication *ind)}}]{\setlength{\rightskip}{0pt plus 5cm}bool knx\+\_\+routing\+\_\+indication\+\_\+generate (
+\begin{DoxyParamCaption}
+\item[{uint8\+\_\+t $\ast$}]{buffer, }
+\item[{const {\bf knx\+\_\+routing\+\_\+indication} $\ast$}]{ind}
+\end{DoxyParamCaption}
+)}\hypertarget{routingind_8h_a32f14c555cbec8791d5708bcd25040bd}{}\label{routingind_8h_a32f14c555cbec8791d5708bcd25040bd}
+Generate a rawrouting indication.
+
+\begin{DoxySeeAlso}{See also}
+knx\+\_\+routing\+\_\+indication\+\_\+size 
+\end{DoxySeeAlso}
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Output buffer, you have to make sure there is enough space \\
+\hline
+{\em ind} & Input routing indication \\
+\hline
+\end{DoxyParams}
+\index{routingind.\+h@{routingind.\+h}!knx\+\_\+routing\+\_\+indication\+\_\+parse@{knx\+\_\+routing\+\_\+indication\+\_\+parse}}
+\index{knx\+\_\+routing\+\_\+indication\+\_\+parse@{knx\+\_\+routing\+\_\+indication\+\_\+parse}!routingind.\+h@{routingind.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+routing\+\_\+indication\+\_\+parse(const uint8\+\_\+t $\ast$buffer, size\+\_\+t length, knx\+\_\+routing\+\_\+indication $\ast$ind)}{knx_routing_indication_parse(const uint8_t *buffer, size_t length, knx_routing_indication *ind)}}]{\setlength{\rightskip}{0pt plus 5cm}bool knx\+\_\+routing\+\_\+indication\+\_\+parse (
+\begin{DoxyParamCaption}
+\item[{const uint8\+\_\+t $\ast$}]{buffer, }
+\item[{size\+\_\+t}]{length, }
+\item[{{\bf knx\+\_\+routing\+\_\+indication} $\ast$}]{ind}
+\end{DoxyParamCaption}
+)}\hypertarget{routingind_8h_a8b3cd50ae8b196278f9f1fe328dd79d1}{}\label{routingind_8h_a8b3cd50ae8b196278f9f1fe328dd79d1}
+Parse a raw routing indication.
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Raw routing indication \\
+\hline
+{\em length} & Number of bytes in {\ttfamily buffer} \\
+\hline
+{\em ind} & Output routing indication \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\ttfamily true} if parsing was successful, otherwise {\ttfamily false} 
+\end{DoxyReturn}

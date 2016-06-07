@@ -1,0 +1,50 @@
+\hypertarget{descres_8h}{}\section{src/proto/descres.h File Reference}
+\label{descres_8h}\index{src/proto/descres.\+h@{src/proto/descres.\+h}}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structknx__description__service}{knx\+\_\+description\+\_\+service}
+\item 
+struct \hyperlink{structknx__description__response}{knx\+\_\+description\+\_\+response}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \hyperlink{descres_8h_abb03f9888e45c02158420dd09806904e}{knx\+\_\+description\+\_\+response\+\_\+parse} (const uint8\+\_\+t $\ast$buffer, size\+\_\+t length, \hyperlink{structknx__description__response}{knx\+\_\+description\+\_\+response} $\ast$res)
+\item 
+void \hyperlink{descres_8h_a589bed83c5f3ff0b427d6f9f47a8d32b}{knx\+\_\+description\+\_\+response\+\_\+free\+\_\+services} (\hyperlink{structknx__description__response}{knx\+\_\+description\+\_\+response} $\ast$res)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\index{descres.\+h@{descres.\+h}!knx\+\_\+description\+\_\+response\+\_\+parse@{knx\+\_\+description\+\_\+response\+\_\+parse}}
+\index{knx\+\_\+description\+\_\+response\+\_\+parse@{knx\+\_\+description\+\_\+response\+\_\+parse}!descres.\+h@{descres.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+description\+\_\+response\+\_\+parse(const uint8\+\_\+t $\ast$buffer, size\+\_\+t length, knx\+\_\+description\+\_\+response $\ast$res)}{knx_description_response_parse(const uint8_t *buffer, size_t length, knx_description_response *res)}}]{\setlength{\rightskip}{0pt plus 5cm}bool knx\+\_\+description\+\_\+response\+\_\+parse (
+\begin{DoxyParamCaption}
+\item[{const uint8\+\_\+t $\ast$}]{buffer, }
+\item[{size\+\_\+t}]{length, }
+\item[{{\bf knx\+\_\+description\+\_\+response} $\ast$}]{res}
+\end{DoxyParamCaption}
+)}\hypertarget{descres_8h_abb03f9888e45c02158420dd09806904e}{}\label{descres_8h_abb03f9888e45c02158420dd09806904e}
+Generate the message for a description response. Parse a raw description response.
+
+\begin{DoxyNote}{Note}
+You have to free the {\ttfamily services} array using {\ttfamily knx\+\_\+description\+\_\+response\+\_\+free\+\_\+services}. 
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Raw description response \\
+\hline
+{\em length} & Number of bytes in {\ttfamily buffer} \\
+\hline
+{\em res} & Output description response \\
+\hline
+\end{DoxyParams}
+\index{descres.\+h@{descres.\+h}!knx\+\_\+description\+\_\+response\+\_\+free\+\_\+services@{knx\+\_\+description\+\_\+response\+\_\+free\+\_\+services}}
+\index{knx\+\_\+description\+\_\+response\+\_\+free\+\_\+services@{knx\+\_\+description\+\_\+response\+\_\+free\+\_\+services}!descres.\+h@{descres.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+description\+\_\+response\+\_\+free\+\_\+services(knx\+\_\+description\+\_\+response $\ast$res)}{knx_description_response_free_services(knx_description_response *res)}}]{\setlength{\rightskip}{0pt plus 5cm}void knx\+\_\+description\+\_\+response\+\_\+free\+\_\+services (
+\begin{DoxyParamCaption}
+\item[{{\bf knx\+\_\+description\+\_\+response} $\ast$}]{res}
+\end{DoxyParamCaption}
+)}\hypertarget{descres_8h_a589bed83c5f3ff0b427d6f9f47a8d32b}{}\label{descres_8h_a589bed83c5f3ff0b427d6f9f47a8d32b}
+Free the dynamically allocated {\ttfamily services} array. 

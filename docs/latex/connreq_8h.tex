@@ -1,0 +1,103 @@
+\hypertarget{connreq_8h}{}\section{src/proto/connreq.h File Reference}
+\label{connreq_8h}\index{src/proto/connreq.\+h@{src/proto/connreq.\+h}}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structknx__connection__request}{knx\+\_\+connection\+\_\+request}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{connreq_8h_ac2a1ba7a767593fc7861a77393c116a5}{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE}~(4 + \hyperlink{hostinfo_8h_a9bf54e87cecbc76611155dff352ca9f2}{K\+N\+X\+\_\+\+H\+O\+S\+T\+\_\+\+I\+N\+F\+O\+\_\+\+S\+I\+ZE} $\ast$ 2)
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{connreq_8h_a5730705958fac25b3fa39e2fc496d5fd}{knx\+\_\+conn\+\_\+type} \{ \hyperlink{connreq_8h_a5730705958fac25b3fa39e2fc496d5fda70f4820ff1edec420985969409a35903}{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+T\+U\+N\+N\+EL} = 4
+ \}
+\item 
+enum \hyperlink{connreq_8h_a4ce4b42187bab375d768b5ff144391e2}{knx\+\_\+conn\+\_\+layer} \{ \hyperlink{connreq_8h_a4ce4b42187bab375d768b5ff144391e2a7869a3d5faedf85419dbcc2d47a23637}{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+L\+A\+Y\+E\+R\+\_\+\+T\+U\+N\+N\+EL} = 2
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{connreq_8h_aadfa82e979d2df84a2d450f028b3fc99}{knx\+\_\+connection\+\_\+request\+\_\+generate} (uint8\+\_\+t $\ast$buffer, const \hyperlink{structknx__connection__request}{knx\+\_\+connection\+\_\+request} $\ast$conn\+\_\+req)
+\item 
+bool \hyperlink{connreq_8h_abf29a8737189418dce7e6cad647c56fd}{knx\+\_\+connection\+\_\+request\+\_\+parse} (const uint8\+\_\+t $\ast$buffer, size\+\_\+t length, \hyperlink{structknx__connection__request}{knx\+\_\+connection\+\_\+request} $\ast$req)
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\index{connreq.\+h@{connreq.\+h}!K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE@{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE}}
+\index{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE@{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE}!connreq.\+h@{connreq.\+h}}
+\subsubsection[{\texorpdfstring{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE}{KNX_CONNECTION_REQUEST_SIZE}}]{\setlength{\rightskip}{0pt plus 5cm}\#define K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE~(4 + {\bf K\+N\+X\+\_\+\+H\+O\+S\+T\+\_\+\+I\+N\+F\+O\+\_\+\+S\+I\+ZE} $\ast$ 2)}\hypertarget{connreq_8h_ac2a1ba7a767593fc7861a77393c116a5}{}\label{connreq_8h_ac2a1ba7a767593fc7861a77393c116a5}
+Connection request size 
+
+\subsection{Enumeration Type Documentation}
+\index{connreq.\+h@{connreq.\+h}!knx\+\_\+conn\+\_\+type@{knx\+\_\+conn\+\_\+type}}
+\index{knx\+\_\+conn\+\_\+type@{knx\+\_\+conn\+\_\+type}!connreq.\+h@{connreq.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+conn\+\_\+type}{knx_conn_type}}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf knx\+\_\+conn\+\_\+type}}\hypertarget{connreq_8h_a5730705958fac25b3fa39e2fc496d5fd}{}\label{connreq_8h_a5730705958fac25b3fa39e2fc496d5fd}
+K\+NX Connection Type \begin{Desc}
+\item[Enumerator]\par
+\begin{description}
+\index{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+T\+U\+N\+N\+EL@{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+T\+U\+N\+N\+EL}!connreq.\+h@{connreq.\+h}}\index{connreq.\+h@{connreq.\+h}!K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+T\+U\+N\+N\+EL@{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+T\+U\+N\+N\+EL}}\item[{\em 
+K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+T\+U\+N\+N\+EL\hypertarget{connreq_8h_a5730705958fac25b3fa39e2fc496d5fda70f4820ff1edec420985969409a35903}{}\label{connreq_8h_a5730705958fac25b3fa39e2fc496d5fda70f4820ff1edec420985969409a35903}
+}]Request a tunnel connection \end{description}
+\end{Desc}
+\index{connreq.\+h@{connreq.\+h}!knx\+\_\+conn\+\_\+layer@{knx\+\_\+conn\+\_\+layer}}
+\index{knx\+\_\+conn\+\_\+layer@{knx\+\_\+conn\+\_\+layer}!connreq.\+h@{connreq.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+conn\+\_\+layer}{knx_conn_layer}}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf knx\+\_\+conn\+\_\+layer}}\hypertarget{connreq_8h_a4ce4b42187bab375d768b5ff144391e2}{}\label{connreq_8h_a4ce4b42187bab375d768b5ff144391e2}
+K\+NX Layer \begin{Desc}
+\item[Enumerator]\par
+\begin{description}
+\index{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+L\+A\+Y\+E\+R\+\_\+\+T\+U\+N\+N\+EL@{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+L\+A\+Y\+E\+R\+\_\+\+T\+U\+N\+N\+EL}!connreq.\+h@{connreq.\+h}}\index{connreq.\+h@{connreq.\+h}!K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+L\+A\+Y\+E\+R\+\_\+\+T\+U\+N\+N\+EL@{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+L\+A\+Y\+E\+R\+\_\+\+T\+U\+N\+N\+EL}}\item[{\em 
+K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+L\+A\+Y\+E\+R\+\_\+\+T\+U\+N\+N\+EL\hypertarget{connreq_8h_a4ce4b42187bab375d768b5ff144391e2a7869a3d5faedf85419dbcc2d47a23637}{}\label{connreq_8h_a4ce4b42187bab375d768b5ff144391e2a7869a3d5faedf85419dbcc2d47a23637}
+}]\end{description}
+\end{Desc}
+
+
+\subsection{Function Documentation}
+\index{connreq.\+h@{connreq.\+h}!knx\+\_\+connection\+\_\+request\+\_\+generate@{knx\+\_\+connection\+\_\+request\+\_\+generate}}
+\index{knx\+\_\+connection\+\_\+request\+\_\+generate@{knx\+\_\+connection\+\_\+request\+\_\+generate}!connreq.\+h@{connreq.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+connection\+\_\+request\+\_\+generate(uint8\+\_\+t $\ast$buffer, const knx\+\_\+connection\+\_\+request $\ast$conn\+\_\+req)}{knx_connection_request_generate(uint8_t *buffer, const knx_connection_request *conn_req)}}]{\setlength{\rightskip}{0pt plus 5cm}void knx\+\_\+connection\+\_\+request\+\_\+generate (
+\begin{DoxyParamCaption}
+\item[{uint8\+\_\+t $\ast$}]{buffer, }
+\item[{const {\bf knx\+\_\+connection\+\_\+request} $\ast$}]{conn\+\_\+req}
+\end{DoxyParamCaption}
+)}\hypertarget{connreq_8h_aadfa82e979d2df84a2d450f028b3fc99}{}\label{connreq_8h_aadfa82e979d2df84a2d450f028b3fc99}
+Generate a raw connection request.
+
+\begin{DoxySeeAlso}{See also}
+\hyperlink{connreq_8h_ac2a1ba7a767593fc7861a77393c116a5}{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE} 
+\end{DoxySeeAlso}
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Output buffer, you have to make sure there is enough space \\
+\hline
+{\em conn\+\_\+req} & Input connection request \\
+\hline
+\end{DoxyParams}
+\index{connreq.\+h@{connreq.\+h}!knx\+\_\+connection\+\_\+request\+\_\+parse@{knx\+\_\+connection\+\_\+request\+\_\+parse}}
+\index{knx\+\_\+connection\+\_\+request\+\_\+parse@{knx\+\_\+connection\+\_\+request\+\_\+parse}!connreq.\+h@{connreq.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+connection\+\_\+request\+\_\+parse(const uint8\+\_\+t $\ast$buffer, size\+\_\+t length, knx\+\_\+connection\+\_\+request $\ast$req)}{knx_connection_request_parse(const uint8_t *buffer, size_t length, knx_connection_request *req)}}]{\setlength{\rightskip}{0pt plus 5cm}bool knx\+\_\+connection\+\_\+request\+\_\+parse (
+\begin{DoxyParamCaption}
+\item[{const uint8\+\_\+t $\ast$}]{buffer, }
+\item[{size\+\_\+t}]{length, }
+\item[{{\bf knx\+\_\+connection\+\_\+request} $\ast$}]{req}
+\end{DoxyParamCaption}
+)}\hypertarget{connreq_8h_abf29a8737189418dce7e6cad647c56fd}{}\label{connreq_8h_abf29a8737189418dce7e6cad647c56fd}
+Parse a raw connection request.
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Raw connection request frame \\
+\hline
+{\em length} & Number of bytes in {\ttfamily buffer} \\
+\hline
+{\em req} & Output connection request \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\ttfamily true} if parsing was successful, otherwise {\ttfamily false} 
+\end{DoxyReturn}

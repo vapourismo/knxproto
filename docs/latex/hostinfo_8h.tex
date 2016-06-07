@@ -1,0 +1,105 @@
+\hypertarget{hostinfo_8h}{}\section{src/proto/hostinfo.h File Reference}
+\label{hostinfo_8h}\index{src/proto/hostinfo.\+h@{src/proto/hostinfo.\+h}}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structknx__host__info}{knx\+\_\+host\+\_\+info}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{hostinfo_8h_ab12f38828a861d6843de3f68d0e1da96}{K\+N\+X\+\_\+\+H\+O\+S\+T\+\_\+\+I\+N\+F\+O\+\_\+\+N\+AT}(prot)~\{prot, 0, 0\}
+\item 
+\#define \hyperlink{hostinfo_8h_a9bf54e87cecbc76611155dff352ca9f2}{K\+N\+X\+\_\+\+H\+O\+S\+T\+\_\+\+I\+N\+F\+O\+\_\+\+S\+I\+ZE}~8
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{hostinfo_8h_ab439fac16def983553605200db4e65e8}{knx\+\_\+proto} \{ \hyperlink{hostinfo_8h_ab439fac16def983553605200db4e65e8a15adbe7ca786bc254eb4ac90dcbcef96}{K\+N\+X\+\_\+\+P\+R\+O\+T\+O\+\_\+\+U\+DP} = 1, 
+\hyperlink{hostinfo_8h_ab439fac16def983553605200db4e65e8aa9abcdee979f8ffa12b099d5b6aab3ea}{K\+N\+X\+\_\+\+P\+R\+O\+T\+O\+\_\+\+T\+CP} = 2
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{hostinfo_8h_aed2443ff748c56af523911fbde60cf91}{knx\+\_\+host\+\_\+info\+\_\+generate} (uint8\+\_\+t $\ast$buffer, const \hyperlink{structknx__host__info}{knx\+\_\+host\+\_\+info} $\ast$host)
+\item 
+bool \hyperlink{hostinfo_8h_aa1e165d52624592a252b27ed11cc66d3}{knx\+\_\+host\+\_\+info\+\_\+parse} (const uint8\+\_\+t $\ast$buffer, size\+\_\+t length, \hyperlink{structknx__host__info}{knx\+\_\+host\+\_\+info} $\ast$host)
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\index{hostinfo.\+h@{hostinfo.\+h}!K\+N\+X\+\_\+\+H\+O\+S\+T\+\_\+\+I\+N\+F\+O\+\_\+\+N\+AT@{K\+N\+X\+\_\+\+H\+O\+S\+T\+\_\+\+I\+N\+F\+O\+\_\+\+N\+AT}}
+\index{K\+N\+X\+\_\+\+H\+O\+S\+T\+\_\+\+I\+N\+F\+O\+\_\+\+N\+AT@{K\+N\+X\+\_\+\+H\+O\+S\+T\+\_\+\+I\+N\+F\+O\+\_\+\+N\+AT}!hostinfo.\+h@{hostinfo.\+h}}
+\subsubsection[{\texorpdfstring{K\+N\+X\+\_\+\+H\+O\+S\+T\+\_\+\+I\+N\+F\+O\+\_\+\+N\+AT}{KNX_HOST_INFO_NAT}}]{\setlength{\rightskip}{0pt plus 5cm}\#define K\+N\+X\+\_\+\+H\+O\+S\+T\+\_\+\+I\+N\+F\+O\+\_\+\+N\+AT(
+\begin{DoxyParamCaption}
+\item[{}]{prot}
+\end{DoxyParamCaption}
+)~\{prot, 0, 0\}}\hypertarget{hostinfo_8h_ab12f38828a861d6843de3f68d0e1da96}{}\label{hostinfo_8h_ab12f38828a861d6843de3f68d0e1da96}
+Initialize for {\ttfamily \hyperlink{structknx__host__info}{knx\+\_\+host\+\_\+info}} in N\+AT mode \index{hostinfo.\+h@{hostinfo.\+h}!K\+N\+X\+\_\+\+H\+O\+S\+T\+\_\+\+I\+N\+F\+O\+\_\+\+S\+I\+ZE@{K\+N\+X\+\_\+\+H\+O\+S\+T\+\_\+\+I\+N\+F\+O\+\_\+\+S\+I\+ZE}}
+\index{K\+N\+X\+\_\+\+H\+O\+S\+T\+\_\+\+I\+N\+F\+O\+\_\+\+S\+I\+ZE@{K\+N\+X\+\_\+\+H\+O\+S\+T\+\_\+\+I\+N\+F\+O\+\_\+\+S\+I\+ZE}!hostinfo.\+h@{hostinfo.\+h}}
+\subsubsection[{\texorpdfstring{K\+N\+X\+\_\+\+H\+O\+S\+T\+\_\+\+I\+N\+F\+O\+\_\+\+S\+I\+ZE}{KNX_HOST_INFO_SIZE}}]{\setlength{\rightskip}{0pt plus 5cm}\#define K\+N\+X\+\_\+\+H\+O\+S\+T\+\_\+\+I\+N\+F\+O\+\_\+\+S\+I\+ZE~8}\hypertarget{hostinfo_8h_a9bf54e87cecbc76611155dff352ca9f2}{}\label{hostinfo_8h_a9bf54e87cecbc76611155dff352ca9f2}
+Size of a host info segment 
+
+\subsection{Enumeration Type Documentation}
+\index{hostinfo.\+h@{hostinfo.\+h}!knx\+\_\+proto@{knx\+\_\+proto}}
+\index{knx\+\_\+proto@{knx\+\_\+proto}!hostinfo.\+h@{hostinfo.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+proto}{knx_proto}}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf knx\+\_\+proto}}\hypertarget{hostinfo_8h_ab439fac16def983553605200db4e65e8}{}\label{hostinfo_8h_ab439fac16def983553605200db4e65e8}
+K\+N\+Xnet/\+IP Protocol \begin{Desc}
+\item[Enumerator]\par
+\begin{description}
+\index{K\+N\+X\+\_\+\+P\+R\+O\+T\+O\+\_\+\+U\+DP@{K\+N\+X\+\_\+\+P\+R\+O\+T\+O\+\_\+\+U\+DP}!hostinfo.\+h@{hostinfo.\+h}}\index{hostinfo.\+h@{hostinfo.\+h}!K\+N\+X\+\_\+\+P\+R\+O\+T\+O\+\_\+\+U\+DP@{K\+N\+X\+\_\+\+P\+R\+O\+T\+O\+\_\+\+U\+DP}}\item[{\em 
+K\+N\+X\+\_\+\+P\+R\+O\+T\+O\+\_\+\+U\+DP\hypertarget{hostinfo_8h_ab439fac16def983553605200db4e65e8a15adbe7ca786bc254eb4ac90dcbcef96}{}\label{hostinfo_8h_ab439fac16def983553605200db4e65e8a15adbe7ca786bc254eb4ac90dcbcef96}
+}]\index{K\+N\+X\+\_\+\+P\+R\+O\+T\+O\+\_\+\+T\+CP@{K\+N\+X\+\_\+\+P\+R\+O\+T\+O\+\_\+\+T\+CP}!hostinfo.\+h@{hostinfo.\+h}}\index{hostinfo.\+h@{hostinfo.\+h}!K\+N\+X\+\_\+\+P\+R\+O\+T\+O\+\_\+\+T\+CP@{K\+N\+X\+\_\+\+P\+R\+O\+T\+O\+\_\+\+T\+CP}}\item[{\em 
+K\+N\+X\+\_\+\+P\+R\+O\+T\+O\+\_\+\+T\+CP\hypertarget{hostinfo_8h_ab439fac16def983553605200db4e65e8aa9abcdee979f8ffa12b099d5b6aab3ea}{}\label{hostinfo_8h_ab439fac16def983553605200db4e65e8aa9abcdee979f8ffa12b099d5b6aab3ea}
+}]\begin{DoxyNote}{Note}
+For reference only 
+\end{DoxyNote}
+\end{description}
+\end{Desc}
+
+
+\subsection{Function Documentation}
+\index{hostinfo.\+h@{hostinfo.\+h}!knx\+\_\+host\+\_\+info\+\_\+generate@{knx\+\_\+host\+\_\+info\+\_\+generate}}
+\index{knx\+\_\+host\+\_\+info\+\_\+generate@{knx\+\_\+host\+\_\+info\+\_\+generate}!hostinfo.\+h@{hostinfo.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+host\+\_\+info\+\_\+generate(uint8\+\_\+t $\ast$buffer, const knx\+\_\+host\+\_\+info $\ast$host)}{knx_host_info_generate(uint8_t *buffer, const knx_host_info *host)}}]{\setlength{\rightskip}{0pt plus 5cm}void knx\+\_\+host\+\_\+info\+\_\+generate (
+\begin{DoxyParamCaption}
+\item[{uint8\+\_\+t $\ast$}]{buffer, }
+\item[{const {\bf knx\+\_\+host\+\_\+info} $\ast$}]{host}
+\end{DoxyParamCaption}
+)}\hypertarget{hostinfo_8h_aed2443ff748c56af523911fbde60cf91}{}\label{hostinfo_8h_aed2443ff748c56af523911fbde60cf91}
+Generate raw host information.
+
+\begin{DoxySeeAlso}{See also}
+\hyperlink{hostinfo_8h_a9bf54e87cecbc76611155dff352ca9f2}{K\+N\+X\+\_\+\+H\+O\+S\+T\+\_\+\+I\+N\+F\+O\+\_\+\+S\+I\+ZE} 
+\end{DoxySeeAlso}
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Output buffer, you have to make sure there is enough space \\
+\hline
+{\em host} & Input host information \\
+\hline
+\end{DoxyParams}
+\index{hostinfo.\+h@{hostinfo.\+h}!knx\+\_\+host\+\_\+info\+\_\+parse@{knx\+\_\+host\+\_\+info\+\_\+parse}}
+\index{knx\+\_\+host\+\_\+info\+\_\+parse@{knx\+\_\+host\+\_\+info\+\_\+parse}!hostinfo.\+h@{hostinfo.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+host\+\_\+info\+\_\+parse(const uint8\+\_\+t $\ast$buffer, size\+\_\+t length, knx\+\_\+host\+\_\+info $\ast$host)}{knx_host_info_parse(const uint8_t *buffer, size_t length, knx_host_info *host)}}]{\setlength{\rightskip}{0pt plus 5cm}bool knx\+\_\+host\+\_\+info\+\_\+parse (
+\begin{DoxyParamCaption}
+\item[{const uint8\+\_\+t $\ast$}]{buffer, }
+\item[{size\+\_\+t}]{length, }
+\item[{{\bf knx\+\_\+host\+\_\+info} $\ast$}]{host}
+\end{DoxyParamCaption}
+)}\hypertarget{hostinfo_8h_aa1e165d52624592a252b27ed11cc66d3}{}\label{hostinfo_8h_aa1e165d52624592a252b27ed11cc66d3}
+Retrieve host information.
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Raw host information \\
+\hline
+{\em length} & Number of bytes in {\ttfamily buffer} \\
+\hline
+{\em host} & Output host information \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\ttfamily true} if parsing was successful, otherwise {\ttfamily false} 
+\end{DoxyReturn}

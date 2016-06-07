@@ -1,0 +1,71 @@
+\hypertarget{descreq_8h}{}\section{src/proto/descreq.h File Reference}
+\label{descreq_8h}\index{src/proto/descreq.\+h@{src/proto/descreq.\+h}}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structknx__description__request}{knx\+\_\+description\+\_\+request}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{descreq_8h_a74919188c67c5c0374b088fb0d60ddad}{K\+N\+X\+\_\+\+D\+E\+S\+C\+R\+I\+P\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE}~\hyperlink{hostinfo_8h_a9bf54e87cecbc76611155dff352ca9f2}{K\+N\+X\+\_\+\+H\+O\+S\+T\+\_\+\+I\+N\+F\+O\+\_\+\+S\+I\+ZE}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{descreq_8h_ab8e8bca633d5b66741648a9483a894a5}{knx\+\_\+description\+\_\+request\+\_\+generate} (uint8\+\_\+t $\ast$buffer, const \hyperlink{structknx__description__request}{knx\+\_\+description\+\_\+request} $\ast$req)
+\item 
+bool \hyperlink{descreq_8h_ad26b28a23e8153d610585d2568826fcc}{knx\+\_\+description\+\_\+request\+\_\+parse} (const uint8\+\_\+t $\ast$buffer, size\+\_\+t length, \hyperlink{structknx__description__request}{knx\+\_\+description\+\_\+request} $\ast$req)
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\index{descreq.\+h@{descreq.\+h}!K\+N\+X\+\_\+\+D\+E\+S\+C\+R\+I\+P\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE@{K\+N\+X\+\_\+\+D\+E\+S\+C\+R\+I\+P\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE}}
+\index{K\+N\+X\+\_\+\+D\+E\+S\+C\+R\+I\+P\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE@{K\+N\+X\+\_\+\+D\+E\+S\+C\+R\+I\+P\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE}!descreq.\+h@{descreq.\+h}}
+\subsubsection[{\texorpdfstring{K\+N\+X\+\_\+\+D\+E\+S\+C\+R\+I\+P\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE}{KNX_DESCRIPTION_REQUEST_SIZE}}]{\setlength{\rightskip}{0pt plus 5cm}\#define K\+N\+X\+\_\+\+D\+E\+S\+C\+R\+I\+P\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE~{\bf K\+N\+X\+\_\+\+H\+O\+S\+T\+\_\+\+I\+N\+F\+O\+\_\+\+S\+I\+ZE}}\hypertarget{descreq_8h_a74919188c67c5c0374b088fb0d60ddad}{}\label{descreq_8h_a74919188c67c5c0374b088fb0d60ddad}
+Description request size 
+
+\subsection{Function Documentation}
+\index{descreq.\+h@{descreq.\+h}!knx\+\_\+description\+\_\+request\+\_\+generate@{knx\+\_\+description\+\_\+request\+\_\+generate}}
+\index{knx\+\_\+description\+\_\+request\+\_\+generate@{knx\+\_\+description\+\_\+request\+\_\+generate}!descreq.\+h@{descreq.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+description\+\_\+request\+\_\+generate(uint8\+\_\+t $\ast$buffer, const knx\+\_\+description\+\_\+request $\ast$req)}{knx_description_request_generate(uint8_t *buffer, const knx_description_request *req)}}]{\setlength{\rightskip}{0pt plus 5cm}void knx\+\_\+description\+\_\+request\+\_\+generate (
+\begin{DoxyParamCaption}
+\item[{uint8\+\_\+t $\ast$}]{buffer, }
+\item[{const {\bf knx\+\_\+description\+\_\+request} $\ast$}]{req}
+\end{DoxyParamCaption}
+)}\hypertarget{descreq_8h_ab8e8bca633d5b66741648a9483a894a5}{}\label{descreq_8h_ab8e8bca633d5b66741648a9483a894a5}
+Generate a raw description request.
+
+\begin{DoxySeeAlso}{See also}
+\hyperlink{descreq_8h_a74919188c67c5c0374b088fb0d60ddad}{K\+N\+X\+\_\+\+D\+E\+S\+C\+R\+I\+P\+T\+I\+O\+N\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+S\+I\+ZE} 
+\end{DoxySeeAlso}
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Output buffer, you have to make sure there is enough space \\
+\hline
+{\em req} & Input description request \\
+\hline
+\end{DoxyParams}
+\index{descreq.\+h@{descreq.\+h}!knx\+\_\+description\+\_\+request\+\_\+parse@{knx\+\_\+description\+\_\+request\+\_\+parse}}
+\index{knx\+\_\+description\+\_\+request\+\_\+parse@{knx\+\_\+description\+\_\+request\+\_\+parse}!descreq.\+h@{descreq.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+description\+\_\+request\+\_\+parse(const uint8\+\_\+t $\ast$buffer, size\+\_\+t length, knx\+\_\+description\+\_\+request $\ast$req)}{knx_description_request_parse(const uint8_t *buffer, size_t length, knx_description_request *req)}}]{\setlength{\rightskip}{0pt plus 5cm}bool knx\+\_\+description\+\_\+request\+\_\+parse (
+\begin{DoxyParamCaption}
+\item[{const uint8\+\_\+t $\ast$}]{buffer, }
+\item[{size\+\_\+t}]{length, }
+\item[{{\bf knx\+\_\+description\+\_\+request} $\ast$}]{req}
+\end{DoxyParamCaption}
+)}\hypertarget{descreq_8h_ad26b28a23e8153d610585d2568826fcc}{}\label{descreq_8h_ad26b28a23e8153d610585d2568826fcc}
+Parse a raw description request.
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Raw description request \\
+\hline
+{\em length} & Number of bytes in {\ttfamily buffer} \\
+\hline
+{\em req} & Output description request \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\ttfamily true} if parsing was successful, otherwise {\ttfamily false} 
+\end{DoxyReturn}

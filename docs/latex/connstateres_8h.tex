@@ -1,0 +1,68 @@
+\hypertarget{connstateres_8h}{}\section{src/proto/connstateres.h File Reference}
+\label{connstateres_8h}\index{src/proto/connstateres.\+h@{src/proto/connstateres.\+h}}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structknx__connection__state__response}{knx\+\_\+connection\+\_\+state\+\_\+response}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{connstateres_8h_a9777e1309b66f1dc67d632574e0c0b78}{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE}~2
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{connstateres_8h_a87d2d775c599e053c6bd05b5f661bb4d}{knx\+\_\+connection\+\_\+state\+\_\+response\+\_\+generate} (uint8\+\_\+t $\ast$buffer, const \hyperlink{structknx__connection__state__response}{knx\+\_\+connection\+\_\+state\+\_\+response} $\ast$res)
+\item 
+bool \hyperlink{connstateres_8h_ad8c37e35020ba1b2cbd880816b27f240}{knx\+\_\+connection\+\_\+state\+\_\+response\+\_\+parse} (const uint8\+\_\+t $\ast$buffer, size\+\_\+t length, \hyperlink{structknx__connection__state__response}{knx\+\_\+connection\+\_\+state\+\_\+response} $\ast$res)
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\index{connstateres.\+h@{connstateres.\+h}!K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE@{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE}}
+\index{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE@{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE}!connstateres.\+h@{connstateres.\+h}}
+\subsubsection[{\texorpdfstring{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE}{KNX_CONNECTION_STATE_RESPONSE_SIZE}}]{\setlength{\rightskip}{0pt plus 5cm}\#define K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE~2}\hypertarget{connstateres_8h_a9777e1309b66f1dc67d632574e0c0b78}{}\label{connstateres_8h_a9777e1309b66f1dc67d632574e0c0b78}
+Connection state response size 
+
+\subsection{Function Documentation}
+\index{connstateres.\+h@{connstateres.\+h}!knx\+\_\+connection\+\_\+state\+\_\+response\+\_\+generate@{knx\+\_\+connection\+\_\+state\+\_\+response\+\_\+generate}}
+\index{knx\+\_\+connection\+\_\+state\+\_\+response\+\_\+generate@{knx\+\_\+connection\+\_\+state\+\_\+response\+\_\+generate}!connstateres.\+h@{connstateres.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+connection\+\_\+state\+\_\+response\+\_\+generate(uint8\+\_\+t $\ast$buffer, const knx\+\_\+connection\+\_\+state\+\_\+response $\ast$res)}{knx_connection_state_response_generate(uint8_t *buffer, const knx_connection_state_response *res)}}]{\setlength{\rightskip}{0pt plus 5cm}void knx\+\_\+connection\+\_\+state\+\_\+response\+\_\+generate (
+\begin{DoxyParamCaption}
+\item[{uint8\+\_\+t $\ast$}]{buffer, }
+\item[{const {\bf knx\+\_\+connection\+\_\+state\+\_\+response} $\ast$}]{res}
+\end{DoxyParamCaption}
+)}\hypertarget{connstateres_8h_a87d2d775c599e053c6bd05b5f661bb4d}{}\label{connstateres_8h_a87d2d775c599e053c6bd05b5f661bb4d}
+Generate a raw connection response.
+
+\begin{DoxySeeAlso}{See also}
+\hyperlink{connstateres_8h_a9777e1309b66f1dc67d632574e0c0b78}{K\+N\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+S\+T\+A\+T\+E\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+S\+I\+ZE} 
+\end{DoxySeeAlso}
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Output buffer, you have to make sure there is enough space \\
+\hline
+{\em res} & Input connection state response \\
+\hline
+\end{DoxyParams}
+\index{connstateres.\+h@{connstateres.\+h}!knx\+\_\+connection\+\_\+state\+\_\+response\+\_\+parse@{knx\+\_\+connection\+\_\+state\+\_\+response\+\_\+parse}}
+\index{knx\+\_\+connection\+\_\+state\+\_\+response\+\_\+parse@{knx\+\_\+connection\+\_\+state\+\_\+response\+\_\+parse}!connstateres.\+h@{connstateres.\+h}}
+\subsubsection[{\texorpdfstring{knx\+\_\+connection\+\_\+state\+\_\+response\+\_\+parse(const uint8\+\_\+t $\ast$buffer, size\+\_\+t length, knx\+\_\+connection\+\_\+state\+\_\+response $\ast$res)}{knx_connection_state_response_parse(const uint8_t *buffer, size_t length, knx_connection_state_response *res)}}]{\setlength{\rightskip}{0pt plus 5cm}bool knx\+\_\+connection\+\_\+state\+\_\+response\+\_\+parse (
+\begin{DoxyParamCaption}
+\item[{const uint8\+\_\+t $\ast$}]{buffer, }
+\item[{size\+\_\+t}]{length, }
+\item[{{\bf knx\+\_\+connection\+\_\+state\+\_\+response} $\ast$}]{res}
+\end{DoxyParamCaption}
+)}\hypertarget{connstateres_8h_ad8c37e35020ba1b2cbd880816b27f240}{}\label{connstateres_8h_ad8c37e35020ba1b2cbd880816b27f240}
+Parse a raw connection response.
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Raw connection response \\
+\hline
+{\em length} & Number of bytes in {\ttfamily buffer} \\
+\hline
+{\em res} & Output connection state response \\
+\hline
+\end{DoxyParams}
