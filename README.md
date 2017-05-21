@@ -1,5 +1,7 @@
-[![Travis CI](https://travis-ci.org/vapourismo/knxproto.svg)]
-(https://travis-ci.org/vapourismo/knxproto)
+[![Travis CI](https://travis-ci.org/vapourismo/knxproto.svg)](https://travis-ci.org/vapourismo/knxproto)
+
+## Obsoletion
+Consider using [knx-go](https://github.com/vapourismo/knx-go) instead.
 
 ## Usage
 The simplest way to get started is to clone the repository, generate the documentation and start
